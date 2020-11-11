@@ -1,0 +1,3 @@
+aiohttp==3.0.1
+aiodns==2.0.0
+pytest==6.1.1
