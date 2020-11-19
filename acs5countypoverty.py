@@ -1,18 +1,16 @@
-from api_keys import census_key
+from census_response import getCensusResponse
 import json
-import requests
 
 #Estimate!!Total!!Population for whom poverty status is determined
 pop_table = 'S1701_C01_001E'
 #Estimate!!Below poverty level!!Population for whom poverty status is determined
 poverty_table = 'S1701_C02_001E'
+get_ls = [pop_table, poverty_table]
 
 subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
-get = f'NAME,{pop_table},{poverty_table}'
-#county level request for IL (state 17)
 geo = 'county:*&in=state:17'
-url = f'{subject_table}get={get}&for={geo}&key={census_key}'
-response = requests.get(url)
+
+response = getCensusResponse(subject_table, get_ls, geo)
 
 #poverty_data is list of lists, where list elements are rows
 #header row: name, population total, population poverty, fip state, fip county
