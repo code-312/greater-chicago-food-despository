@@ -1,10 +1,6 @@
-from census import Census
 from api_keys import census_key
 import json
 import requests
-import pandas as pd
-
-c = Census(census_key)
 
 #Estimate!!Total!!Population for whom poverty status is determined
 pop_table = 'S1701_C01_001E'
@@ -17,14 +13,10 @@ get = f'NAME,{pop_table},{poverty_table}'
 geo = 'county:*&in=state:17'
 url = f'{subject_table}get={get}&for={geo}&key={census_key}'
 response = requests.get(url)
-response
-
 
 #poverty_data is list of lists, where list elements are rows
 #header row: name, population total, population poverty, fip state, fip county
 poverty_data = response.json()
-poverty_data[:5]
-
 
 #Json format
 #{'countyfip': (countyfip = concatenation state and county fip numbers)
@@ -50,7 +42,7 @@ for d in poverty_data[1:]:
 
 
 #save file
-with open('acs5countypoverty_output.json', 'w') as f:
+with open('final_jsons/acs5countypoverty_output.json', 'w') as f:
     json.dump(final_json, f)
 
 
