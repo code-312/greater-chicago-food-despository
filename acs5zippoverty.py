@@ -15,13 +15,9 @@ geo = 'zip code tabulation area:*'
 
 response = getCensusResponse(subject_table, get_ls, geo)
 
-print(response.url)
-response.text
-
 #poverty_data is list of lists, where list elements are rows
 #header row: name, population total, population poverty, fip state, fip county
 poverty_data = response.json()
-poverty_data[:5]
 
 #filter zipcodes
 #IL zipcodes begin with numbers in zip_ls_IL
@@ -34,8 +30,6 @@ for d in poverty_data[1:]:
     if d[3][:2] in zip_ls_IL:
         poverty_data_IL.append(d)
         
-poverty_data_IL[:5]
-
 #Json format
 #{'countyfip': (countyfip = concatenation state and county fip numbers)
     #{'metric_one': 1234,
