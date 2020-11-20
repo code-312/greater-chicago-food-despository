@@ -1,10 +1,19 @@
 from acs5countypoverty import main as countypoverty_script
+#import acs5countypoverty.main as countypoverty_script
+
+from acs5zippoverty import main as zippoverty_script
 import json
 
 def main():
-    #runs county script to creates/updates county json
+    #runs county script to create/update county json
     countypoverty_script()
+    #tests county json file
     testFile('final_jsons/acs5countypoverty_output.json')
+
+    #runs zip script to create/update zip json
+    zippoverty_script()
+    #tests zip json file
+    testFile('final_jsons/acs5zippoverty_output.json')
 
 
 def testFile(fp):
