@@ -1,6 +1,5 @@
-from api_keys import census_key
+from census_response import getCensusResponse
 import json
-import requests
 
 def main():
     #Estimate!!Total!!Population for whom poverty status is determined
