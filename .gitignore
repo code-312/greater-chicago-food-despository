@@ -5,9 +5,12 @@ api_keys.py
 ## pyenv ##
 .python-version
 
-### Jupyter Notebook ###
-.ipynb_checkpoints/
-*.ipynb
+## pytest ##
+.pytest_cache/
 
 ### JSON ###
 *.json
+
+### Jupyter Notebook ###
+.ipynb_checkpoints/
+*.ipynb
