@@ -1,5 +1,16 @@
 ### Python ###
 __pycache__/
+api_keys.py
 
 ## pyenv ##
 .python-version
+
+## pytest ##
+.pytest_cache/
+
+### JSON ###
+*.json
+
+### Jupyter Notebook ###
+.ipynb_checkpoints/
+*.ipynb
