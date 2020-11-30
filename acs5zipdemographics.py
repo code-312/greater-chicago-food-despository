@@ -3,9 +3,11 @@ from census_response import getCensusResponse
 import requests
 
 def main():
-    #race group table
-    get_ls = ['group(B02001)']
-
+    #race tables (requesting specific tables faster than filtering out group)
+    get_ls= ['B02001_001E', 'B02001_002E', 'B02001_003E', 'B02001_004E',\
+                    'B02001_005E', 'B02001_006E', 'B02001_007E', 'B02001_008E',\
+                    'B02001_009E', 'B02001_010E']
+                    
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
 
     #zip level request 
@@ -13,19 +15,16 @@ def main():
     geo = 'zip code tabulation area:*'
 
     response = getCensusResponse(detailed_table, get_ls, geo)
-
     #race_data is list of lists, where list elements are rows
     #headers defined by group_data_variables elements
     race_data = response.json()
+
     
     group_response = requests.get('https://api.census.gov/data/2018/acs/acs5/groups/B02001')
     group_data_variables = group_response.json()['variables']
     
-    #Keep columns with estimates, filtering out margin of error and annotations
     #Labels table columns with group variable labels
-    filtered_race_ls = [[],[]]
-    #filters out margin and annotations
-    filter_ls = ['Margin', 'Annota']
+    labelled_race_ls = [[]]
 
     for i, row in enumerate(race_data):
         #header row
@@ -33,27 +32,21 @@ def main():
             for c, col in enumerate(race_data[0]):
                 #Gets variable label from group data
                 if col in group_data_variables:
-                    if group_data_variables[col]['label'][:6] not in filter_ls:
-                        label = group_data_variables[col]['label']
-                        filtered_race_ls[0].append(c)
-                        filtered_race_ls[1].append(label)
-                    else:
-                        continue
+                    label = group_data_variables[col]['label']
+                    labelled_race_ls[0].append(label)
                 #Variables not in group data added to list
                 else:
-                    filtered_race_ls[0].append(c)
-                    filtered_race_ls[1].append(col)
+                    labelled_race_ls[0].append(col)
         #filtered rows
         else:
             new_row = []
-            for n in filtered_race_ls[0]:
-                elem = race_data[i][n]
-                #Convert data strings to int
-                if n in filtered_race_ls[0][2:-2]:
-                    new_row.append(int(elem))
+            for v, n in enumerate(row):
+                if v == 0 or v == len(row)-1:
+                    new_row.append(n)
                 else:
-                    new_row.append(elem)
-            filtered_race_ls.append(new_row)
+                    new_row.append(int(n))
+
+            labelled_race_ls.append(new_row)
 
 
     #filter zipcodes
@@ -62,7 +55,7 @@ def main():
 
     race_data_IL = []
 
-    for d in filtered_race_ls[1:]:
+    for d in labelled_race_ls[1:]:
         #print(d[3][:2])
         if d[-1][:2] in zip_ls_IL:
             race_data_IL.append(d)
@@ -76,9 +69,13 @@ def main():
 
     for d in race_data_IL:
         #set variables to list elements
-        name, geo_id, race_total, race_white, race_black, race_americanindian, \
+        # name, geo_id, race_total, race_white, race_black, race_americanindian, \
+        #     race_asian, race_pacific, race_other, race_twoplus_total, \
+        #     race_twoplus_inclusive, race_twoplus_exclusive, name2, zipcode = d
+
+        name, race_total, race_white, race_black, race_americanindian, \
             race_asian, race_pacific, race_other, race_twoplus_total, \
-            race_twoplus_inclusive, race_twoplus_exclusive, name2, zipcode = d
+            race_twoplus_inclusive, race_twoplus_exclusive, zipcode = d
         #Calculate percentages?
         
         #create zip json
@@ -89,12 +86,13 @@ def main():
             'race_twoplus_total': race_twoplus_total, \
             'race_twoplus_inclusive':race_twoplus_inclusive,\
             'race_twoplus_exclusive':race_twoplus_exclusive}
+
         #set zip key to zip json value
         final_json[zipcode] = zip_json
 
     #save file
     with open('final_jsons/acs5ziprace_output.json', 'w') as f:
         json.dump(final_json, f)
-
+    
 if __name__ == '__main__':
     main()
