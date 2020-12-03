@@ -3,16 +3,23 @@ from census_response import getCensusResponse
 import requests
 
 def main():
+    zip_data = getRaceData('zip')
+    county_data = getRaceData('county')
+
+def getRaceData(geography):
+    if geography == 'zip':
+        geo = 'zip code tabulation area:*'
+    elif geography == 'county':
+        geo = 'county:*&in=state:17'
+    else:
+        raise Exception("Invalid Geography")
+
     #race tables (requesting specific tables faster than filtering out group)
     get_ls= ['B02001_001E', 'B02001_002E', 'B02001_003E', 'B02001_004E',\
                     'B02001_005E', 'B02001_006E', 'B02001_007E', 'B02001_008E',\
                     'B02001_009E', 'B02001_010E']
                     
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
-
-    #zip level request 
-    #Unable to filter request by state
-    geo = 'zip code tabulation area:*'
 
     response = getCensusResponse(detailed_table, get_ls, geo)
     #race_data is list of lists, where list elements are rows
@@ -37,7 +44,7 @@ def main():
                 #Variables not in group data added to list
                 else:
                     labelled_race_ls[0].append(col)
-        #filtered rows
+        #converts data strings to ints
         else:
             new_row = []
             for v, n in enumerate(row):
@@ -48,38 +55,36 @@ def main():
 
             labelled_race_ls.append(new_row)
 
-
-    #filter zipcodes
-    #IL zipcodes begin with numbers in zip_ls_IL
-    zip_ls_IL = ['60', '61', '62']
-
     race_data_IL = []
+    if "zip" == geography:
+        #filter zipcodes
+        #IL zipcodes begin with numbers in zip_ls_IL
+        zip_ls_IL = ['60', '61', '62']
 
-    for d in labelled_race_ls[1:]:
-        #print(d[3][:2])
-        if d[-1][:2] in zip_ls_IL:
-            race_data_IL.append(d)
-            
+        for d in labelled_race_ls[1:]:
+            #print(d[3][:2])
+            if d[-1][:2] in zip_ls_IL:
+                race_data_IL.append(d)
+    else:
+          race_data_IL = [d[:-2] + [f"{d[-2]}{d[-1]}"] for d in labelled_race_ls[1:]]
     #Json format
-    #{'zipcode:
+    #{'geography':
         #{'metric_one': 1234,
         #'metric_two': 5678}}
         
     final_json = {}
+    print(race_data_IL[:2])
 
     for d in race_data_IL:
         #set variables to list elements
-        # name, geo_id, race_total, race_white, race_black, race_americanindian, \
-        #     race_asian, race_pacific, race_other, race_twoplus_total, \
-        #     race_twoplus_inclusive, race_twoplus_exclusive, name2, zipcode = d
-
         name, race_total, race_white, race_black, race_americanindian, \
             race_asian, race_pacific, race_other, race_twoplus_total, \
-            race_twoplus_inclusive, race_twoplus_exclusive, zipcode = d
+            race_twoplus_inclusive, race_twoplus_exclusive, g = d
+       
         #Calculate percentages?
         
-        #create zip json
-        zip_json = {'name_zip': name, 'race_total': race_total, \
+        #create geography json
+        g_json = {f'name_{geography}': name, 'race_total': race_total, \
             'race_white': race_white, 'race_black': race_black, \
             'race_americanindian': race_americanindian, 'race_asian': race_asian,\
             'race_pacific': race_pacific, 'race_other': race_other,\
@@ -87,11 +92,11 @@ def main():
             'race_twoplus_inclusive':race_twoplus_inclusive,\
             'race_twoplus_exclusive':race_twoplus_exclusive}
 
-        #set zip key to zip json value
-        final_json[zipcode] = zip_json
+        #set geography key to geography json value
+        final_json[g] = g_json
 
     #save file
-    with open('final_jsons/acs5ziprace_output.json', 'w') as f:
+    with open(F'final_jsons/acs5{geography}race_output.json', 'w') as f:
         json.dump(final_json, f)
     
 if __name__ == '__main__':
