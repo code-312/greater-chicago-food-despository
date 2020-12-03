@@ -14,3 +14,6 @@ api_keys.py
 ### Jupyter Notebook ###
 .ipynb_checkpoints/
 *.ipynb
+
+## VS Code ##
+.vscode/
