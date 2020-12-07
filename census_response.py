@@ -17,23 +17,38 @@ def getCensusResponse(table_url,get_ls,geo):
     response = requests.get(url)
     return(response)
 
-def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls=list()):
+def searchTable(table_json_ls, keyword_ls=list(), filter_function_ls=list()):
+    '''
+    Filters variable tables by keyword and filter
+    input:
+        table_json_ls (response.json() object): list of lists from census variable table api
+        keyword_ls (list):  list of keyword strings
+                            keyword filter applied to the third element of the input list (concept column)
+        filter_function_ls (list): list of functions that filter table_json_ls with filter method
+    output:
+        return_json_ls (list): list, same format as table_json_ls, filtered
+    '''
+    #verifies parameters are lists
     assert (type(table_json_ls)==type(keyword_ls)==type(filter_function_ls)==list), "searchTable Parameters must be lists"
-    return_json = list()
     
+    return_json_ls = list()
+    
+    #runs filter for each function in filter_function_ls
     for f in filter_function_ls:
         table_json_ls = list(filter(f, table_json_ls))
-    #print(table_json_ls)
+    
+    #adds rows with keyword(s) in concept column to return_json_ls
     for d in table_json_ls:
         try:
             for k in keyword_ls:
-                if k.lower() in d[2].lower():
+                #d[2] is the concept column, d[1] is the label column
+                if k.lower() in d[2].lower() or k.lower() in d[1].lower():
                     continue
                 else:
                     break
             else:
-                return_json.append(d)
+                return_json_ls.append(d)
         except: 
             continue
     
-    return return_json
+    return return_json_ls
