@@ -19,7 +19,7 @@ To run:
 
 JSON Format:
 
-{'geographic area': {metric1: data, metric2: data}}
+{'geographic area': {geo_code: {metric1: data, metric2: data}}}
 
 
 
