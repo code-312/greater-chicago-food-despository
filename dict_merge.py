@@ -24,7 +24,9 @@ def main():
     with open(F'final_jsons/mergedZip_output.json', 'w') as f:
         json.dump(mergedZipDict, f)
 
-    return None
+    final_json_ls = [mergedCountyDict, mergedZipDict]
+    
+    return final_json_ls
 
 
 def merge(dictList = list()):
