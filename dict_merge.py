@@ -1,3 +1,32 @@
+from acs5countypoverty import main as countypoverty_script
+from acs5zippoverty import main as zippoverty_script
+from acs5racedemographics import main as racedemo_script
+import json
+
+def main():
+    #Data Dicts
+    countyPovertyDict = countypoverty_script()
+    zipPovertyDict = zippoverty_script()
+    zipRaceDict, countyRaceDict = racedemo_script()
+
+    #Create Geo Lists
+    countyDictList = [countyPovertyDict, countyRaceDict]
+    zipDictList = [zipPovertyDict, zipRaceDict]
+
+    #Pass Geo Lists into Merge function
+    mergedCountyDict = merge(countyDictList)
+    mergedZipDict = merge(zipDictList)
+    
+    #write to json
+    with open(F'final_jsons/mergedCounty_output.json', 'w') as f:
+            json.dump(mergedCountyDict, f)
+
+    with open(F'final_jsons/mergedZip_output.json', 'w') as f:
+        json.dump(mergedZipDict, f)
+
+    return None
+
+
 def merge(dictList = list()):
     '''
     Merges county data dictionaries
@@ -37,3 +66,6 @@ def merge(dictList = list()):
                 else:
                     mergedDict[k][v] = d[k][v]
     return mergedDict
+
+if __name__ == '__main__':
+    main()
