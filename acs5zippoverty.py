@@ -59,5 +59,7 @@ def main():
     with open('final_jsons/acs5zippoverty_output.json', 'w') as f:
         json.dump(final_json, f)
 
+    return final_json
+
 if __name__ == '__main__':
     main()

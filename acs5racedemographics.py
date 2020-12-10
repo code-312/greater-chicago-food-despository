@@ -6,6 +6,8 @@ def main():
     zip_data = getRaceData('zip')
     county_data = getRaceData('county')
 
+    return [zip_data, county_data]
+
 def getRaceData(geography):
     '''
     Calls census api for race demographic data by specified geography
