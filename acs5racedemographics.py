@@ -142,11 +142,11 @@ def getRaceData(geography):
 
 def processRaceData(data_json):
     '''
-    Determines majority race from getRaceData final json and adds to race_metrics
+    Determines majority race and race percentages from getRaceData final json and adds to race_metrics
     input:
         data_json (dict): final_json from getRaceData
     output:
-        data_json (dict): input with 'race_majority' metric added to 'race_metrics'
+        data_json (dict): input with 'race_majority' and 'percentages' metrics added to 'race_metrics'
     '''
     #Majority filter function
     majority = lambda x, y: x/y >= 0.5
@@ -156,7 +156,8 @@ def processRaceData(data_json):
         race_majority = "majority_minority"
         race_data = d[1]['race_metrics']
         race_total = race_data['race_total']
-        #if checks that total is not zero
+        percentages = {}
+        #if: checks that total is not zero
         if race_total:
             for k, v in race_data.items():
                 #skips evaluating race_total
@@ -165,16 +166,18 @@ def processRaceData(data_json):
                         continue
                     elif majority(v,race_total):
                         race_majority = k
-                        break
-                    else:
-                        continue
+                    #Add percentage
+                    race_pct = v/race_total * 100
+                    percentages[k] = race_pct
                 except Exception as e:
-                    print(e)
-                    print(d)
-                    print(race_data)
-                    print(v, race_total)
+                    print(e) #error
+                    print(d) #current data object
+                    print(race_data) #racemetrics
+                    print(v, race_total) #race data value, race_total metric
                     raise Exception('Error')
+        #Add majority and percentages to json
         data_json[d[0]]['race_metrics']['race_majority'] = race_majority
+        data_json[d[0]]['race_metrics']['percentages'] = percentages
         if race_majority == 'race_other' or race_majority == 'race_twoplus_exclusive':
             print(d)
     
