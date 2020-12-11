@@ -37,6 +37,8 @@ def merge(dictList = list()):
             within each dictionary assumes all counties include the same metrics
     output: merged geo data dictionary, same format
     '''
+    #What happens if some geo areas do not have all the data elements?
+
     mergedDict = dict()
     
     #Get all the geocodes in both datasets
