@@ -8,8 +8,9 @@ api_keys.py
 ## pytest ##
 .pytest_cache/
 
-### JSON ###
+### Data Files ###
 *.json
+*.csv
 
 ### Jupyter Notebook ###
 .ipynb_checkpoints/

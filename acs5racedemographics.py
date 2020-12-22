@@ -178,6 +178,7 @@ def processRaceData(data_json):
         #Add majority and percentages to json
         data_json[d[0]]['race_metrics']['race_majority'] = race_majority
         data_json[d[0]]['race_metrics']['percentages'] = percentages
+        #For dev investigation if printed
         if race_majority == 'race_other' or race_majority == 'race_twoplus_exclusive':
             print(d)
     

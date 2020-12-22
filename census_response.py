@@ -17,11 +17,11 @@ def getCensusResponse(table_url,get_ls,geo):
     response = requests.get(url)
     return(response)
 
-def searchTable(table_json_ls, keyword_ls=list(), filter_function_ls=list()):
+def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list) -> list:
     '''
     Filters variable tables by keyword and filter
     input:
-        table_json_ls (response.json() object): list of lists from census variable table api
+        table_json_ls (response.json() list object): list of lists from census variable table api
         keyword_ls (list):  list of keyword strings
                             keyword filter applied to the third element of the input list (concept column)
         filter_function_ls (list): list of functions that filter table_json_ls with filter method
@@ -52,3 +52,27 @@ def searchTable(table_json_ls, keyword_ls=list(), filter_function_ls=list()):
             continue
     
     return return_json_ls
+
+def county_fips(reverse = False) -> dict:
+    '''
+    Requests county fips from census API and returns list of IL county FIPS
+    input: reverse (bool) reverses keys and values in output
+    output: il_json (dict) {'county name': 'fip'}
+    '''
+    import requests
+
+    url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
+
+    response = requests.get(url)
+
+    #filter for IL
+    il_county = lambda x: x[1] == '17'
+
+    response_json = response.json()
+
+    if reverse:
+        il_json = {county[1]+county[2]: county[0]  for county in response_json if il_county(county)}
+    else:
+        il_json = {county[0]: county[1]+county[2] for county in response_json if il_county(county)}
+
+    return il_json
