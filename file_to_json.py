@@ -5,13 +5,14 @@ def main():
     import pandas as pd
     json_ls = list()
 
-    #Implement processing all files in data_folder
+    #TODO Implement processing all files in data_folder
     #Challenge: relevant data may be on different worksheets
     fp = "data_folder/FoodInsecurityRates12.15.2020.xlsx"
     table = pd.read_excel(fp, "County")
 
-    json_ls.append(table)
-    print(json_ls)
+    table_json = table_to_json(table)
+
+    json_ls.append(table_json)
     return(json_ls)
 
 
@@ -24,7 +25,7 @@ def determine_fips(df):
     from census_response import county_fips
 
     fips = county_fips()
-    # verify county column
+    # Verifies county column
     # Moves properly named column to first column
     first_column_name = table.iloc[:, 0].name
     cols = df.columns
@@ -64,7 +65,7 @@ def table_to_json(df):
 
     df = df.set_index('fips')
     df_json = df.to_json(orient='index')
-    return table_json
+    return df_json
 
 
 if __name__ == '__main__':

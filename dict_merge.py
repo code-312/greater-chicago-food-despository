@@ -4,6 +4,12 @@ from acs5racedemographics import main as racedemo_script
 import json
 
 def main():
+    '''
+    Runs all data scripts
+    Puts zip and county data into separate lists
+    Merges data and writes to merged json
+    Returns jsons in list
+    '''
     #Data Dicts
     countyPovertyDict = countypoverty_script()
     zipPovertyDict = zippoverty_script()
@@ -31,13 +37,15 @@ def main():
 
 def merge(dictList = list()):
     '''
-    Merges county data dictionaries
+    Merges data dictionaries
     input: list of geo data dictionaries (list)
             dictionary format {'countyFIP':{'metric1':1}}
-            within each dictionary assumes all counties include the same metrics
+            within each dictionary assumes all geo-areas include the same metrics
     output: merged geo data dictionary, same format
     '''
-    #What happens if some geo areas do not have all the data elements?
+    #TODO What happens if some geo areas do not have all the data elements?
+    #Error handled: prints geo area not in list index
+    #Do we want to add the missing data with null values?
 
     mergedDict = dict()
     
@@ -52,6 +60,7 @@ def merge(dictList = list()):
         mergedDict[k] = dict()
         for i, d in enumerate(dictList):
             #if the geocode is not in the dictionary, print to console and continue
+            #TODO add missing geocode metric here?
             try:
                 value = list(d[k])
             except:

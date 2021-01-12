@@ -19,14 +19,14 @@ To run:
 
 JSON Format:
 
-{'geographic area': {geo_code: {metric1: data, metric2: data}}}
-
-
-
+{'geographic area': {geo_code: {metric1_dict: {}, metric2_dict: {},...},...}}
+<hr>
 <u>Additional Scripts</u>
 
 **census_response.py**
+
 *helper module for census API*
+
 functions:
 
 - getCensusResponse: creates census API query url
@@ -46,3 +46,15 @@ functions:
     - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
     - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
 
+**file_to_json.py**
+
+*converts CSV and Excel files to the json format*
+
+- County name in table MUST be in the first column or named "County Name"
+- Returns list of JSON/Dictionaries to be merged
+
+**dict_merge.py**
+
+*Merges data dictionaries, prevents overwrite*
+
+- Currently does not add missing data keys to geocodes
