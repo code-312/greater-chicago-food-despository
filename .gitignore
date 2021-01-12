@@ -11,6 +11,7 @@ api_keys.py
 ### Data Files ###
 *.json
 *.csv
+*.xlsx
 
 ### Jupyter Notebook ###
 .ipynb_checkpoints/

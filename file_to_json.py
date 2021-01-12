@@ -1,8 +1,13 @@
 def main():
+    '''
+    Reads excel/csv files into json format
+    '''
     import pandas as pd
     json_ls = list()
 
-    fp = "C:/Users/kuhnie/code-chicago/gcfd/FoodInsecurityRates12.15.2020.xlsx"
+    #Implement processing all files in data_folder
+    #Challenge: relevant data may be on different worksheets
+    fp = "data_folder/FoodInsecurityRates12.15.2020.xlsx"
     table = pd.read_excel(fp, "County")
 
     json_ls.append(table)
@@ -44,6 +49,10 @@ def determine_fips(df):
 
 
 def table_to_json(df):
+    '''
+    Converts panda df to json format
+    Checks for fips column, calls determine_fips if not present
+    '''
     import pandas as pd
 
     # get county FIPs, if necessary
