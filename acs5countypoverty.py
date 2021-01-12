@@ -40,10 +40,11 @@ def main():
         #set county key to county json value
         final_json[fip_final] = county_json
 
-
     #save file
     with open('final_jsons/acs5countypoverty_output.json', 'w') as f:
         json.dump(final_json, f)
+
+    return final_json
 
 if __name__ == '__main__':
     main()

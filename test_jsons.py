@@ -1,5 +1,6 @@
 from acs5countypoverty import main as countypoverty_script
 from acs5zippoverty import main as zippoverty_script
+from acs5racedemographics import main as racedemo_script
 import json
 
 def test_county_poverty():
@@ -14,6 +15,13 @@ def test_zip_poverty():
     #tests zip json file
     check_file('final_jsons/acs5zippoverty_output.json')
 
+
+def test_race_demographics():
+    #runs zip script to create/update zip json
+    racedemo_script()
+    #tests zip json file
+    check_file('final_jsons/acs5ziprace_output.json')
+    check_file('final_jsons/acs5countyrace_output.json')
 
 def check_file(fp):
     #read in json

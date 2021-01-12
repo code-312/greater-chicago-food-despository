@@ -6,6 +6,7 @@ def main():
     pop_table = 'S1701_C01_001E'
     #Estimate!!Below poverty level!!Population for whom poverty status is determined
     poverty_table = 'S1701_C02_001E'
+
     get_ls = [pop_table, poverty_table]
 
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
@@ -57,6 +58,8 @@ def main():
     #save file
     with open('final_jsons/acs5zippoverty_output.json', 'w') as f:
         json.dump(final_json, f)
+
+    return final_json
 
 if __name__ == '__main__':
     main()
