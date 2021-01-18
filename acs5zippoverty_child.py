@@ -54,16 +54,17 @@ def main():
             pct_poverty = pop_poverty_int / pop_total_int * 100
         else:
             pct_poverty = 'Undefined'
-        #create zip json
-        zip_json = {'name_zip': name, 'population_total': pop_total_int, 'population_poverty': pop_poverty_int, 'percent_poverty': pct_poverty}
-        #set county key to county json value
-        final_json[zipcode]['poverty_metrics'] = zip_json
+        #create zip child json
+        zip_child_json = {'name_zip': name, 'population_total': pop_total_int, 'population_poverty': pop_poverty_int, 'percent_poverty': pct_poverty}
+        #set zip key to zip child json value
+        final_json[zipcode] = zip_child_json
 
     #save file
-    with open('final_jsons/acs5zippoverty_output.json', 'w') as f:
+    with open('final_jsons/acs5zip_child_poverty_output.json', 'w') as f:
         json.dump(final_json, f)
-        
-    return final_json    
+
+    return final_json
+
 
 if __name__ == '__main__':
     main()
