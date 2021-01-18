@@ -39,18 +39,16 @@ def main():
         fip_final = fip_state + fip_county
         #calculate percent poverty
         pct_poverty = pop_poverty_int / pop_total_int * 100
-        #create county json
-        county_json = {'name_county':name, 'population_total': pop_total_int, 'population_poverty': pop_poverty_int, 'percent_poverty': pct_poverty}
-        #set county key to county json value
-        final_json[fip_final]['poverty_metrics'] = county_json
-
+        #create county child json
+        county_child_json = {'name_county':name, 'population_total': pop_total_int, 'population_poverty': pop_poverty_int, 'percent_poverty': pct_poverty}
+        #set county key to county child json value
+        final_json[fip_final] = county_child_json
 
     #save file
-    with open('final_jsons/acs5countypoverty_output.json', 'w') as f:
+    with open('final_jsons/acs5county_child_poverty_output.json', 'w') as f:
         json.dump(final_json, f)
-        
+    
     return final_json
-
 
 if __name__ == '__main__':
     main()
