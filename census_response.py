@@ -79,7 +79,7 @@ def county_fips(reverse = False) -> dict:
 
     return il_json
 
-def getCensusData(table_code_dict, census_table, geo_ls=["zip","county"]):
+def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip","county"]):
     '''
     Obtains Census data and returns zip and county dictionaries
     input:
@@ -89,6 +89,7 @@ def getCensusData(table_code_dict, census_table, geo_ls=["zip","county"]):
         census_table (str, url): Census table url
         geo_ls (ls): Geographies to return, accepts "zip" and "county" as keywords
                     additional geographies may be passed, but must be valid Census API keywords
+        function_ls (ls): functions to run sequentially on final_js, before saved and returned
     output:
         final_json (dict):
             key: zip or county code (str)
@@ -165,24 +166,6 @@ def getCensusData(table_code_dict, census_table, geo_ls=["zip","county"]):
 
         print("Creating final json")
         for d in IL_data:
-            #set variables to list elements
-            #determine whether to pull unused variables
-            # name, race_hispaniclatino_twoplus_exclusive, \
-            # race_hispaniclatino_twoplus_inclusive, race_total, race_native, race_black,\
-            # race_white, race_total_not_hispaniclatino, race_twoplus_total, race_pacific,\
-            # race_other, race_asian, race_hispaniclatino_white, race_hispaniclatino_total,\
-            # race_twoplus_exclusive, race_twoplus_inclusive, race_hispaniclatino_pacific,\
-            # race_hispaniclatino_asian, race_hispaniclatino_native, \
-            # race_hispaniclatino_black, race_hispaniclatino_other, \
-            # race_hispaniclatino_twoplus_total, g = d
-            # ORIGINAL DICT for Race
-            # race_dict = {'race_total': race_total, \
-            #     'race_white': race_white, 'race_black': race_black, \
-            #     'race_hispaniclatino_total' : race_hispaniclatino_total, \
-            #     'race_native': race_native, 'race_asian': race_asian,\
-            #     'race_pacific': race_pacific, 'race_other': race_other,\
-            #     'race_twoplus_total': race_twoplus_total}
-            #Calculate percentages?
             
             #create geography json
             #topic_metrics nests topic data
@@ -196,6 +179,8 @@ def getCensusData(table_code_dict, census_table, geo_ls=["zip","county"]):
             final_json[geo_dict['g']] = g_json
 
         #TODO add processing race data to main script
+        for f in function_ls:
+            final_json = f(final_json)
         # final_json = processRaceData(final_json)
 
         #save file
