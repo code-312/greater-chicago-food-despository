@@ -1,5 +1,7 @@
 from acs5countypoverty import main as countypoverty_script
 from acs5zippoverty import main as zippoverty_script
+from acs5countypoverty_child import main as county_child_poverty_script
+from acs5zippoverty_child import main as zip_child_poverty_script
 from acs5racedemographics import main as racedemo_script
 import json
 
@@ -15,6 +17,17 @@ def test_zip_poverty():
     #tests zip json file
     check_file('final_jsons/acs5zippoverty_output.json')
 
+def test_county_child_poverty():
+    #runs county script to create/update county json
+    county_child_poverty_script()
+    #tests county json file
+    check_file('final_jsons/acs5county_child_poverty_output.json')
+    
+def test_zip_child_poverty():
+    #runs county script to create/update county json
+    zip_child_poverty_script()
+    #tests county json file
+    check_file('final_jsons/acs5zip_child_poverty_output.json')    
 
 def test_race_demographics():
     #runs zip script to create/update zip json
