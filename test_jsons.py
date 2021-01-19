@@ -1,3 +1,4 @@
+from json.decoder import JSONDecodeError
 from acs5countypoverty import main as countypoverty_script
 from acs5zippoverty import main as zippoverty_script
 from acs5racedemographics import main as racedemo_script
@@ -25,14 +26,22 @@ def test_race_demographics():
 
 def check_file(fp):
     #read in json
-    with open(fp) as f:
-        data = json.load(f)
-    
-    #tests elements in data
-    for d in data:
-        #key should be a string
-        assert(type(d)==str)
+    #Invalid JSON (non-string keys) raises JSONDecodeError
+    try:
+        with open(fp) as f:
+            data = json.load(f)
+    except JSONDecodeError as j:
+        print(j)
+        print("Keys must be strings")
+        print("If using python to create JSON, use JSON library to dump dictionary to JSON file")
+        return j
+    except Exception as e:
+        print(e)
+        return e
 
+    #Primary key must contain dictionary
+    #TODO determine if second-level dictionary must be dictionary
+    for d in data:
         #test the value, should be dictionary
         v = data[d]
         assert(type(v)==dict)
