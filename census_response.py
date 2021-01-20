@@ -14,9 +14,9 @@ def getCensusResponse(table_url,get_ls,geo):
     '''
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
-    print(f"Calling for {geo}: {get_ls}")
+    # print(f"Calling for {geo}: {get_ls}")
     response = requests.get(url)
-    print(f"{response} Received")
+    # print(f"{response} Received")
     return(response)
 
 def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list) -> list:
@@ -119,7 +119,7 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         #Labels table columns with group variable labels
         #Add better comment
         labelled_ls = [[]]
-        print("Creating Labelled List")
+        # print("Creating Labelled List")
         for i, row in enumerate(response_data):
             #header row
             if i == 0:
@@ -145,10 +145,10 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
                             new_row.append(n)
 
                 labelled_ls.append(new_row)
-        print("Labelled List Created")
+        # print("Labelled List Created")
         IL_data = []
         
-        print("Filtering zipcodes")
+        # print("Filtering zipcodes")
         if "zip" == geography:
         #filter zipcodes
         #IL zipcodes begin with numbers in zip_ls_IL
@@ -161,30 +161,26 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         else:
             #creates county geo labels
             IL_data = [d[:-2] + [f"{d[-2]}{d[-1]}"] for d in labelled_ls[1:]]
-        print("Zip codes filtered")
+        # print("Zip codes filtered")
         final_json = {}
 
-        print("Creating final json")
+        # print("Creating final json")
         for d in IL_data:
             
             #create geography json
             #topic_metrics nests topic data
             geo_dict = {l:d[i] for i, l in enumerate(value_ls)}
-
-
             
             g_json = {f'name_{geography}': geo_dict['name'], f'{topic}_metrics': geo_dict}
 
             #set geography key to geography json value
             final_json[geo_dict['g']] = g_json
 
-        #TODO add processing race data to main script
         for f in function_ls:
             final_json = f(final_json)
-        # final_json = processRaceData(final_json)
 
         #save file
-        "Final Json created, saving to file"
+        # print("Final Json created, saving to file")
         with open(F'final_jsons/z_acs5{geography}new{topic}_output.json', 'w') as f:
             json.dump(final_json, f)
         

@@ -5,6 +5,12 @@ Defines and calls Census data requests
 def dict_approach():
     #move this function to census_response.py
     from acs5racedemographics import processRaceData
+    import census_response
+
+    #Census tables
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+
     d = {
         "race": {
             "var_dict":{
@@ -14,70 +20,87 @@ def dict_approach():
                 'B03002_008E':'race_other', 'B03002_006E': 'race_asian',\
                 'B03002_012E': 'race_hispaniclatino_total'
             },
-            "table":'https://api.census.gov/data/2018/acs/acs5?',
+            "table":detailed_table,
             "function_ls" : [processRaceData]
         },
         "poverty":{
             "var_dict":{
                 'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty'
             },
-            "table":'https://api.census.gov/data/2018/acs/acs5/subject?',
+            "table":subject_table,
             "function_ls" : []
         }
     }
-    return d
+
+    d_ls = []
+
+    for v in d.values():
+        var_dict, table, function_ls = v.values()
+        v_ls = census_response.getCensusData(var_dict, table, function_ls)
+        d_ls += v_ls
+    
+    return d_ls
 
 
+'''
+Advantage to class approach is function ls, default parameter(s) set by default
+Once implemented, attached function can update data for the class
+'''
 def class_approach():
-    '''
-    Advantage to class approach is function ls, default parameter(s) set by default
-    Once implemented, attached function can update data for the class
-    '''
     #move this function to census_response.py
     from acs5racedemographics import processRaceData
+    from census_response import getCensusData
+
     class CensusData:
-        def __init__(self, var_dict, table, function_ls=[]):
+        #set tracks instances of the class
+        class_set = set()
+        def __init__(self, var_dict, table, function_ls=[], geo_ls=["zip","county"]):
             self.var_dict = var_dict
             self.table = table
             self.function_ls = function_ls
-
+            self.geo_ls = geo_ls
+            self.class_set.add(self)
+        
+        def getData(self):
+            c_ls = getCensusData(self.var_dict, self.table, self.function_ls, self.geo_ls)
+            return c_ls
+    
+    #Census tables
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+    
     #define race instance
     race_dict = {'B03002_001E': 'race_total', 'B03002_005E': \
                 'race_native','B03002_004E': 'race_black', 'B03002_003E':\
                 'race_white', 'B03002_009E': 'race_twoplus_total', 'B03002_007E': 'race_pacific', \
                 'B03002_008E':'race_other', 'B03002_006E': 'race_asian',\
                 'B03002_012E': 'race_hispaniclatino_total'}
-    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
     race_functions = [processRaceData]
+    #variable does not need to be defined, but it is for readability
     race = CensusData(race_dict, detailed_table, race_functions)
 
     #define poverty instance
     poverty_dict = {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty'}
-    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
     poverty = CensusData(poverty_dict, subject_table)
 
-    #add instances to list
-    class_ls = [race, poverty]
-    return {i:c for i, c in enumerate(class_ls)}
-
-def main(d):
-    import census_response
+    #reference class set
+    class_set = CensusData.class_set
+    
     d_ls = []
-    for v in d.values():
-        try:
-            var_dict, table, function_ls = v.values()
-        except:
-            var_dict = v.var_dict
-            table = v.table
-            function_ls = v.function_ls
-        v_ls = census_response.getCensusData(var_dict, table, function_ls)
-        d_ls += v_ls
-    return d_ls
+    
+    for c in class_set:
+        d_ls += c.getData()
+
+    return class_set
+
+def main():
+    class_approach()
+    #dict_approach()
+
+
 
 if __name__ == '__main__':
-    d = dict_approach()
-    d = class_approach()
-    main(d)
+    main()
 
 '''
 Race data notes
