@@ -28,7 +28,7 @@ def censusData():
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
     
     #define race instance
-    #Values name format: topic_property_subproperty
+    #Values name format: topic_property_subproperty...
     race_dict = {'B03002_001E': 'race_total', 'B03002_005E': \
                 'race_native','B03002_004E': 'race_black', 'B03002_003E':\
                 'race_white', 'B03002_009E': 'race_twoplus_total', 'B03002_007E': 'race_pacific', \
@@ -39,7 +39,11 @@ def censusData():
     race = CensusData(race_dict, detailed_table, race_functions)
 
     #define poverty instance
-    poverty_dict = {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty'}
+    poverty_dict = {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty',\
+                    'S1701_C02_002E': 'poverty_population_poverty_child'}
+                    #If additional subdivision are needed
+                    #'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
+                    #'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
     poverty = CensusData(poverty_dict, subject_table)
 
     #reference class set
