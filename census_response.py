@@ -108,6 +108,7 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
 
         key_ls = list(table_code_dict.keys())
         value_ls = list(table_code_dict.values())
+        #Values name format: topic_property_subproperty
         topic = value_ls[0].split('_')[0]
         value_ls.insert(0, 'name')
         value_ls.append('g')
@@ -145,10 +146,8 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
                             new_row.append(n)
 
                 labelled_ls.append(new_row)
-        # print("Labelled List Created")
         IL_data = []
         
-        # print("Filtering zipcodes")
         if "zip" == geography:
         #filter zipcodes
         #IL zipcodes begin with numbers in zip_ls_IL
@@ -161,10 +160,8 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         else:
             #creates county geo labels
             IL_data = [d[:-2] + [f"{d[-2]}{d[-1]}"] for d in labelled_ls[1:]]
-        # print("Zip codes filtered")
         final_json = {geography:{}}
 
-        # print("Creating final json")
         for d in IL_data:
             
             #create geography json
