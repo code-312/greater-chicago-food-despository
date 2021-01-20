@@ -91,10 +91,13 @@ def class_approach():
     for c in class_set:
         d_ls += c.getData()
 
-    return class_set
+    return d_ls
 
 def main():
-    class_approach()
+    import dict_merge
+    d_ls = class_approach()
+    d_merged_ls = dict_merge.main(d_ls)
+    # breakpoint()
     #dict_approach()
 
 

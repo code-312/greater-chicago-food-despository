@@ -162,7 +162,7 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
             #creates county geo labels
             IL_data = [d[:-2] + [f"{d[-2]}{d[-1]}"] for d in labelled_ls[1:]]
         # print("Zip codes filtered")
-        final_json = {}
+        final_json = {geography:{}}
 
         # print("Creating final json")
         for d in IL_data:
@@ -174,14 +174,14 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
             g_json = {f'name_{geography}': geo_dict['name'], f'{topic}_metrics': geo_dict}
 
             #set geography key to geography json value
-            final_json[geo_dict['g']] = g_json
+            final_json[geography][geo_dict['g']] = g_json
 
         for f in function_ls:
-            final_json = f(final_json)
+            final_json[geography] = f(final_json[geography])
 
         #save file
         # print("Final Json created, saving to file")
-        with open(F'final_jsons/z_acs5{geography}new{topic}_output.json', 'w') as f:
+        with open(F'final_jsons/acs5{geography}{topic}_output.json', 'w') as f:
             json.dump(final_json, f)
         
         final_json_ls.append(final_json)
