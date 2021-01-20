@@ -19,6 +19,7 @@ To run:
 
 JSON Format:
 
+<<<<<<< HEAD
 {'geographic area': {geo_code: {metric1_dict: {}, metric2_dict: {},...},...}}
 <hr>
 <u>Additional Scripts</u>
@@ -27,6 +28,16 @@ JSON Format:
 
 *helper module for census API*
 
+=======
+{'geographic area': {geo_code: {metric1: data, metric2: data}}}
+
+
+
+<u>Additional Scripts</u>
+
+**census_response.py**
+*helper module for census API*
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b
 functions:
 
 - getCensusResponse: creates census API query url
@@ -46,6 +57,7 @@ functions:
     - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
     - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
 
+<<<<<<< HEAD
 **file_to_json.py**
 
 *converts CSV and Excel files to the json format*
@@ -58,3 +70,5 @@ functions:
 *Merges data dictionaries, prevents overwrite*
 
 - Currently does not add missing data keys to geocodes
+=======
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b

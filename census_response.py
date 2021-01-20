@@ -14,6 +14,7 @@ def getCensusResponse(table_url,get_ls,geo):
     '''
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
+<<<<<<< HEAD
     # print(f"Calling for {geo}: {get_ls}")
     response = requests.get(url)
     # print(f"{response} Received")
@@ -24,6 +25,16 @@ def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list)
     Filters variable tables by keyword and filter
     input:
         table_json_ls (response.json() list object): list of lists from census variable table api
+=======
+    response = requests.get(url)
+    return(response)
+
+def searchTable(table_json_ls, keyword_ls=list(), filter_function_ls=list()):
+    '''
+    Filters variable tables by keyword and filter
+    input:
+        table_json_ls (response.json() object): list of lists from census variable table api
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b
         keyword_ls (list):  list of keyword strings
                             keyword filter applied to the third element of the input list (concept column)
         filter_function_ls (list): list of functions that filter table_json_ls with filter method
@@ -53,6 +64,7 @@ def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list)
         except: 
             continue
     
+<<<<<<< HEAD
     return return_json_ls
 
 def county_fips(reverse = False) -> dict:
@@ -229,3 +241,6 @@ def processRaceData(data_json):
             print(d)
     
     return data_json
+=======
+    return return_json_ls
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b
