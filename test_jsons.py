@@ -1,28 +1,33 @@
 from json.decoder import JSONDecodeError
-from acs5countypoverty import main as countypoverty_script
-from acs5zippoverty import main as zippoverty_script
-from acs5racedemographics import main as racedemo_script
+# from acs5countypoverty import main as countypoverty_script
+# from acs5zippoverty import main as zippoverty_script
+# from acs5racedemographics import main as racedemo_script
 import json
 
-def test_county_poverty():
-    #runs county script to create/update county json
-    countypoverty_script()
-    #tests county json file
-    check_file('final_jsons/acs5countypoverty_output.json')
+# def test_county_poverty():
+#     #runs county script to create/update county json
+#     countypoverty_script()
+#     #tests county json file
+#     check_file('final_jsons/acs5countypoverty_output.json')
 
-def test_zip_poverty():
-    #runs zip script to create/update zip json
-    zippoverty_script()
-    #tests zip json file
-    check_file('final_jsons/acs5zippoverty_output.json')
+# def test_zip_poverty():
+#     #runs zip script to create/update zip json
+#     zippoverty_script()
+#     #tests zip json file
+#     check_file('final_jsons/acs5zippoverty_output.json')
 
 
-def test_race_demographics():
-    #runs zip script to create/update zip json
-    racedemo_script()
-    #tests zip json file
-    check_file('final_jsons/acs5ziprace_output.json')
-    check_file('final_jsons/acs5countyrace_output.json')
+# def test_race_demographics():
+#     #runs zip script to create/update zip json
+#     racedemo_script()
+#     #tests zip json file
+#     check_file('final_jsons/acs5ziprace_output.json')
+#     check_file('final_jsons/acs5countyrace_output.json')
+
+def test_main():
+    from main import main
+    main()
+    check_file('final_jsons/merged_output.json')
 
 def check_file(fp):
     #read in json

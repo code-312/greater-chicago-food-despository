@@ -6,10 +6,8 @@ Defines and calls Census data requests
 Advantage to class approach is function ls, default parameter(s) set by default
 Once implemented, attached function can update data for the class
 '''
-def class_approach():
-    #move this function to census_response.py
-    from acs5racedemographics import processRaceData
-    from census_response import getCensusData
+def censusData():
+    from census_response import getCensusData, processRaceData
 
     class CensusData:
         #set tracks instances of the class
@@ -56,7 +54,7 @@ def class_approach():
 
 def main():
     import dict_merge
-    d_ls = class_approach()
+    d_ls = censusData()
     d_merged_ls = dict_merge.main(d_ls)
 
 

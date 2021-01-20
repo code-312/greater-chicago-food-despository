@@ -19,12 +19,18 @@ def main(d_ls):
     final_json_ls = []
     # breakpoint()
     for k,v in d_dict.items():
-        geo_json = merge(v)
+        geo_json = {}
+        geo_json[k] = merge(v)
         final_json_ls.append(geo_json)
-        breakpoint()
+        # breakpoint()
         with open(F'final_jsons/merged{k}_output.json','w') as f:
             json.dump(geo_json, f)
-            
+    
+    with open(F'final_jsons/merged_output.json','w') as f:
+        merged_dict = {**final_json_ls[0], **final_json_ls[1]}
+        # breakpoint()
+        json.dump(merged_dict, f)
+
     return final_json_ls
 
 
@@ -39,7 +45,7 @@ def merge(dictList = list()):
     #TODO What happens if some geo areas do not have all the data elements?
     #Error handled: prints geo area not in list index
     #Do we want to add the missing data with null values?
-    
+    # breakpoint()
     mergedDict = dict()
     
     #Get all the geocodes in both datasets

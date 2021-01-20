@@ -80,6 +80,7 @@ def county_fips(reverse = False) -> dict:
     return il_json
 
 def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip","county"]):
+
     '''
     Obtains Census data and returns zip and county dictionaries
     input:
@@ -183,3 +184,48 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         
         final_json_ls.append(final_json)
     return final_json_ls
+
+def processRaceData(data_json):
+    '''
+    Determines majority race and race percentages from getRaceData final json and adds to race_metrics
+    input:
+        data_json (dict): final_json from getRaceData
+    output:
+        data_json (dict): input with 'race_majority' and 'percentages' metrics added to 'race_metrics'
+    '''
+    #Majority filter function
+    majority = lambda x, y: x/y >= 0.5
+
+    for d in data_json.items():
+        #race_majority default value, since another majority would overwrite
+        race_majority = "majority_minority"
+        race_data = d[1]['race_metrics']
+        race_total = race_data['race_total']
+        percentages = {}
+        #if: checks that total is not zero
+        if race_total:
+            for k, v in race_data.items():
+                #skips evaluating race_total, 'name' and 'g'
+                try:
+                    skip_ls = ['race_total','name','g']
+                    if k in skip_ls:
+                        continue
+                    elif majority(v,race_total):
+                        race_majority = k
+                    #Add percentage
+                    race_pct = v/race_total * 100
+                    percentages[k] = race_pct
+                except Exception as e:
+                    print(e) #error
+                    print(d) #current data object
+                    print(race_data) #racemetrics
+                    print(v, race_total) #race data value, race_total metric
+                    raise Exception('Error')
+        #Add majority and percentages to json
+        data_json[d[0]]['race_metrics']['race_majority'] = race_majority
+        data_json[d[0]]['race_metrics']['percentages'] = percentages
+        #For dev investigation if printed
+        if race_majority == 'race_other' or race_majority == 'race_twoplus_exclusive':
+            print(d)
+    
+    return data_json
