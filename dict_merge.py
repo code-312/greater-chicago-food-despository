@@ -3,10 +3,18 @@ import json
 def main(d_ls):
     '''
     Puts zip and county data into separate lists
-    Merges data and writes to merged json
+    Sends data to merge() and writes to merged json
     Returns jsons in list
+    
+    input:
+        d_ls (list): list of dictionaries
+            dictionary format:
+            {geo_area:{geo_code:{metrics...},...}}
+    output:
+        final_json_ls (list): list of dictionaries
+            len() = 2 (default, county and zip)
     '''
-    #unpack d_ls
+    #unpack d_ls into dictionary by geo_area
     d_dict = {}
     for d in d_ls:
         d_keys = str(list(d.keys())[0])
@@ -18,6 +26,7 @@ def main(d_ls):
 
     final_json_ls = []
     # breakpoint()
+    #calls merge function on each geo_area
     for k,v in d_dict.items():
         geo_json = {}
         geo_json[k] = merge(v)
@@ -26,6 +35,7 @@ def main(d_ls):
         with open(F'final_jsons/merged{k}_output.json','w') as f:
             json.dump(geo_json, f)
     
+    #saves merged_dict to file
     with open(F'final_jsons/merged_output.json','w') as f:
         merged_dict = {**final_json_ls[0], **final_json_ls[1]}
         # breakpoint()
@@ -38,7 +48,7 @@ def merge(dictList = list()):
     '''
     Merges data dictionaries
     input: list of geo data dictionaries (list)
-            dictionary format {'countyFIP':{'metric1':1}}
+            dictionary format {geo_area:{'geo_code':{'metric1':1,...},...}}
             within each dictionary assumes all geo-areas include the same metrics
     output: merged geo data dictionary, same format
     '''

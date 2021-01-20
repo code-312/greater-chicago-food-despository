@@ -1,18 +1,19 @@
 '''
 Defines and calls Census data requests
 '''
-
-'''
-Advantage to class approach is function ls, default parameter(s) set by default
-Once implemented, attached function can update data for the class
-'''
 def censusData():
+    '''
+    Defines class CensusData
+    CensusData instances created
+    Loops through CensusData instances calling getData method to produce dictionaries
+    Returns list of dictionaries
+    '''
     from census_response import getCensusData, processRaceData
 
     class CensusData:
         #set tracks instances of the class
         class_set = set()
-        def __init__(self, var_dict, table, function_ls=[], geo_ls=["zip","county"]):
+        def __init__(self, var_dict:dict, table:str, function_ls:list = [], geo_ls:list =["zip","county"]):
             self.var_dict = var_dict
             self.table = table
             self.function_ls = function_ls
@@ -57,6 +58,10 @@ def censusData():
     return d_ls
 
 def main():
+    '''
+    Calls censusData function to create CensusData instances and return list of dictionaries
+    Calls dict_merge to merge list of dictionaries by geo_area and save jsons to file
+    '''
     import dict_merge
     d_ls = censusData()
     d_merged_ls = dict_merge.main(d_ls)
