@@ -160,9 +160,16 @@ def processRaceData(data_json):
         #if: checks that total is not zero
         if race_total:
             for k, v in race_data.items():
+<<<<<<< HEAD
+                #skips evaluating race_total, 'name' and 'g'
+                try:
+                    skip_ls = ['race_total','name','g']
+                    if k in skip_ls:
+=======
                 #skips evaluating race_total
                 try:
                     if k == 'race_total':
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b
                         continue
                     elif majority(v,race_total):
                         race_majority = k
@@ -178,6 +185,10 @@ def processRaceData(data_json):
         #Add majority and percentages to json
         data_json[d[0]]['race_metrics']['race_majority'] = race_majority
         data_json[d[0]]['race_metrics']['percentages'] = percentages
+<<<<<<< HEAD
+        #For dev investigation if printed
+=======
+>>>>>>> 250623b9afaadccb3f1f173f837f491e50764b2b
         if race_majority == 'race_other' or race_majority == 'race_twoplus_exclusive':
             print(d)
     
