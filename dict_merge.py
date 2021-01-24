@@ -1,57 +1,77 @@
-from acs5countypoverty import main as countypoverty_script
-from acs5zippoverty import main as zippoverty_script
-from acs5racedemographics import main as racedemo_script
 import json
 
-def main():
-    #Data Dicts
-    countyPovertyDict = countypoverty_script()
-    zipPovertyDict = zippoverty_script()
-    zipRaceDict, countyRaceDict = racedemo_script()
-
-    #Create Geo Lists
-    countyDictList = [countyPovertyDict, countyRaceDict]
-    zipDictList = [zipPovertyDict, zipRaceDict]
-
-    #Pass Geo Lists into Merge function
-    mergedCountyDict = merge(countyDictList)
-    mergedZipDict = merge(zipDictList)
+def main(d_ls):
+    '''
+    Puts zip and county data into separate lists
+    Sends data to merge() and writes to merged json
+    Returns jsons in list
     
-    #write to json
-    with open(F'final_jsons/mergedCounty_output.json', 'w') as f:
-            json.dump(mergedCountyDict, f)
+    input:
+        d_ls (list): list of dictionaries
+            dictionary format:
+            {geo_area:{geo_code:{metrics...},...}}
+    output:
+        final_json_ls (list): list of dictionaries
+            len() = 2 (default, county and zip)
+    '''
+    #unpack d_ls into dictionary by geo_area
+    d_dict = {}
+    for d in d_ls:
+        d_keys = str(list(d.keys())[0])
+        d_values = list(d.values())[0]
+        if d_keys not in d_dict:
+            d_dict[d_keys] = [d_values]
+        else:
+            d_dict[d_keys].append(d_values)
 
-    with open(F'final_jsons/mergedZip_output.json', 'w') as f:
-        json.dump(mergedZipDict, f)
-
-    final_json_ls = [mergedCountyDict, mergedZipDict]
+    final_json_ls = []
+    # breakpoint()
+    #calls merge function on each geo_area
+    for k,v in d_dict.items():
+        geo_json = {}
+        geo_json[k] = merge(v)
+        final_json_ls.append(geo_json)
+        # breakpoint()
+        with open(F'final_jsons/merged{k}_output.json','w') as f:
+            json.dump(geo_json, f)
     
+    #saves merged_dict to file
+    with open(F'final_jsons/merged_output.json','w') as f:
+        merged_dict = {**final_json_ls[0], **final_json_ls[1]}
+        # breakpoint()
+        json.dump(merged_dict, f)
+
     return final_json_ls
 
 
 def merge(dictList = list()):
     '''
-    Merges county data dictionaries
+    Merges data dictionaries
     input: list of geo data dictionaries (list)
-            dictionary format {'countyFIP':{'metric1':1}}
-            within each dictionary assumes all counties include the same metrics
+            dictionary format {geo_area:{'geo_code':{'metric1':1,...},...}}
+            within each dictionary assumes all geo-areas include the same metrics
     output: merged geo data dictionary, same format
     '''
-    #What happens if some geo areas do not have all the data elements?
-
+    #TODO What happens if some geo areas do not have all the data elements?
+    #Error handled: prints geo area not in list index
+    #Do we want to add the missing data with null values?
+    # breakpoint()
     mergedDict = dict()
     
     #Get all the geocodes in both datasets
     mergedKeys = set()
     for d in dictList:
-        mergedKeys.update(set(d))
+        # breakpoint()
+        mergedKeys.update(set(d.keys()))
     
     #loop through all geocodes
     for k in mergedKeys:
         #creates geocode key for mergedDict
         mergedDict[k] = dict()
         for i, d in enumerate(dictList):
+            # breakpoint()
             #if the geocode is not in the dictionary, print to console and continue
+            #TODO add missing geocode metric here?
             try:
                 value = list(d[k])
             except:
