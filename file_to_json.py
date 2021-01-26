@@ -6,13 +6,6 @@ def main(blacklist = []):
     import pandas as pd
     import os
     json_ls = list()
-
-    #TODO Implement processing all files in data_folder
-    #Challenge: relevant data may be on different worksheets
-    #No great way to determine if a work sheet is valid or not
-    #Add worksheet name blacklist
-    #fp = "data_folder/FoodInsecurityRates12.15.2020.xlsx"
-    
     f_walk = os.walk('data_folder')
 
     for subdir, dir, files in f_walk:
@@ -28,10 +21,10 @@ def main(blacklist = []):
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
-                            table_ls.append(table[k])
+                            table_ls.append((k+f,table[k]))
                         else: continue
             elif f_ext == 'csv':
-                table_ls.append(pd.read_csv(fp))
+                table_ls.append((f, pd.read_csv(fp)))
             elif f_ext == 'gitkeep':
                 #for directory processing
                 continue
@@ -39,9 +32,12 @@ def main(blacklist = []):
                 return Exception('File Type Not Supported')
 
             for t in table_ls:
+                #table_ls is list of tuples
+                #index 0: unique name
+                #index 1: DataFrame
                 #breakpoint()
                 try:
-                    table_json = table_to_json(t, blacklist=blacklist)
+                    table_json = table_to_json(t[1], t[0], blacklist=blacklist)
                 except Exception as e:
                     print(e)
                     print(t)
@@ -85,7 +81,7 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df, blacklist=[]):
+def table_to_json(df,  filename, blacklist=[]):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
@@ -100,11 +96,17 @@ def table_to_json(df, blacklist=[]):
         df = determine_fips(df)
         # return merged dataframe
 
+    #TODO nest data
     df = df.set_index('fips')
     df_json_str = df.to_json(orient='index')
     df_json_dict = json.loads(df_json_str)
-    return df_json_dict
+    # breakpoint()
+    df_values = [*df_json_dict.values()][0]
+
+    final_dict = {k:{filename:v} for k,v in df_values.items()}
+
+    return final_dict
 
 
 if __name__ == '__main__':
-    main()
+    main(blacklist=['Key'])
