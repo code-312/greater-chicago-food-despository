@@ -29,7 +29,7 @@ def main(d_ls):
     #calls merge function on each geo_area
     for k,v in d_dict.items():
         geo_json = {}
-        geo_json[k] = merge(v)
+        geo_json[k+"Data"] = merge(v)
         final_json_ls.append(geo_json)
         # breakpoint()
         with open(F'final_jsons/merged{k}_output.json','w') as f:
@@ -37,7 +37,8 @@ def main(d_ls):
     
     #saves merged_dict to file
     with open(F'final_jsons/merged_output.json','w') as f:
-        merged_dict = {**final_json_ls[0], **final_json_ls[1]}
+        geojson = getGeoJson()
+        merged_dict = {**final_json_ls[0], **final_json_ls[1], **geojson}
         # breakpoint()
         json.dump(merged_dict, f)
 
@@ -90,6 +91,11 @@ def merge(dictList = list()):
                 else:
                     mergedDict[k][v] = d[k][v]
     return mergedDict
+
+def getGeoJson(fp = 'ILgeojson.json'):
+    with open(fp) as f:
+        j = json.load(f)
+    return j
 
 if __name__ == '__main__':
     main()
