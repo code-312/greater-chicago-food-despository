@@ -1,0 +1,35 @@
+name: run-tests
+on: [push, pull_request]
+jobs:
+  # This project is intended to be run locally. We don't know what computer the 
+  # maintainer will have, so run the tests on common OS.
+  run-tests-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
+  run-tests-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
+  run-tests-mac-os:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
