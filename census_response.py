@@ -1,4 +1,4 @@
-from api_keys import CENSUS_KEY
+from config import CENSUS_KEY
 import json
 import requests
 

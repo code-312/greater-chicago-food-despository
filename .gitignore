@@ -1,6 +1,5 @@
 ### Python ###
 __pycache__/
-api_keys.py
 
 ## pyenv ##
 .python-version
@@ -19,3 +18,6 @@ api_keys.py
 
 ## VS Code ##
 .vscode/
+
+## Secrets ##
+.env
