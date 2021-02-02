@@ -19,3 +19,6 @@ api_keys.py
 
 ## VS Code ##
 .vscode/
+
+## Secrets ##
+.env

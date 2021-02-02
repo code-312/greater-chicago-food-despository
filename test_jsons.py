@@ -2,8 +2,8 @@ from json.decoder import JSONDecodeError
 import json
 
 def test_main():
-    from main import main
-    main()
+    import main
+    main.main()
     check_file('final_jsons/merged_output.json')
 
 def test_requirements():

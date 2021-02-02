@@ -1,0 +1,50 @@
+name: run-tests
+on: [push, pull_request]
+jobs:
+  # This project is intended to be run locally. We don't know what computer the 
+  # maintainer will have, so run the tests on common OS.
+  run-tests-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8.5', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
+        env:
+          CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
+  run-tests-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ['3.8.5', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: py -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
+        env:
+          CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
+  run-tests-mac-os:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version: ['3.8.5', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python3 -m pip install --upgrade pip
+      - run: pip install -r requirements.txt
+      - run: pytest
+        env:
+          CENSUS_KEY: ${{ secrets.CENSUS_KEY }}

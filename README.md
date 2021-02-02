@@ -4,9 +4,12 @@
 
 <u>To run:</u>
 
-1. Obtain a Census API key
-2. Create api_keys.py in "greater-chicago-food-depository" root directory
-3. In api_keys.py write "CENSUS_KEY = " and then paste your census key as a string ("")
+1. Obtain a Census API key [here](https://api.census.gov/data/key_signup.html)
+2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
+3. Add the following to the `.env`:
+```
+CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
+```
 4. Run scripts:
    - test_jsons.py: runs all scripts and tests their output
      - Verifies scripts produce valid jsons
