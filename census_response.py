@@ -120,7 +120,7 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         #save file
         # print("Final Json created, saving to file")
         with open(F'final_jsons/acs5{geography}{topic}_output.json', 'w') as f:
-            json.dump(final_json, f)
+            json.dump(final_json, f, separators=(',',':'))
         
         final_json_ls.append(final_json)
     return final_json_ls

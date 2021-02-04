@@ -33,14 +33,14 @@ def main(d_ls):
         final_json_ls.append(geo_json)
         # breakpoint()
         with open(F'final_jsons/merged{k}_output.json','w') as f:
-            json.dump(geo_json, f)
+            json.dump(geo_json, f, separators=(',',':'))
     
     #saves merged_dict to file
     with open(F'final_jsons/merged_output.json','w') as f:
         geojson = getGeoJson()
         merged_dict = {**final_json_ls[0], **final_json_ls[1], **geojson}
         # breakpoint()
-        json.dump(merged_dict, f)
+        json.dump(merged_dict, f, separators=(',',':'))
 
     return final_json_ls
 
@@ -93,6 +93,9 @@ def merge(dictList = list()):
     return mergedDict
 
 def getGeoJson(fp = 'ILgeojson.json'):
+    #geojson file from https://github.com/OpenDataDE/State-zip-code-GeoJSON
+    #ZCTA updated in 2010, further updates, if any, would be posted here 
+    #https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html
     with open(fp) as f:
         j = json.load(f)
     return j
