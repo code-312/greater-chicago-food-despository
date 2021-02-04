@@ -135,10 +135,7 @@ def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list)
         filter_function_ls (list): list of functions that filter table_json_ls with filter method
     output:
         return_json_ls (list): list, same format as table_json_ls, filtered
-    '''
-    #verifies parameters are lists
-    assert (type(table_json_ls)==type(keyword_ls)==type(filter_function_ls)==list), "searchTable Parameters must be lists"
-    
+    '''    
     return_json_ls = list()
     
     #runs filter for each function in filter_function_ls
