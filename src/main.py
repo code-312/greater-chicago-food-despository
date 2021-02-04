@@ -1,6 +1,7 @@
 '''
 Defines and calls Census data requests
 '''
+
 def censusData(geo_ls=["zip","county"]):
     '''
     Defines class CensusData
@@ -8,7 +9,7 @@ def censusData(geo_ls=["zip","county"]):
     Loops through CensusData instances calling getData method to produce dictionaries
     Returns list of dictionaries
     '''
-    from census_response import getCensusData, processRaceData
+    from src.census_response import getCensusData, processRaceData
 
     class CensusData:
         #set tracks instances of the class
@@ -62,7 +63,7 @@ def main(geo_ls=["zip","county"]):
     Calls censusData function to create CensusData instances and return list of dictionaries
     Calls dict_merge to merge list of dictionaries by geo_area and save jsons to file
     '''
-    import dict_merge
+    from src import dict_merge
     d_ls = censusData(geo_ls)
     d_merged_dict = dict_merge.main(d_ls)
     

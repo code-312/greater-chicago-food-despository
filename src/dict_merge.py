@@ -30,7 +30,7 @@ def main(d_ls):
     geo_dict = {'zip':'zipcodes', 'county':'counties'}
     for k,v in d_dict.items():
         geo_str = geo_dict[k]
-        fp = 'shape_files/ILgeojson_county.json' if geo_str == 'counties' else 'shape_files/ILgeojson.json'
+        fp =  '../shape_files/ILgeojson.json' if geo_str != 'counties' else '../tests/resources/ILgeojson_county.json'
         geo_json, g_map = getGeoJson(fp=fp, param=geo_str)
         #breakpoint()
         merged_json = merge(v)
@@ -38,11 +38,11 @@ def main(d_ls):
         final_json[geo_str] = mergeGeoJson(geo_json, g_map, merged_json)
         final_json_ls.append(final_json)
         # breakpoint()
-        with open(F'final_jsons/merged{k}_output.json','w') as f:
+        with open(F'../final_jsons/merged{k}_output.json','w') as f:
             json.dump(final_json, f, separators=(',',':'))
     
     #saves merged_dict to file
-    with open(F'final_jsons/merged_output.json','w') as f:
+    with open(F'../final_jsons/merged_output.json','w') as f:
         #geojson = getGeoJson()
         merged_dict = {k:v for d in final_json_ls for k, v in d.items()}
         # breakpoint()
@@ -98,7 +98,7 @@ def merge(dictList = list()):
                     mergedDict[k][v] = d[k][v]
     return mergedDict
 
-def getGeoJson(fp = 'shape_files/ILgeojson.json', param=""):
+def getGeoJson(fp = '../shape_files/ILgeojson.json', param=""):
     '''
     Loads geojson file and gets param if specified
     Returns dictionary and index map of geocodes in GeoJSON features list
