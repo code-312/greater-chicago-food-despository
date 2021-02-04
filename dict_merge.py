@@ -17,28 +17,34 @@ def main(d_ls):
     #unpack d_ls into dictionary by geo_area
     d_dict = {}
     for d in d_ls:
-        d_keys = str(list(d.keys())[0])
+        d_key = str(list(d.keys())[0])
         d_values = list(d.values())[0]
-        if d_keys not in d_dict:
-            d_dict[d_keys] = [d_values]
+        if d_key not in d_dict:
+            d_dict[d_key] = [d_values]
         else:
-            d_dict[d_keys].append(d_values)
+            d_dict[d_key].append(d_values)
 
     final_json_ls = []
     # breakpoint()
     #calls merge function on each geo_area
+    geo_dict = {'zip':'zipcodes', 'county':'counties'}
     for k,v in d_dict.items():
-        geo_json = {}
-        geo_json[k+"Data"] = merge(v)
-        final_json_ls.append(geo_json)
+        geo_str = geo_dict[k]
+        
+        geo_json, g_map = getGeoJson(param=geo_str)
+        #breakpoint()
+        merged_json = merge(v)
+        final_json = {}
+        final_json[geo_str] = mergeGeoJson(geo_json, g_map, merged_json)
+        final_json_ls.append(final_json)
         # breakpoint()
         with open(F'final_jsons/merged{k}_output.json','w') as f:
-            json.dump(geo_json, f, separators=(',',':'))
+            json.dump(final_json, f, separators=(',',':'))
     
     #saves merged_dict to file
     with open(F'final_jsons/merged_output.json','w') as f:
-        geojson = getGeoJson()
-        merged_dict = {**final_json_ls[0], **final_json_ls[1], **geojson}
+        #geojson = getGeoJson()
+        merged_dict = {**final_json_ls[0], **final_json_ls[1]}
         # breakpoint()
         json.dump(merged_dict, f, separators=(',',':'))
 
@@ -92,13 +98,40 @@ def merge(dictList = list()):
                     mergedDict[k][v] = d[k][v]
     return mergedDict
 
-def getGeoJson(fp = 'ILgeojson.json'):
+def getGeoJson(fp = 'ILgeojson.json', param=""):
     #geojson file from https://github.com/OpenDataDE/State-zip-code-GeoJSON
     #ZCTA updated in 2010, further updates, if any, would be posted here 
     #https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html
+    #Create a merged county and zip geojson and name ILgeojson.json
+    #this code currently assumes we are only looking at zips and counties
+    g_ls = []
     with open(fp) as f:
         j = json.load(f)
-    return j
+        j = j.get(param,j)
+
+    if param == "":
+        g_ls.append(j['counties'])
+        g_ls.append(j['zipcodes'])
+    else: g_ls.append(j)
+
+    g_map = {}
+    for g in g_ls:
+        for i, f in enumerate(g['features']):
+            f_props = f['properties']
+            try: 
+                geocode = f_props['STATE'] + f_props['COUNTY']
+            except:
+                geocode = f_props['ZCTA']
+            g_map[geocode] = i
+    return j, g_map
+
+def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
+    if inplace == False:
+        geo_json = dict(geo_json)
+    for g in merged_json:
+        g_index = g_map[g]
+        geo_json['features'][g_index]['properties'].update(merged_json[g])
+    return geo_json
 
 if __name__ == '__main__':
     main()
