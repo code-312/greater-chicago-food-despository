@@ -99,6 +99,10 @@ def merge(dictList = list()):
     return mergedDict
 
 def getGeoJson(fp = 'ILgeojson.json', param=""):
+    '''
+    Loads geojson file and gets param if specified
+    Returns dictionary and index map of geocodes in GeoJSON features list
+    '''
     #geojson file from https://github.com/OpenDataDE/State-zip-code-GeoJSON
     #ZCTA updated in 2010, further updates, if any, would be posted here 
     #https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html
@@ -118,14 +122,18 @@ def getGeoJson(fp = 'ILgeojson.json', param=""):
     for g in g_ls:
         for i, f in enumerate(g['features']):
             f_props = f['properties']
-            try: 
-                geocode = f_props['STATE'] + f_props['COUNTY']
+            try:
+                geocode = f_props['ZCTA'] 
             except:
-                geocode = f_props['ZCTA']
+                geocode = f_props['STATE'] + f_props['COUNTY']
             g_map[geocode] = i
     return j, g_map
 
 def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
+    '''
+    Adds data to GeoJSON properties by geocode
+    '''
+    #creates new geo_json by default to avoid unintended side effects
     if inplace == False:
         geo_json = dict(geo_json)
     for g in merged_json:
