@@ -48,7 +48,7 @@ def main(d_ls):
         # breakpoint()
         json.dump(merged_dict, f, separators=(',',':'))
 
-    return final_json_ls
+    return merged_dict
 
 
 def merge(dictList = list()):
@@ -98,7 +98,7 @@ def merge(dictList = list()):
                     mergedDict[k][v] = d[k][v]
     return mergedDict
 
-def getGeoJson(fp = 'ILgeojson.json', param=""):
+def getGeoJson(fp = 'shape_files/ILgeojson.json', param=""):
     '''
     Loads geojson file and gets param if specified
     Returns dictionary and index map of geocodes in GeoJSON features list

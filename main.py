@@ -64,8 +64,9 @@ def main():
     '''
     import dict_merge
     d_ls = censusData()
-    d_merged_ls = dict_merge.main(d_ls)
-
+    d_merged_dict = dict_merge.main(d_ls)
+    
+    return d_merged_dict
 
 
 if __name__ == '__main__':
