@@ -30,8 +30,8 @@ def main(d_ls):
     geo_dict = {'zip':'zipcodes', 'county':'counties'}
     for k,v in d_dict.items():
         geo_str = geo_dict[k]
-        
-        geo_json, g_map = getGeoJson(param=geo_str)
+        fp = 'shape_files/ILgeojson_county.json' if geo_str == 'counties' else 'shape_files/ILgeojson.json'
+        geo_json, g_map = getGeoJson(fp=fp, param=geo_str)
         #breakpoint()
         merged_json = merge(v)
         final_json = {}
@@ -44,7 +44,7 @@ def main(d_ls):
     #saves merged_dict to file
     with open(F'final_jsons/merged_output.json','w') as f:
         #geojson = getGeoJson()
-        merged_dict = {**final_json_ls[0], **final_json_ls[1]}
+        merged_dict = {k:v for d in final_json_ls for k, v in d.items()}
         # breakpoint()
         json.dump(merged_dict, f, separators=(',',':'))
 
