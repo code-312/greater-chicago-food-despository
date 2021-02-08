@@ -2,7 +2,7 @@ import json
 import geojson
 import os
 import sys
-sys.path.append(os.path.abspath('..'))  
+sys.path.append(os.path.abspath(''))  
 from src import main
 
 def test_main():
@@ -18,7 +18,7 @@ def test_main():
 def test_requirements():
     import pkg_resources
 
-    requirements_path = "../requirements.txt"
+    requirements_path = "requirements.txt"
     with open(requirements_path) as f:
         requirements = pkg_resources.parse_requirements(f)
         for r in requirements:

@@ -63,6 +63,9 @@ def main(geo_ls=["zip","county"]):
     Calls censusData function to create CensusData instances and return list of dictionaries
     Calls dict_merge to merge list of dictionaries by geo_area and save jsons to file
     '''
+    import os
+    import sys
+    sys.path.append(os.path.abspath(''))
     from src import dict_merge
     d_ls = censusData(geo_ls)
     d_merged_dict = dict_merge.main(d_ls)
