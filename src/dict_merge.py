@@ -127,7 +127,7 @@ def getGeoJson(fp = '../shape_files/ILgeojson.json', param=""):
             except:
                 geocode = f_props['STATE'] + f_props['COUNTY']
             g_map[geocode] = i
-    return j, g_map
+    return g_ls, g_map
 
 def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
     '''
@@ -141,5 +141,28 @@ def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
         geo_json['features'][g_index]['properties'].update(merged_json[g])
     return geo_json
 
+def flattenGeoJson(fp='final_jsons/mergedcounty_output.json'):
+    '''
+    Removes nested properties from GeoJSON for GIS visualization
+    Does not check for duplicates keys, may overwrite data: use unique keys
+    '''
+    with open(fp) as f:
+        j = json.load(f)
+    
+    for geo_area in j:
+        features = j[geo_area]['features']
+        for i, f in enumerate(features):
+            new_props = {}
+            for prop, value in f['properties'].items():
+                if type(value) == dict:
+                    new_props.update(value)
+                else:
+                    new_props[prop] = value
+            features[i]['properties'] = new_props
+    
+    with open('_flattened.'.join(fp.split('.')), 'w') as f:
+        json.dump(j, f)
+    return j
+    
 if __name__ == '__main__':
     main()
