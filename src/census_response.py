@@ -1,4 +1,4 @@
-from config import CENSUS_KEY
+from src.config import CENSUS_KEY
 import json
 import requests
 
@@ -119,8 +119,9 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
 
         #save file
         # print("Final Json created, saving to file")
+        # breakpoint()
         with open(F'final_jsons/acs5{geography}{topic}_output.json', 'w') as f:
-            json.dump(final_json, f)
+            json.dump(final_json, f, separators=(',',':'))
         
         final_json_ls.append(final_json)
     return final_json_ls
@@ -135,10 +136,7 @@ def searchTable(table_json_ls: list, keyword_ls: list, filter_function_ls: list)
         filter_function_ls (list): list of functions that filter table_json_ls with filter method
     output:
         return_json_ls (list): list, same format as table_json_ls, filtered
-    '''
-    #verifies parameters are lists
-    assert (type(table_json_ls)==type(keyword_ls)==type(filter_function_ls)==list), "searchTable Parameters must be lists"
-    
+    '''    
     return_json_ls = list()
     
     #runs filter for each function in filter_function_ls
