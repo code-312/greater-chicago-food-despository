@@ -15,7 +15,9 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
      - Verifies scripts produce valid jsons
    - main.py: produces JSON files
 
-<u>ACS5 Data Tables</u>
+<details>
+<summary><u>ACS5 Data Tables</u></summary>
+
  - Detailed: https://api.census.gov/data/2018/acs/acs5?
    - "Most detailed cross-tabulations"
  - Subject: https://api.census.gov/data/2018/acs/acs5/subject?
@@ -24,10 +26,12 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
    - "Broad social, economic, housing, and demographic information"
  - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile?
    - "Similar to data profiles but include comparisons with past-year data"
+</details>
 
 JSON Format:
 
 {'geographic area': {geo_code: {metric1_dict: {}, metric2_dict: {},...},...},...}
+
 <hr>
 <h3><u>How to use Main.py</u></h3>
 
