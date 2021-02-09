@@ -132,6 +132,13 @@ def getGeoJson(fp = 'shape_files/ILgeojson.json', param=""):
 def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
     '''
     Adds data to GeoJSON properties by geocode
+    Input:
+        geo_json (dict):  GeoJSON
+        g_map (dict): maps geo-area to geo_json index
+        merged_json (dict): merged json of geo-data
+        inplace (bool): if true, returns the modified original
+    Output:
+        geo_json (dict): geo-json merged with merged_json values
     '''
     #creates new geo_json by default to avoid unintended side effects
     if inplace == False:
