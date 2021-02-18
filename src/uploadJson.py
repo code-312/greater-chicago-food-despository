@@ -16,7 +16,7 @@ def authFirebase():
     
     #Key created on google cloud platform
     #https://console.cloud.google.com/iam-admin/serviceaccounts/details/106834063605083129956?authuser=0&project=cfc-gcfd
-    serviceKey = 'cfc-gcfd-ef48601756a7.json'
+    serviceKey = '../cfc-gcfd-ef48601756a7.json'
     params = {
         "databaseURL":'https://cfc-gcfd-default-rtdb.firebaseio.com',
         'databaseAuthBariableOverride': {
@@ -25,12 +25,16 @@ def authFirebase():
     }
     #breakpoint()
     cred = credentials.Certificate(serviceKey)
-    firebase_admin.initialize_app(cred, params)
+    app = firebase_admin.initialize_app(cred, params)
+    
+    return db
+
 
     #ref entire db
-    ref = db.reference()
-    cook = db.reference('/countyData/17031')
-    print(cook.get())
+    #ref = db.reference()
+    
+    # cook = db.reference('/countyData/17031')
+    # print(cook.get())
     #post/push to reference
     #https://firebase.google.com/docs/database/admin/save-data
     #print(ref.get('/countyData/17031'))
