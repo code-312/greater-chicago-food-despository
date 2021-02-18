@@ -35,5 +35,6 @@ def test_auth():
 
 def test_secrets():
     import src.config as config
-    assert type(config.FIREBASE_SERVICE_KEY) == str
     assert type(config.CENSUS_KEY) == str
+    assert type(config.FIREBASE_SERVICE_KEY) == str
+    
