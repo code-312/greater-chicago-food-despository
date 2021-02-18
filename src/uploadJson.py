@@ -23,7 +23,11 @@ def authFirebase():
         }
     }
     #breakpoint()
-    service_key = json.loads(FIREBASE_SERVICE_KEY)
+    try:
+        service_key = json.loads(FIREBASE_SERVICE_KEY)
+    except:
+        service_key = FIREBASE_SERVICE_KEY
+
     cred = credentials.Certificate(service_key)
     try:
         app = firebase_admin.initialize_app(cred, params)
