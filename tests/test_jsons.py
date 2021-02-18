@@ -28,6 +28,12 @@ def test_requirements():
             # breakpoint()
 
 def test_auth():
+    #TODO determine why this fails on github
     db = uploadJson.authFirebase()
     cook = db.reference('/countyData/17031').get()
     assert cook['name_county'] == 'Cook County, Illinois'
+
+def test_secrets():
+    import src.config as config
+    assert type(config.FIREBASE_SERVICE_KEY) == str
+    assert type(config.CENSUS_KEY) == str
