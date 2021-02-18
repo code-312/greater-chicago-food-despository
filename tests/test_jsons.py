@@ -4,6 +4,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(''))  
 from src import main
+from src import uploadJson
 
 def test_main():
     #from src import main
@@ -25,3 +26,15 @@ def test_requirements():
             r = str(r)
             require = pkg_resources.require(r)
             # breakpoint()
+
+def test_auth():
+    #TODO determine why this fails on github
+    db = uploadJson.authFirebase()
+    cook = db.reference('/countyData/17031').get()
+    assert cook['name_county'] == 'Cook County, Illinois'
+
+def test_secrets():
+    import src.config as config
+    assert type(config.CENSUS_KEY) == str
+    assert type(config.FIREBASE_SERVICE_KEY) == str
+    
