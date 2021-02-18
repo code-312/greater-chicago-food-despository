@@ -1,14 +1,15 @@
 '''
 Defines and calls Census data requests
 '''
-def censusData():
+
+def censusData(geo_ls=["zip","county"]):
     '''
     Defines class CensusData
     CensusData instances created
     Loops through CensusData instances calling getData method to produce dictionaries
     Returns list of dictionaries
     '''
-    from census_response import getCensusData, processRaceData
+    from src.census_response import getCensusData, processRaceData
 
     class CensusData:
         #set tracks instances of the class
@@ -37,7 +38,7 @@ def censusData():
                 'B03002_012E': 'race_hispaniclatino_total'}
     race_functions = [processRaceData]
     #variable does not need to be defined, but it is for readability
-    race = CensusData(race_dict, detailed_table, race_functions)
+    race = CensusData(race_dict, detailed_table, race_functions, geo_ls)
 
     #define poverty instance
     poverty_dict = {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty',\
@@ -45,7 +46,7 @@ def censusData():
                     #If additional subdivision are needed
                     #'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
                     #'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
-    poverty = CensusData(poverty_dict, subject_table)
+    poverty = CensusData(poverty_dict, subject_table, geo_ls=geo_ls)
 
     #reference class set
     class_set = CensusData.class_set
@@ -57,15 +58,19 @@ def censusData():
 
     return d_ls
 
-def main():
+def main(geo_ls=["zip","county"]):
     '''
     Calls censusData function to create CensusData instances and return list of dictionaries
     Calls dict_merge to merge list of dictionaries by geo_area and save jsons to file
     '''
-    import dict_merge
-    d_ls = censusData()
-    d_merged_ls = dict_merge.main(d_ls)
-
+    import os
+    import sys
+    sys.path.append(os.path.abspath(''))
+    from src import dict_merge
+    d_ls = censusData(geo_ls)
+    d_merged_dict = dict_merge.main(d_ls)
+    
+    return d_merged_dict
 
 
 if __name__ == '__main__':
