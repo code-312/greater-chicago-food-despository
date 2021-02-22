@@ -1,6 +1,8 @@
+from numpy.lib.function_base import quantile
 from src.config import CENSUS_KEY
 import json
 import requests
+import numpy as np
 
 def getCensusResponse(table_url,get_ls,geo):
     '''
@@ -57,28 +59,26 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
         response = getCensusResponse(census_table, key_ls, geo)
 
         response_data = response.json()
-
-        #Labels table columns with group variable labels
-        #Add better comment
+        
+        #Replaces Census table IDs with labels
         labelled_ls = [[]]
-        # print("Creating Labelled List")
+
         for i, row in enumerate(response_data):
             #header row
             if i == 0:
                 for c, col in enumerate(response_data[0]):
                     #Gets variable label from group data
-                    if col in table_code_dict:
-                        label = table_code_dict[col]
-                        labelled_ls[0].append(label)
-                    #Variables not in group data added to list
-                    else:
-                        labelled_ls[0].append(col)
+                    #Otherwise adds column name
+                    label = table_code_dict.get(col, col)
+                    labelled_ls[0].append(label)
             #converts data strings to ints
             else:
                 new_row = []
                 for v, n in enumerate(row):
+                    #First and last elements are geo names
                     if v == 0 or v == len(row)-1:
                         new_row.append(n)
+                    #Tries to convert data to int
                     else:
                         try:
                             new_row.append(int(n))
@@ -87,6 +87,8 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
                             new_row.append(n)
 
                 labelled_ls.append(new_row)
+        
+        #breakpoint()
         IL_data = []
         
         if "zip" == geography:
@@ -227,3 +229,73 @@ def processRaceData(data_json):
             print(d)
     
     return data_json
+
+def processPovertyData(data_json):
+    '''
+    Calculates percent poverty
+    data_json (dict)
+    '''
+    from collections import defaultdict
+    pct_dict = defaultdict(list)
+    for d in data_json.items():
+        poverty_data = d[1]['poverty_metrics']
+        poverty_total = poverty_data['poverty_population_total']
+        percentages = {}
+        if poverty_total:
+            for k, v in poverty_data.items():
+                #skips evaluating poverty_population_total, 'name' and 'g'
+                try:
+                    skip_ls = ['poverty_population_total','name','g']
+                    if k in skip_ls:
+                        continue
+                    #Add percentage
+                    poverty_pct = v/poverty_total * 100
+                    percentages[k] = poverty_pct
+                    pct_dict[k].append(poverty_pct)
+                    
+                except Exception as e:
+                    print(e) #error
+                    print(d) #current data object
+                    print(poverty_data) #povertymetrics
+                    print(v, poverty_total) #poverty data value, poverty_total metric
+                    raise Exception('Error')
+            else:
+                pct_dict[k] = np.array(pct_dict[k])
+        data_json[d[0]]['poverty_metrics']['percentages'] = percentages
+    else:
+        pct_bin = binData(pct_dict)
+        #breakpoint()
+        data_json['meta'] = data_json.get('meta',{})
+        data_json['meta']['poverty_bins'] = pct_bin
+    return data_json
+
+def binData(geoData: dict):
+    '''
+    Creates bins from functions described in this function 
+    
+    geoData:
+        keys: geo code
+        values: percentages or data to bin
+    '''
+
+    def quartiles(geoValue):
+        min_v = np.min(geoValue)
+        first = np.quantile(geoValue, 0.25)
+        second = np.quantile(geoValue, 0.5)
+        third = np.quantile(geoValue, 0.75)
+        max = np.max(geoValue)
+        q = [min_v, first, second, third, max]
+        
+        return {'quartiles': q}
+    
+    bin_dict = {}
+    
+    for k in geoData:
+        v = geoData[k]
+        try:
+            q = quartiles(v)
+        except:
+            continue
+        bin_dict[k] = q
+
+    return bin_dict

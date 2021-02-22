@@ -31,6 +31,7 @@ def main(d_ls):
     for k,v in d_dict.items():
         geo_str = geo_dict[k]
         fp =  'shape_files/ILgeojson.json' if geo_str != 'counties' else 'tests/resources/ILgeojson_county.json'
+        #only add bins to geojson properties
         geo_json, g_map = getGeoJson(fp=fp, param=geo_str)
         #breakpoint()
         merged_json = merge(v)

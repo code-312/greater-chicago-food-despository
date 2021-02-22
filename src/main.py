@@ -9,7 +9,7 @@ def censusData(geo_ls=["zip","county"]):
     Loops through CensusData instances calling getData method to produce dictionaries
     Returns list of dictionaries
     '''
-    from src.census_response import getCensusData, processRaceData
+    from src.census_response import getCensusData, processRaceData, processPovertyData
 
     class CensusData:
         #set tracks instances of the class
@@ -46,7 +46,7 @@ def censusData(geo_ls=["zip","county"]):
                     #If additional subdivision are needed
                     #'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
                     #'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
-    poverty = CensusData(poverty_dict, subject_table, geo_ls=geo_ls)
+    poverty = CensusData(poverty_dict, subject_table, [processPovertyData], geo_ls=geo_ls)
 
     #reference class set
     class_set = CensusData.class_set
@@ -67,6 +67,7 @@ def main(geo_ls=["zip","county"]):
     import sys
     sys.path.append(os.path.abspath(''))
     from src import dict_merge
+
     d_ls = censusData(geo_ls)
     d_merged_dict = dict_merge.main(d_ls)
     

@@ -22,3 +22,6 @@ api_keys.py
 
 ## Secrets ##
 .env
+
+## ignore test script
+untitled.py
