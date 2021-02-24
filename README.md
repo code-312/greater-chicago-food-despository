@@ -5,25 +5,37 @@
 <u>To run:</u>
 
 1. Obtain a Census API key [here](https://api.census.gov/data/key_signup.html)
-2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
+2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing
+   secrets.
 3. Add the following to the `.env`:
+
 ```
 CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
 ```
-4. Run scripts:
-   - test_jsons.py: runs all scripts and tests their output
-     - Verifies scripts produce valid jsons
-   - main.py: produces JSON files
 
+4. Run scripts:
+    - test_jsons.py: runs all scripts and tests their output
+        - Verifies scripts produce valid jsons
+    - main.py: produces JSON files
+        - To run with memory profiling on MacOS/Linux:
+            1. Make sure the script is executable: `chmod 755 memory_profiling/run_main.sh`
+            2. Run the script: `./memory_profiling/run_main.sh`
+            3. View the report: `memory_profiling/memory_profile_report.txt`
+        - To run with memory profiling on Windows (TODO need a Windows user to write this):
+            1. Make sure the script is executable
+            2. Run the script:
+            3. View the report: `memory_profiling\memory_profile_report.txt`
+    
 <u>ACS5 Data Tables</u>
- - Detailed: https://api.census.gov/data/2018/acs/acs5?
-   - "Most detailed cross-tabulations"
- - Subject: https://api.census.gov/data/2018/acs/acs5/subject?
-   - "Overview of estimates available in a particular topic"
- - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile?
-   - "Broad social, economic, housing, and demographic information"
- - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile?
-   - "Similar to data profiles but include comparisons with past-year data"
+
+- Detailed: https://api.census.gov/data/2018/acs/acs5?
+    - "Most detailed cross-tabulations"
+- Subject: https://api.census.gov/data/2018/acs/acs5/subject?
+    - "Overview of estimates available in a particular topic"
+- Data Profile: https://api.census.gov/data/2018/acs/acs5/profile?
+    - "Broad social, economic, housing, and demographic information"
+- Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile?
+    - "Similar to data profiles but include comparisons with past-year data"
 
 JSON Format:
 
@@ -32,21 +44,22 @@ JSON Format:
 <h3><u>How to use Main.py</u></h3>
 
 - Add Census data call to script by creating new CensusData instance
-  - Required Construction: CensusData(var_dict, table)
-  - class CensusData:
-    - self.var_dict:
-      - dictionary of census table codes and **descriptive** name: *Values name format: topic_property_subproperty*
-    - self.table:
-      - ACS5 Data Table link
-    - self.function_ls: 
-      - optional parameter to send modifying function on final_json inside getCensusData function (sequential), example: processRaceData
-    - self.geo_ls:
-      - default: zip and county, see getCensusData function description
-    - getData(self):
-      - Calls getCensusData on itself
-    - CensusData.class_set:
-      - Tracks instances of CensusData
-
+    - Required Construction: CensusData(var_dict, table)
+    - class CensusData:
+        - self.var_dict:
+            - dictionary of census table codes and **descriptive** name: *Values name format:
+              topic_property_subproperty*
+        - self.table:
+            - ACS5 Data Table link
+        - self.function_ls:
+            - optional parameter to send modifying function on final_json inside getCensusData function (sequential),
+              example: processRaceData
+        - self.geo_ls:
+            - default: zip and county, see getCensusData function description
+        - getData(self):
+            - Calls getCensusData on itself
+        - CensusData.class_set:
+            - Tracks instances of CensusData
 
 <u>Additional Scripts</u>
 
@@ -57,21 +70,21 @@ JSON Format:
 functions:
 
 - **getCensusResponse**: creates census API query url
-  - ACS5 Table URLs:
-    - Detailed: https://api.census.gov/data/2018/acs/acs5/variables.html
-    - Subject: https://api.census.gov/data/2018/acs/acs5/subject/variables.html
-    - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
-    - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
+    - ACS5 Table URLs:
+        - Detailed: https://api.census.gov/data/2018/acs/acs5/variables.html
+        - Subject: https://api.census.gov/data/2018/acs/acs5/subject/variables.html
+        - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
+        - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
 - **getCensusData**: obtains Census data returns as dictionary
-  - Uses getCensusResponse for API call
-  - By default runs for zip and county, but expandable to other geographies (not tested)
-    - By default only keeps zipcodes for Illinois
+    - Uses getCensusResponse for API call
+    - By default runs for zip and county, but expandable to other geographies (not tested)
+        - By default only keeps zipcodes for Illinois
 - **searchTable**: searches variable tables with keyword and function filters
-  - ACS5 Variable Table URLs:
-    - Detailed: https://api.census.gov/data/2018/acs/acs5/variables.html
-    - Subject: https://api.census.gov/data/2018/acs/acs5/subject/variables.html
-    - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
-    - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
+    - ACS5 Variable Table URLs:
+        - Detailed: https://api.census.gov/data/2018/acs/acs5/variables.html
+        - Subject: https://api.census.gov/data/2018/acs/acs5/subject/variables.html
+        - Data Profile: https://api.census.gov/data/2018/acs/acs5/profile/variables.html
+        - Comparison Profile: https://api.census.gov/data/2018/acs/acs5/cprofile/variables.html
 - county_fips: returns JSON of county_name: fip (reversible)
 - **processRaceData**: determines majority race and race percentages, passed into getCensusData function
 
@@ -85,5 +98,6 @@ functions:
 **dict_merge.py**
 
 *Merges data dictionaries, prevents overwrite*
+
 - Outputs to file and returns list of dictionaries
 - Currently does not add missing data keys to geocodes
