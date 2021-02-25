@@ -20,8 +20,17 @@ api_keys.py
 ## VS Code ##
 .vscode/
 
+## PyCharm ##
+.idea
+
 ## Secrets ##
 .env
 
+<<<<<<< HEAD
 ## ignore test script
 untitled.py
+=======
+## Memory Profiling ##
+memory_profile_report.txt
+raw_memory_usage.txt
+>>>>>>> 4935c1db40e1fd812ef999fef4ae456d1727f3f2
