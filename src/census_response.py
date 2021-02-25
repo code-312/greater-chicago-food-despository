@@ -21,6 +21,129 @@ def getCensusResponse(table_url,get_ls,geo):
     # print(f"{response} Received")
     return(response)
 
+class CensusData:
+    df_dict = {}
+    data_metrics = set()
+
+    def __init__(self, var_metrics: tuple, table: str, geo_ls: list = ["zip", "county"]):
+        self.metric = var_metrics[0]
+        self.data_metrics.add(self.metric)
+        self.var_dict = var_metrics[1]
+        self.table = table
+        self.geo_ls = geo_ls
+
+    def get_data(self):
+        geo_dict = {'zip': 'zip code tabulation area:*',
+                    'county': 'county:*&in=state:17'}
+        get_ls = list(self.var_dict.keys())
+        df_ls = []
+        for g in self.geo_ls:
+            response = getCensusResponse(self.table, get_ls, geo_dict[g])
+            self.response_json = jsonResponse(response)
+            df = self.__panda_from_json(self.response_json, g)
+            df_ls.append(df)
+        return df_ls
+
+    def __panda_from_json(self, response_json, geo):
+        '''
+        Called by getData method
+        Updates CensusData.zip_df and returns response_df
+        '''
+        # Name Columns
+        # hard coded columns are default from census response
+        # only works if we're only processing zip and county data
+        dict_values = list(self.var_dict.values())
+        columns = [self.var_dict.get(header, header)
+                   for header in response_json[0]]
+        #print(columns, response_json[0])
+        # Creates DF
+        response_df = pd.DataFrame(response_json[1:], columns=columns)
+        # adds types for performance and predictable method output
+        string_df = response_df.astype('string')
+        # ignore error to keep NAN values
+        typed_df = string_df.astype(
+            {v: int for v in dict_values}, errors='ignore')
+        # Processes geographies for output
+        if geo == 'county':
+            fip_series = typed_df.loc[:, 'state'] + typed_df.loc[:, 'county']
+            fip_series.rename('FIPS', inplace=True)
+            geo_df = pd.concat([typed_df, fip_series], axis=1)
+            geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
+            #self.county_df = self.county_df.join(geo_df, how='outer') if not(self.county_df.empty) else geo_df
+        elif geo == 'zip':
+            # filter keeps Illinois zipcodes
+            # zip sometimes returns with 'state' column, so it isn't dropped atm
+            geo_df = typed_df.set_index('zip code tabulation area').drop(
+                ['NAME'], axis=1).filter(regex='^(6[0-2])\d+', axis=0)
+
+        class_df = self.df_dict.get(geo, pd.DataFrame())
+        if not(class_df.empty):
+            geo_df = geo_df.drop(
+                ['NAME'], axis=1) if 'NAME' in class_df.columns else geo_df
+            try:
+                self.df_dict[geo] = class_df.join(geo_df, how='outer')
+            except Exception as e:
+                print(e)
+                print("Make sure the column names are unique")
+        else:
+            self.df_dict[geo] = geo_df
+
+        return geo_df
+
+    @classmethod
+    def df_to_json(cls, zip_df = True):
+        if not(zip_df):
+            k_json = dict()
+            fp = 'final_jsons/df_dump.json'
+            for k in cls.df_dict:
+#                 fp = f'final_jsons/{k}_df_dump.json'
+#                 k_json = cls.df_dict[k].to_json()
+                #with open(fp, 'w') as f:
+                k_json[k] = cls.df_dict[k].to_dict()
+            
+            with open(fp, 'w') as f:
+                json.dump(k_json, f, separators=(',', ':'))
+                    #json.dumps(k_json, f, separators=(',', ':'))
+            return fp
+        # determine metrics
+        class_json_dict = dict()
+        for geo in cls.df_dict:
+            geo_dict = dict()
+            for geo_area in cls.df_dict[geo].itertuples():
+                geo_area_dict = {f'{m}_data': dict() for m in cls.data_metrics}
+                for name in geo_area._fields:
+                    if name == "Index":
+                        continue
+                    for metric in cls.data_metrics:
+                        metric_name = f'{metric}_data'
+                        geo_area_dict[metric_name]
+                        if metric in name:
+                            geo_area_dict[metric_name][name] = getattr(
+                                geo_area, name)
+                            break
+                    else:
+                        geo_area_dict[name] = getattr(geo_area, name)
+                geo_dict[geo_area.Index] = geo_area_dict
+            class_json_dict[geo] = geo_dict
+        fp = 'final_jsons/df_merged_json.json'
+        with open(fp, 'w') as f:
+            json.dump(class_json_dict, f, separators=(',', ':'))
+
+        return fp
+    
+    @classmethod
+    def load_df(cls, fp='final_jsons/df_dump.json'):
+        with open(fp) as f:
+            load_df = json.load(f)
+        
+        cls.df_dict = dict()
+        
+        for k in load_df:
+            v = pd.DataFrame(load_df[k])
+            cls.df_dict[k] = v
+        
+        return None
+
 def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip","county"]):
 
     '''
