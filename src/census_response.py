@@ -58,8 +58,12 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
 
         response = getCensusResponse(census_table, key_ls, geo)
 
-        response_data = response.json()
-        
+        try:
+            response_data = response.json()
+        except Exception as e:
+            print(e)
+            print(response_data)
+            raise e
         #Replaces Census table IDs with labels
         labelled_ls = [[]]
 
