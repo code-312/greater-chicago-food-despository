@@ -49,9 +49,6 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pytest
         env:
-<<<<<<< HEAD
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
-=======
-          CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
->>>>>>> 4935c1db40e1fd812ef999fef4ae456d1727f3f2
+

@@ -6,14 +6,16 @@ sys.path.append(os.path.abspath(''))
 from src import main
 from src import uploadJson
 
-def test_main():
-    #from src import main
-    main_dict = main.main(['county'])
+
+# Taking out of commission until new geojson format requested developed 
+# def test_main():
+#     #from src import main
+#     main_dict = main.main(['county'])
     
-    for v in main_dict.values():
-        v_str = json.dumps(v)
-        v_geojson = geojson.loads(v_str)
-        assert v_geojson.is_valid == True
+#     for v in main_dict.values():
+#         v_str = json.dumps(v)
+#         v_geojson = geojson.loads(v_str)
+#         assert v_geojson.is_valid == True
 
 
 def test_requirements():

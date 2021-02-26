@@ -46,21 +46,13 @@ JSON Format:
 
 - Add Census data call to script by creating new CensusData instance
     - Required Construction: CensusData(var_dict, table)
-    - class CensusData:
-        - self.var_dict:
-            - dictionary of census table codes and **descriptive** name: *Values name format:
-              topic_property_subproperty*
-        - self.table:
-            - ACS5 Data Table link
-        - self.function_ls:
-            - optional parameter to send modifying function on final_json inside getCensusData function (sequential),
-              example: processRaceData
-        - self.geo_ls:
-            - default: zip and county, see getCensusData function description
-        - getData(self):
-            - Calls getCensusData on itself
-        - CensusData.class_set:
-            - Tracks instances of CensusData
+- Use the get_data method to update CensusData.df_dict
+    - View dataframes: df_dict[key] (key='zip' or 'county')
+- Save dataframe using CensusData.df_to_json()
+    - Default saves zipped by geo_code
+    - Set zip_df = False to save dataframes without processing
+- Load dataframe using CensusData.load_df()
+    - Default loads unzipped saved file, described above
 
 <u>Additional Scripts</u>
 
