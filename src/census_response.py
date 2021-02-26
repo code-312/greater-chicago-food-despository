@@ -3,6 +3,7 @@ from src.config import CENSUS_KEY
 import json
 import requests
 import numpy as np
+import pandas as pd
 
 def getCensusResponse(table_url,get_ls,geo):
     '''
@@ -22,6 +23,27 @@ def getCensusResponse(table_url,get_ls,geo):
     return(response)
 
 class CensusData:
+    '''
+    Stores and Updates Census Data in df_dict
+    input:
+        var_metrics (tuple):
+            [0] metric name (str) e.g. race, poverty
+            [1] variable (dict):
+                Keys: Census Table Codes
+                Values: Census Table Names/Aliases
+        table (str): link to ACS5 Data Tables
+        geo_ls (list): list of geographies to process
+    
+    Instructions:
+        Create a class instance via input described above
+        Use the get_data method to update CensusData.df_dict
+            View dataframes: df_dict[key] (key='zip' or 'county')
+        Save dataframe using CensusData.df_to_json()
+            Default saves zipped by geo_code
+            Set zip_df = False to save dataframes without processing
+        Load dataframe using CensusData.load_df()
+            Default loads unzipped saved file, described above
+    '''
     df_dict = {}
     data_metrics = set()
 
@@ -39,7 +61,7 @@ class CensusData:
         df_ls = []
         for g in self.geo_ls:
             response = getCensusResponse(self.table, get_ls, geo_dict[g])
-            self.response_json = jsonResponse(response)
+            self.response_json = response.json()
             df = self.__panda_from_json(self.response_json, g)
             df_ls.append(df)
         return df_ls
@@ -55,7 +77,6 @@ class CensusData:
         dict_values = list(self.var_dict.values())
         columns = [self.var_dict.get(header, header)
                    for header in response_json[0]]
-        #print(columns, response_json[0])
         # Creates DF
         response_df = pd.DataFrame(response_json[1:], columns=columns)
         # adds types for performance and predictable method output
@@ -69,7 +90,6 @@ class CensusData:
             fip_series.rename('FIPS', inplace=True)
             geo_df = pd.concat([typed_df, fip_series], axis=1)
             geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
-            #self.county_df = self.county_df.join(geo_df, how='outer') if not(self.county_df.empty) else geo_df
         elif geo == 'zip':
             # filter keeps Illinois zipcodes
             # zip sometimes returns with 'state' column, so it isn't dropped atm
@@ -96,16 +116,14 @@ class CensusData:
             k_json = dict()
             fp = 'final_jsons/df_dump.json'
             for k in cls.df_dict:
-#                 fp = f'final_jsons/{k}_df_dump.json'
-#                 k_json = cls.df_dict[k].to_json()
-                #with open(fp, 'w') as f:
+
                 k_json[k] = cls.df_dict[k].to_dict()
             
             with open(fp, 'w') as f:
                 json.dump(k_json, f, separators=(',', ':'))
-                    #json.dumps(k_json, f, separators=(',', ':'))
             return fp
         # determine metrics
+        # Not sure we need this many loops, but seemed like a good idea at the time
         class_json_dict = dict()
         for geo in cls.df_dict:
             geo_dict = dict()
