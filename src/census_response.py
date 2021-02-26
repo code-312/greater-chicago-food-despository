@@ -48,6 +48,10 @@ class CensusData:
     data_metrics = set()
 
     def __init__(self, var_metrics: tuple, table: str, geo_ls: list = ["zip", "county"]):
+        '''
+        Initialized instance
+        Adds metric to class set data_metrics
+        '''
         self.metric = var_metrics[0]
         self.data_metrics.add(self.metric)
         self.var_dict = var_metrics[1]
@@ -55,6 +59,11 @@ class CensusData:
         self.geo_ls = geo_ls
 
     def get_data(self):
+        '''
+        Calls getCensusResponse on each geography
+        Sends response json to __panda_from_json function
+        Returns list of DataFrames
+        '''
         geo_dict = {'zip': 'zip code tabulation area:*',
                     'county': 'county:*&in=state:17'}
         get_ls = list(self.var_dict.keys())
@@ -72,8 +81,6 @@ class CensusData:
         Updates CensusData.zip_df and returns response_df
         '''
         # Name Columns
-        # hard coded columns are default from census response
-        # only works if we're only processing zip and county data
         dict_values = list(self.var_dict.values())
         columns = [self.var_dict.get(header, header)
                    for header in response_json[0]]
@@ -96,8 +103,10 @@ class CensusData:
             geo_df = typed_df.set_index('zip code tabulation area').drop(
                 ['NAME'], axis=1).filter(regex='^(6[0-2])\d+', axis=0)
 
+        #checks if df exists 
         class_df = self.df_dict.get(geo, pd.DataFrame())
         if not(class_df.empty):
+            #Removes NAME to avoid conflict
             geo_df = geo_df.drop(
                 ['NAME'], axis=1) if 'NAME' in class_df.columns else geo_df
             try:
@@ -112,6 +121,12 @@ class CensusData:
 
     @classmethod
     def df_to_json(cls, zip_df = True):
+        '''
+        Saves df to file
+        Default: zips dataframe by geo_code
+        Otherwise: saves df.to_json() in dictionary to json
+            This format loads with load_df()
+        '''
         if not(zip_df):
             k_json = dict()
             fp = 'final_jsons/df_dump.json'
@@ -151,6 +166,9 @@ class CensusData:
     
     @classmethod
     def load_df(cls, fp='final_jsons/df_dump.json'):
+        '''
+        Loads df_dict from file saved from df_to_json
+        '''
         with open(fp) as f:
             load_df = json.load(f)
         
