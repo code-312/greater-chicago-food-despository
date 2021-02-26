@@ -31,6 +31,7 @@ def main(d_ls):
     for k,v in d_dict.items():
         geo_str = geo_dict[k]
         fp =  'shape_files/ILgeojson.json' if geo_str != 'counties' else 'tests/resources/ILgeojson_county.json'
+        #only add bins to geojson properties
         geo_json, g_map = getGeoJson(fp=fp, param=geo_str)
         #breakpoint()
         merged_json = merge(v)
@@ -132,6 +133,13 @@ def getGeoJson(fp = 'shape_files/ILgeojson.json', param=""):
 def mergeGeoJson(geo_json, g_map, merged_json, inplace=False):
     '''
     Adds data to GeoJSON properties by geocode
+    Input:
+        geo_json (dict):  GeoJSON
+        g_map (dict): maps geo-area to geo_json index
+        merged_json (dict): merged json of geo-data
+        inplace (bool): if true, returns the modified original
+    Output:
+        geo_json (dict): geo-json merged with merged_json values
     '''
     #creates new geo_json by default to avoid unintended side effects
     if inplace == False:

@@ -1,77 +1,70 @@
+import os
+import sys
+sys.path.append(os.path.abspath(''))
+import memory_profiling.memory_profile_helpers as mph
+
+
 '''
 Defines and calls Census data requests
 '''
 
-def censusData(geo_ls=["zip","county"]):
+def census_data(geo_ls=["zip","county"]):
     '''
     Defines class CensusData
     CensusData instances created
     Loops through CensusData instances calling getData method to produce dictionaries
     Returns list of dictionaries
     '''
-    from src.census_response import getCensusData, processRaceData
-
-    class CensusData:
-        #set tracks instances of the class
-        class_set = set()
-        def __init__(self, var_dict:dict, table:str, function_ls:list = [], geo_ls:list =["zip","county"]):
-            self.var_dict = var_dict
-            self.table = table
-            self.function_ls = function_ls
-            self.geo_ls = geo_ls
-            self.class_set.add(self)
-        
-        def getData(self):
-            c_ls = getCensusData(self.var_dict, self.table, self.function_ls, self.geo_ls)
-            return c_ls
-    
-    #Census tables
+    from src.census_response import CensusData
+    # Census tables
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
-    
-    #define race instance
-    #Values name format: topic_property_subproperty...
-    race_dict = {'B03002_001E': 'race_total', 'B03002_005E': \
-                'race_native','B03002_004E': 'race_black', 'B03002_003E':\
-                'race_white', 'B03002_009E': 'race_twoplus_total', 'B03002_007E': 'race_pacific', \
-                'B03002_008E':'race_other', 'B03002_006E': 'race_asian',\
-                'B03002_012E': 'race_hispaniclatino_total'}
-    race_functions = [processRaceData]
-    #variable does not need to be defined, but it is for readability
-    race = CensusData(race_dict, detailed_table, race_functions, geo_ls)
 
-    #define poverty instance
-    poverty_dict = {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty',\
-                    'S1701_C02_002E': 'poverty_population_poverty_child'}
+    # define race instance
+    # Values name format: topic_property_subproperty...
+    race_metrics = ('race', {'B03002_001E': 'race_total', 'B03002_005E': \
+    'race_native', 'B03002_004E': 'race_black', 'B03002_003E': \
+                 'race_white', 'B03002_009E': 'race_twoplus_total', 'B03002_007E': 'race_pacific', \
+             'B03002_008E': 'race_other', 'B03002_006E': 'race_asian', \
+             'B03002_012E': 'race_hispaniclatino_total'})
+    #race_functions = [processRaceData]
+    #variable does not need to be defined, but it is for readability
+    race = CensusData(race_metrics, detailed_table, geo_ls)
+
+    # define poverty instance
+    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total','S1701_C02_001E':'poverty_population_poverty',\
+                    'S1701_C02_002E': 'poverty_population_poverty_child'})
                     #If additional subdivision are needed
                     #'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
                     #'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
-    poverty = CensusData(poverty_dict, subject_table, geo_ls=geo_ls)
+    #poverty_functions = [processPovertyData]
+    poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
-    #reference class set
-    class_set = CensusData.class_set
+    mph.record_current_memory_usage_if_enabled()
+    race.get_data()
+    mph.record_current_memory_usage_if_enabled()
+    poverty.get_data()
+    mph.record_current_memory_usage_if_enabled()
+    fp = CensusData.df_to_json(zip_df=False)
+    print(F"Data saved at {fp}")
+    # Record heap size.
     
-    d_ls = []
-    
-    for c in class_set:
-        d_ls += c.getData()
-
-    return d_ls
+    return None
 
 def main(geo_ls=["zip","county"]):
     '''
     Calls censusData function to create CensusData instances and return list of dictionaries
     Calls dict_merge to merge list of dictionaries by geo_area and save jsons to file
     '''
-    import os
-    import sys
-    sys.path.append(os.path.abspath(''))
-    from src import dict_merge
-    d_ls = censusData(geo_ls)
-    d_merged_dict = dict_merge.main(d_ls)
+    #from src import dict_merge
+    mph.setup_memory_usage_file_if_enabled()
+    mph.record_current_memory_usage_if_enabled()
+    census_data(geo_ls)
+    mph.record_current_memory_usage_if_enabled()
+    #d_merged_dict = dict_merge.main(d_ls)
+    mph.generate_report_if_enabled()
     
-    return d_merged_dict
-
+    return None
 
 if __name__ == '__main__':
     main()

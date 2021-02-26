@@ -1,6 +1,9 @@
+from numpy.lib.function_base import quantile
 from src.config import CENSUS_KEY
 import json
 import requests
+import numpy as np
+import pandas as pd
 
 def getCensusResponse(table_url,get_ls,geo):
     '''
@@ -18,6 +21,164 @@ def getCensusResponse(table_url,get_ls,geo):
     response = requests.get(url)
     # print(f"{response} Received")
     return(response)
+
+class CensusData:
+    '''
+    Stores and Updates Census Data in df_dict
+    input:
+        var_metrics (tuple):
+            [0] metric name (str) e.g. race, poverty
+            [1] variable (dict):
+                Keys: Census Table Codes
+                Values: Census Table Names/Aliases
+        table (str): link to ACS5 Data Tables
+        geo_ls (list): list of geographies to process
+    
+    Instructions:
+        Create a class instance via input described above
+        Use the get_data method to update CensusData.df_dict
+            View dataframes: df_dict[key] (key='zip' or 'county')
+        Save dataframe using CensusData.df_to_json()
+            Default saves zipped by geo_code
+            Set zip_df = False to save dataframes without processing
+        Load dataframe using CensusData.load_df()
+            Default loads unzipped saved file, described above
+    '''
+    df_dict = {}
+    data_metrics = set()
+
+    def __init__(self, var_metrics: tuple, table: str, geo_ls: list = ["zip", "county"]):
+        '''
+        Initialized instance
+        Adds metric to class set data_metrics
+        '''
+        self.metric = var_metrics[0]
+        self.data_metrics.add(self.metric)
+        self.var_dict = var_metrics[1]
+        self.table = table
+        self.geo_ls = geo_ls
+
+    def get_data(self):
+        '''
+        Calls getCensusResponse on each geography
+        Sends response json to __panda_from_json function
+        Returns list of DataFrames
+        '''
+        geo_dict = {'zip': 'zip code tabulation area:*',
+                    'county': 'county:*&in=state:17'}
+        get_ls = list(self.var_dict.keys())
+        df_ls = []
+        for g in self.geo_ls:
+            response = getCensusResponse(self.table, get_ls, geo_dict[g])
+            self.response_json = response.json()
+            df = self.__panda_from_json(self.response_json, g)
+            df_ls.append(df)
+        return df_ls
+
+    def __panda_from_json(self, response_json, geo):
+        '''
+        Called by getData method
+        Updates CensusData.zip_df and returns response_df
+        '''
+        # Name Columns
+        dict_values = list(self.var_dict.values())
+        columns = [self.var_dict.get(header, header)
+                   for header in response_json[0]]
+        # Creates DF
+        response_df = pd.DataFrame(response_json[1:], columns=columns)
+        # adds types for performance and predictable method output
+        string_df = response_df.astype('string')
+        # ignore error to keep NAN values
+        typed_df = string_df.astype(
+            {v: int for v in dict_values}, errors='ignore')
+        # Processes geographies for output
+        if geo == 'county':
+            fip_series = typed_df.loc[:, 'state'] + typed_df.loc[:, 'county']
+            fip_series.rename('FIPS', inplace=True)
+            geo_df = pd.concat([typed_df, fip_series], axis=1)
+            geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
+        elif geo == 'zip':
+            # filter keeps Illinois zipcodes
+            # zip sometimes returns with 'state' column, so it isn't dropped atm
+            geo_df = typed_df.set_index('zip code tabulation area').drop(
+                ['NAME'], axis=1).filter(regex='^(6[0-2])\d+', axis=0)
+
+        #checks if df exists 
+        class_df = self.df_dict.get(geo, pd.DataFrame())
+        if not(class_df.empty):
+            #Removes NAME to avoid conflict
+            geo_df = geo_df.drop(
+                ['NAME'], axis=1) if 'NAME' in class_df.columns else geo_df
+            try:
+                self.df_dict[geo] = class_df.join(geo_df, how='outer')
+            except Exception as e:
+                print(e)
+                print("Make sure the column names are unique")
+        else:
+            self.df_dict[geo] = geo_df
+
+        return geo_df
+
+    @classmethod
+    def df_to_json(cls, zip_df = True):
+        '''
+        Saves df to file
+        Default: zips dataframe by geo_code
+        Otherwise: saves df.to_json() in dictionary to json
+            This format loads with load_df()
+        '''
+        if not(zip_df):
+            k_json = dict()
+            fp = 'final_jsons/df_dump.json'
+            for k in cls.df_dict:
+
+                k_json[k] = cls.df_dict[k].to_dict()
+            
+            with open(fp, 'w') as f:
+                json.dump(k_json, f, separators=(',', ':'))
+            return fp
+        # determine metrics
+        # Not sure we need this many loops, but seemed like a good idea at the time
+        class_json_dict = dict()
+        for geo in cls.df_dict:
+            geo_dict = dict()
+            for geo_area in cls.df_dict[geo].itertuples():
+                geo_area_dict = {f'{m}_data': dict() for m in cls.data_metrics}
+                for name in geo_area._fields:
+                    if name == "Index":
+                        continue
+                    for metric in cls.data_metrics:
+                        metric_name = f'{metric}_data'
+                        geo_area_dict[metric_name]
+                        if metric in name:
+                            geo_area_dict[metric_name][name] = getattr(
+                                geo_area, name)
+                            break
+                    else:
+                        geo_area_dict[name] = getattr(geo_area, name)
+                geo_dict[geo_area.Index] = geo_area_dict
+            class_json_dict[geo] = geo_dict
+        fp = 'final_jsons/df_merged_json.json'
+        with open(fp, 'w') as f:
+            json.dump(class_json_dict, f, separators=(',', ':'))
+
+        return fp
+    
+    @classmethod
+    def load_df(cls, fp='final_jsons/df_dump.json'):
+        '''
+        Loads df_dict from file saved from df_to_json
+        '''
+        with open(fp) as f:
+            load_df = json.load(f)
+        
+        cls.df_dict = dict()
+        
+        for k in load_df:
+            v = pd.DataFrame(load_df[k])
+            cls.df_dict[k] = v
+        
+        return None
 
 def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip","county"]):
 
@@ -56,29 +217,31 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
 
         response = getCensusResponse(census_table, key_ls, geo)
 
-        response_data = response.json()
-
-        #Labels table columns with group variable labels
-        #Add better comment
+        try:
+            response_data = response.json()
+        except Exception as e:
+            print(e)
+            print(response_data)
+            raise e
+        #Replaces Census table IDs with labels
         labelled_ls = [[]]
-        # print("Creating Labelled List")
+
         for i, row in enumerate(response_data):
             #header row
             if i == 0:
                 for c, col in enumerate(response_data[0]):
                     #Gets variable label from group data
-                    if col in table_code_dict:
-                        label = table_code_dict[col]
-                        labelled_ls[0].append(label)
-                    #Variables not in group data added to list
-                    else:
-                        labelled_ls[0].append(col)
+                    #Otherwise adds column name
+                    label = table_code_dict.get(col, col)
+                    labelled_ls[0].append(label)
             #converts data strings to ints
             else:
                 new_row = []
                 for v, n in enumerate(row):
+                    #First and last elements are geo names
                     if v == 0 or v == len(row)-1:
                         new_row.append(n)
+                    #Tries to convert data to int
                     else:
                         try:
                             new_row.append(int(n))
@@ -87,6 +250,8 @@ def getCensusData(table_code_dict, census_table, function_ls = [], geo_ls=["zip"
                             new_row.append(n)
 
                 labelled_ls.append(new_row)
+        
+        #breakpoint()
         IL_data = []
         
         if "zip" == geography:
@@ -227,3 +392,73 @@ def processRaceData(data_json):
             print(d)
     
     return data_json
+
+def processPovertyData(data_json):
+    '''
+    Calculates percent poverty
+    data_json (dict)
+    '''
+    from collections import defaultdict
+    pct_dict = defaultdict(list)
+    for d in data_json.items():
+        poverty_data = d[1]['poverty_metrics']
+        poverty_total = poverty_data['poverty_population_total']
+        percentages = {}
+        if poverty_total:
+            for k, v in poverty_data.items():
+                #skips evaluating poverty_population_total, 'name' and 'g'
+                try:
+                    skip_ls = ['poverty_population_total','name','g']
+                    if k in skip_ls:
+                        continue
+                    #Add percentage
+                    poverty_pct = v/poverty_total * 100
+                    percentages[k] = poverty_pct
+                    pct_dict[k].append(poverty_pct)
+                    
+                except Exception as e:
+                    print(e) #error
+                    print(d) #current data object
+                    print(poverty_data) #povertymetrics
+                    print(v, poverty_total) #poverty data value, poverty_total metric
+                    raise Exception('Error')
+            else:
+                pct_dict[k] = np.array(pct_dict[k])
+        data_json[d[0]]['poverty_metrics']['percentages'] = percentages
+    else:
+        pct_bin = binData(pct_dict)
+        #breakpoint()
+        data_json['meta'] = data_json.get('meta',{})
+        data_json['meta']['poverty_bins'] = pct_bin
+    return data_json
+
+def binData(geoData: dict):
+    '''
+    Creates bins from functions described in this function 
+    
+    geoData:
+        keys: geo code
+        values: percentages or data to bin
+    '''
+
+    def quartiles(geoValue):
+        min_v = np.min(geoValue)
+        first = np.quantile(geoValue, 0.25)
+        second = np.quantile(geoValue, 0.5)
+        third = np.quantile(geoValue, 0.75)
+        max = np.max(geoValue)
+        q = [min_v, first, second, third, max]
+        
+        return {'quartiles': q}
+    
+    bin_dict = {}
+    
+    for k in geoData:
+        v = geoData[k]
+        try:
+            q = quartiles(v)
+        except:
+            continue
+        bin_dict[k] = q
+
+    return bin_dict
