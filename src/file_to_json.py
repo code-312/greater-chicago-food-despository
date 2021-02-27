@@ -1,18 +1,21 @@
-def main(blacklist = []):
+import pandas as pd
+
+
+def main(blacklist=[]):
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    import pandas as pd
     import os
     json_ls = list()
     f_walk = os.walk('data_folder')
 
     for subdir, dir, files in f_walk:
         for f in files:
-            #pandas not only provides file reading functionality, but outputs in a single format
-            #if performance requires, alternative packages may be implemented, 
-            # but that will require additional processing after reading in the file
+            # pandas not only provides file reading functionality,
+            # but outputs in a single format
+            # if performance requires, other packages may be implemented,
+            # that may require additional processing after reading in the file
             fp = os.path.join(subdir, f)
             f_ext = f.split('.')[-1]
             table_ls = []
@@ -21,28 +24,29 @@ def main(blacklist = []):
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
-                            table_ls.append((k+f,table[k]))
-                        else: continue
+                            table_ls.append((k+f, table[k]))
+                        else:
+                            continue
             elif f_ext == 'csv':
                 table_ls.append((f, pd.read_csv(fp)))
             elif f_ext == 'gitkeep':
-                #for directory processing
+                # for directory processing
                 continue
             else:
                 return Exception('File Type Not Supported')
 
             for t in table_ls:
-                #table_ls is list of tuples
-                #index 0: unique name
-                #index 1: DataFrame
-                #breakpoint()
+                # table_ls is list of tuples
+                # index 0: unique name
+                # index 1: DataFrame
+                # breakpoint()
                 try:
                     table_json = table_to_json(t[1], t[0], blacklist=blacklist)
                 except Exception as e:
                     print(e)
                     print(t)
                     print('-'*10)
-                    table_json=[]
+                    table_json = []
                 json_ls.append(table_json)
 
     return(json_ls)
@@ -53,7 +57,6 @@ def determine_fips(df):
     Returns df with fips codes
     County name in df must be in the first column or named 'County Name'
     '''
-    import pandas as pd
     from census_response import county_fips
 
     fips = county_fips()
@@ -74,7 +77,7 @@ def determine_fips(df):
 
     # update fip column with fip codes
     for index, row in df.iterrows():
-        #print(index, row)
+        # print(index, row)
         fip = fips[row[0]]
         df.iloc[index, -1] = fip
 
@@ -86,7 +89,6 @@ def table_to_json(df,  filename, blacklist=[]):
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
     '''
-    import pandas as pd
     import json
 
     # get county FIPs, if necessary
@@ -96,14 +98,14 @@ def table_to_json(df,  filename, blacklist=[]):
         df = determine_fips(df)
         # return merged dataframe
 
-    #TODO nest data
+    # TODO nest data
     df = df.set_index('fips')
     df_json_str = df.to_json(orient='index')
     df_json_dict = json.loads(df_json_str)
     # breakpoint()
     df_values = [*df_json_dict.values()][0]
 
-    final_dict = {k:{filename:v} for k,v in df_values.items()}
+    final_dict = {k: {filename: v} for k, v in df_values.items()}
 
     return final_dict
 
