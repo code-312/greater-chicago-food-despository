@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(''))
 # Raises linting error because not at top of file
 # Not sure how to resolve this with the pathing
 from src import uploadJson  # noqa: E402
+import src.config as config  # noqa: E402
 
 # Taking out of commission until new geojson format requested developed
 # def test_main():
@@ -38,7 +39,6 @@ def test_auth():
 
 
 def test_secrets():
-    import src.config as config
     assert type(config.CENSUS_KEY) == str
     assert type(config.FIREBASE_SERVICE_KEY) == str
     assert config.CENSUS_KEY != ''
