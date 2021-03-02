@@ -225,15 +225,17 @@ class CensusData:
             # divides df by race_total column to calculate percentages 
             divide_by_total = lambda x: x/race_df['race_total']
             race_percent_df = race_df.apply(divide_by_total).drop('race_total', axis=1)
-
+            
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
             majority_series.name = 'race_majority'
 
+            # converts NAN to None, for proper JSON encoding
+            race_percent_df = race_percent_df.where(pd.notnull(race_percent_df),None)
+            
             # creates series of race percentages as a dictionary
             # this allows us to add percentages to the main table, 
             # without adding many more columns
-
             pct_dict_series = race_percent_df.apply(pd.Series.to_dict, axis=1)
             pct_dict_series.name = 'race_percentages'
             # creates df from the series above for merging
