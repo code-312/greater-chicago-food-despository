@@ -4,6 +4,7 @@ sys.path.append(os.path.abspath(''))
 # Raises linting error because not at top of file
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
+from src.census_response import CensusData
 
 '''
 Defines and calls Census data requests
@@ -18,7 +19,6 @@ def census_data(geo_ls=["zip", "county"]):
     calling getData method to produce dictionaries
     Returns list of dictionaries
     '''
-    from src.census_response import CensusData
     # Census tables
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
@@ -72,6 +72,8 @@ def main(geo_ls=["zip", "county"]):
     mph.record_current_memory_usage_if_enabled()
     census_data(geo_ls)
     mph.record_current_memory_usage_if_enabled()
+    
+    CensusData.process_data()
     # d_merged_dict = dict_merge.main(d_ls)
     mph.generate_report_if_enabled()
 
