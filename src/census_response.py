@@ -1,4 +1,3 @@
-from pandas.core.base import DataError
 from src.config import CENSUS_KEY
 import json
 import requests
@@ -77,7 +76,7 @@ class CensusData:
             df = self.__panda_from_json(self.response_json, g)
             df_ls.append(df)
         return df_ls
-    
+
     @classmethod
     def process_data(cls):
         cls.__pd_process_race()
@@ -137,6 +136,7 @@ class CensusData:
             This format loads with load_df()
         '''
         class_json_dict = dict()
+        # Add Meta Data Here (Bins, etc)
         class_json_dict['meta'] = {'data_metrics': cls.data_metrics}
         if not(zip_df):
             fp = 'final_jsons/df_dump.json'
@@ -152,7 +152,7 @@ class CensusData:
         for geo in cls.df_dict:
             geo_dict = dict()
             for geo_area in cls.df_dict[geo].itertuples():
-                geo_area_dict = {f'{m}_data': dict() 
+                geo_area_dict = {f'{m}_data': dict()
                                  for m in cls.data_metrics.keys()}
                 for name in geo_area._fields:
                     if name == "Index":
@@ -193,7 +193,7 @@ class CensusData:
             cls.df_dict[k] = v
 
         return None
-    
+
     @classmethod
     def __pd_process_race(cls):
         def majority(series):
@@ -207,39 +207,41 @@ class CensusData:
             try:
                 value = series[idx]
             except KeyError:
-                #if NA row, idx = NA
+                # if NA row, idx = NA
                 return None
             if value >= 0.5:
                 return idx
             else:
                 return 'majority_minority'
-        
+
         for geo_area in cls.df_dict:
             geo_df = cls.df_dict[geo_area]
-            
+
             # creates df using original columns
             # prevents conflicts with new columns
             race_values = tuple(cls.data_metrics['race'].values())
             race_df = geo_df.loc[:, race_values]
-            
-            # divides df by race_total column to calculate percentages 
-            divide_by_total = lambda x: x/race_df['race_total']
-            race_percent_df = race_df.apply(divide_by_total).drop('race_total', axis=1)
-            
+
+            # divides df by race_total column to calculate percentages
+            divide_by_total = lambda x: x/race_df['race_total']  # noqa: E731
+            race_percent_df = race_df.apply(divide_by_total)\
+                                     .drop('race_total', axis=1)
+
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
             majority_series.name = 'race_majority'
 
             # converts NAN to None, for proper JSON encoding
-            race_percent_df = race_percent_df.where(pd.notnull(race_percent_df),None)
-            
+            race_percent_df = race_percent_df.where(pd.notnull(race_percent_df), None)  # noqa: E501
+
             # creates series of race percentages as a dictionary
-            # this allows us to add percentages to the main table, 
+            # this allows us to add percentages to the main table,
             # without adding many more columns
             pct_dict_series = race_percent_df.apply(pd.Series.to_dict, axis=1)
             pct_dict_series.name = 'race_percentages'
             # creates df from the series above for merging
-            percentage_df = pd.concat([pct_dict_series, majority_series], axis=1)
+            percentage_df = pd.concat([pct_dict_series,
+                                       majority_series], axis=1)
 
             # A join would add the values as two new columns
             # Trying to merge creates the columns if they don't exist
@@ -247,8 +249,9 @@ class CensusData:
             # Potential simplification with attribute access,
             # however I'm not confident that handles missing data, etc
             try:
-                geo_df = geo_df.merge(percentage_df, left_index=True, 
-                                  right_index=True, suffixes=(False, False))
+                geo_df = geo_df.merge(percentage_df,
+                                      left_index=True, right_index=True,
+                                      suffixes=(False, False))
             except ValueError:
                 geo_df.update(percentage_df)
             cls.df_dict[geo_area] = geo_df
