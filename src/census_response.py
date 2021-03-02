@@ -1,3 +1,4 @@
+from pandas.core.base import DataError
 from src.config import CENSUS_KEY
 import json
 import requests
@@ -131,20 +132,19 @@ class CensusData:
         Otherwise: saves df.to_json() in dictionary to json
             This format loads with load_df()
         '''
+        class_json_dict = dict()
+        class_json_dict['meta'] = {'data_metrics': tuple(cls.data_metrics)}
         if not(zip_df):
-            k_json = dict()
             fp = 'final_jsons/df_dump.json'
             for k in cls.df_dict:
-
-                k_json[k] = cls.df_dict[k].to_dict()
+                class_json_dict[k] = cls.df_dict[k].to_dict()
 
             with open(fp, 'w') as f:
-                json.dump(k_json, f, separators=(',', ':'))
+                json.dump(class_json_dict, f, separators=(',', ':'))
             return fp
         # determine metrics
         # Not sure we need this many loops, \
         # but seemed like a good idea at the time
-        class_json_dict = dict()
         for geo in cls.df_dict:
             geo_dict = dict()
             for geo_area in cls.df_dict[geo].itertuples():
@@ -163,6 +163,7 @@ class CensusData:
                         geo_area_dict[name] = getattr(geo_area, name)
                 geo_dict[geo_area.Index] = geo_area_dict
             class_json_dict[geo] = geo_dict
+
         fp = 'final_jsons/df_merged_json.json'
         with open(fp, 'w') as f:
             json.dump(class_json_dict, f, separators=(',', ':'))
@@ -180,6 +181,9 @@ class CensusData:
         cls.df_dict = dict()
 
         for k in load_df:
+            if k == 'meta':
+                cls.data_metrics = load_df[k]['data_metrics']
+                continue
             v = pd.DataFrame(load_df[k])
             cls.df_dict[k] = v
 
