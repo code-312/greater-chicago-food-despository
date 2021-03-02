@@ -25,6 +25,7 @@ def census_data(geo_ls=["zip", "county"]):
 
     # define race instance
     # Values name format: topic_property_subproperty...
+    # B03002_003E: Does not include people of hispanic/latino origin 
     race_metrics = ('race',
                     {'B03002_001E': 'race_total', 'B03002_005E': 'race_native',
                      'B03002_004E': 'race_black', 'B03002_003E': 'race_white',
