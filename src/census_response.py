@@ -79,9 +79,12 @@ class CensusData:
         return df_ls
 
     @classmethod
-    def process_data(cls):
+    def process_data(cls, save=False):
         cls.__pd_process_race()
         cls.__pd_process_poverty()
+
+        if save:
+            cls.df_to_json(both=True)
 
     def __panda_from_json(self, response_json, geo):
         '''
@@ -107,11 +110,11 @@ class CensusData:
             geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
         elif geo == 'zip':
             # filter keeps Illinois zipcodes
-            # zip sometimes returns with 'state' column, \
-            # so it isn't dropped atm
-            geo_df = typed_df.set_index('zip code tabulation area').drop(
-                ['NAME'], axis=1).filter(regex='^(6[0-2])\d+',  # noqa: W605
-                                         axis=0)
+            drop_ls = ['state'] if 'state' in typed_df else []
+            drop_ls.append('NAME')
+            geo_df = typed_df.set_index('zip code tabulation area')\
+                             .drop(drop_ls, axis=1)\
+                             .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605
 
         # checks if df exists
         class_df = self.df_dict.get(geo, pd.DataFrame())
@@ -181,7 +184,7 @@ class CensusData:
                       cls=NumpyEncoder)
 
         fp = 'final_jsons/' if both else fp
-
+        print(f'Data updated at {fp}')
         return fp
 
     @classmethod
@@ -216,7 +219,8 @@ class CensusData:
         str_idx = total_col_str.find('_')
         metric = total_col_str[:str_idx]
         # divides df by total column to calculate percentages
-        divide_by_total = lambda x: x/df[total_col_str]  # noqa: E731
+        # rounds to save space
+        divide_by_total = lambda x: np.round(x/df[total_col_str], 6)  # noqa: E731, E501
         # try:
         percent_df = df.apply(divide_by_total).drop(total_col_str, axis=1)
         # except:
