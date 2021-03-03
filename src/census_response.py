@@ -48,6 +48,7 @@ class CensusData:
     '''
     df_dict = {}
     data_metrics = dict()
+    data_bins = dict()
 
     def __init__(self, var_metrics: tuple,
                  table: str, geo_ls: list = ["zip", "county"]):
@@ -144,17 +145,20 @@ class CensusData:
         zip_df = False if both else zip_df
         class_json_dict = dict()
         # Add Meta Data Here (Bins, etc)
-        class_json_dict['meta'] = {'data_metrics': cls.data_metrics}
+        class_json_dict['meta'] = {'data_metrics': cls.data_metrics,
+                                   'data_bins': cls.data_bins}
         if not(zip_df):
             fp = 'final_jsons/df_dump.json'
+            zip_dict = class_json_dict.copy()
             for k in cls.df_dict:
-                class_json_dict[k] = cls.df_dict[k].to_dict()
+                zip_dict[k] = cls.df_dict[k].to_dict()
 
             with open(fp, 'w') as f:
-                json.dump(class_json_dict, f, separators=(',', ':'),
+                json.dump(zip_dict, f, separators=(',', ':'),
                           cls=NumpyEncoder)
             if not(both):
                 return fp
+                
         # determine metrics
         # Not sure we need this many loops, \
         # but seemed like a good idea at the time
@@ -176,7 +180,7 @@ class CensusData:
                     else:
                         geo_area_dict[name] = getattr(geo_area, name)
                 geo_dict[geo_area.Index] = geo_area_dict
-            class_json_dict[geo] = geo_dict
+            class_json_dict[f'{geo}_data'] = geo_dict
 
         fp = 'final_jsons/df_merged_json.json'
         with open(fp, 'w') as f:
@@ -300,7 +304,11 @@ class CensusData:
             total_col = 'poverty_population_total'
             pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
             # no further processing required, deleting pct_df
-            del pct_df
+            pct_df.to_pickle('final_jsons/pct_test.pkl')
+            # create quantile bins
+            q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))
+            q_dict = q_df.to_dict(orient='list')
+            cls.data_bins.update({'quantiles': q_dict})
             # A join would add the values as two new columns
             # Trying to merge creates the columns if they don't exist
             # and updates them if they do exist
