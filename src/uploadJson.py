@@ -1,5 +1,6 @@
 from json.decoder import JSONDecodeError
 from src.config import FIREBASE_SERVICE_KEY
+import json
 
 
 def auth_firebase():
@@ -38,6 +39,16 @@ def auth_firebase():
     return db
 
 
+def update_db():
+    db = auth_firebase()
+
+    fp = 'final_jsons/df_merged_json.json'
+    with open(fp) as f:
+        data_dict = json.load(f)
+
+    for k in data_dict:
+        node = db.reference(k)
+        node.set(data_dict[k])
 #   references entire db
 #   ref = db.reference()
 #   Returns Cook County Data
