@@ -2,8 +2,10 @@
 requests>=2.23.0
 # testing
 pytest>=6.1.2
-# used to import excel
+# used for data manipulation
 pandas>=1.1.3
+# used for pandas + json compatibility
+numpyencoder>=0.3.0
 #used to authenticate
 firebase-admin>=4.5.1
 cachetools==4.2.1

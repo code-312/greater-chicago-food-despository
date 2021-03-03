@@ -3,6 +3,7 @@ import json
 import requests
 import numpy as np
 import pandas as pd
+from numpyencoder import NumpyEncoder
 # from numpy.lib.function_base import quantile
 
 
@@ -80,6 +81,7 @@ class CensusData:
     @classmethod
     def process_data(cls):
         cls.__pd_process_race()
+        cls.__pd_process_poverty()
 
     def __panda_from_json(self, response_json, geo):
         '''
@@ -95,8 +97,8 @@ class CensusData:
         # adds types for performance and predictable method output
         string_df = response_df.astype('string')
         # ignore error to keep NAN values
-        typed_df = string_df.astype(
-            {v: int for v in dict_values}, errors='ignore')
+        conversion_dict = {v: 'Int64' for v in dict_values}
+        typed_df = string_df.astype(conversion_dict)
         # Processes geographies for output
         if geo == 'county':
             fip_series = typed_df.loc[:, 'state'] + typed_df.loc[:, 'county']
@@ -128,13 +130,15 @@ class CensusData:
         return geo_df
 
     @classmethod
-    def df_to_json(cls, zip_df=True):
+    def df_to_json(cls, zip_df=True, both=False):
         '''
         Saves df to file
         Default: zips dataframe by geo_code
+        Both: overrides zip_df, saves both
         Otherwise: saves df.to_json() in dictionary to json
             This format loads with load_df()
         '''
+        zip_df = False if both else zip_df
         class_json_dict = dict()
         # Add Meta Data Here (Bins, etc)
         class_json_dict['meta'] = {'data_metrics': cls.data_metrics}
@@ -144,8 +148,10 @@ class CensusData:
                 class_json_dict[k] = cls.df_dict[k].to_dict()
 
             with open(fp, 'w') as f:
-                json.dump(class_json_dict, f, separators=(',', ':'))
-            return fp
+                json.dump(class_json_dict, f, separators=(',', ':'),
+                          cls=NumpyEncoder)
+            if not(both):
+                return fp
         # determine metrics
         # Not sure we need this many loops, \
         # but seemed like a good idea at the time
@@ -171,7 +177,10 @@ class CensusData:
 
         fp = 'final_jsons/df_merged_json.json'
         with open(fp, 'w') as f:
-            json.dump(class_json_dict, f, separators=(',', ':'))
+            json.dump(class_json_dict, f, separators=(',', ':'),
+                      cls=NumpyEncoder)
+
+        fp = 'final_jsons/' if both else fp
 
         return fp
 
@@ -193,6 +202,34 @@ class CensusData:
             cls.df_dict[k] = v
 
         return None
+    
+    @classmethod
+    def get_data_values(cls, metric_name):
+        return tuple(cls.data_metrics[metric_name].values())
+    
+    @classmethod
+    def __nest_percentages(cls, df, total_col_str):
+        '''
+        Calculates percentages and removes NaN for dict conversion
+        Returns calculated percent_df and series of dictionaries
+        '''
+        str_idx = total_col_str.find('_')
+        metric = total_col_str[:str_idx]
+        # divides df by total column to calculate percentages
+        divide_by_total = lambda x: x/df[total_col_str]  # noqa: E731
+        # try:
+        percent_df = df.apply(divide_by_total).drop(total_col_str, axis=1)
+        # except:
+        #     print(df.dtypes)
+        #     raise Exception
+        # converts NAN to None, for proper JSON encoding
+        working_df = percent_df.where(pd.notnull(percent_df), None)
+        # creates series of race percentages as a dictionary
+        # this allows us to add percentages to the main table,
+        # without adding many more columns
+        dict_series = working_df.apply(pd.Series.to_dict, axis=1)
+        dict_series.name = f'{metric}_percentages'
+        return percent_df, dict_series
 
     @classmethod
     def __pd_process_race(cls):
@@ -219,27 +256,18 @@ class CensusData:
 
             # creates df using original columns
             # prevents conflicts with new columns
-            race_values = tuple(cls.data_metrics['race'].values())
+            # race_values = tuple(cls.data_metrics['race'].values())
+            race_values = cls.get_data_values('race')
             race_df = geo_df.loc[:, race_values]
 
             # divides df by race_total column to calculate percentages
-            divide_by_total = lambda x: x/race_df['race_total']  # noqa: E731
-            race_percent_df = race_df.apply(divide_by_total)\
-                                     .drop('race_total', axis=1)
+            race_percent_df, pct_dict_series = cls.__nest_percentages(race_df, 'race_total')
 
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
             majority_series.name = 'race_majority'
 
-            # converts NAN to None, for proper JSON encoding
-            race_percent_df = race_percent_df.where(pd.notnull(race_percent_df), None)  # noqa: E501
-
-            # creates series of race percentages as a dictionary
-            # this allows us to add percentages to the main table,
-            # without adding many more columns
-            pct_dict_series = race_percent_df.apply(pd.Series.to_dict, axis=1)
-            pct_dict_series.name = 'race_percentages'
-            # creates df from the series above for merging
+            # creates df from the series for merging
             percentage_df = pd.concat([pct_dict_series,
                                        majority_series], axis=1)
 
@@ -255,6 +283,34 @@ class CensusData:
             except ValueError:
                 geo_df.update(percentage_df)
             cls.df_dict[geo_area] = geo_df
+    
+    @classmethod
+    def __pd_process_poverty(cls):
+        for geo_area in cls.df_dict:
+            geo_df = cls.df_dict[geo_area]
+
+            # creates df using original columns
+            # prevents conflicts with new columns
+            poverty_values = cls.get_data_values('poverty')
+            poverty_df = geo_df.loc[:, poverty_values]
+            total_col = 'poverty_population_total'
+            pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
+            # no further processing required, deleting pct_df
+            del pct_df
+            # A join would add the values as two new columns
+            # Trying to merge creates the columns if they don't exist
+            # and updates them if they do exist
+            # Potential simplification with attribute access,
+            # however I'm not confident that handles missing data, etc
+            try:
+                geo_df = geo_df.merge(pct_series,
+                                      left_index=True, right_index=True,
+                                      suffixes=(False, False))
+            except ValueError:
+                geo_df.update(pct_series)
+            cls.df_dict[geo_area] = geo_df
+
+
 
 
 def get_census_data(table_code_dict, census_table,
