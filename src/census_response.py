@@ -115,7 +115,7 @@ class CensusData:
             drop_ls.append('NAME')
             geo_df = typed_df.set_index('zip code tabulation area')\
                              .drop(drop_ls, axis=1)\
-                             .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605
+                             .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605, E501
 
         # checks if df exists
         class_df = self.df_dict.get(geo, pd.DataFrame())
@@ -158,7 +158,7 @@ class CensusData:
                           cls=NumpyEncoder)
             if not(both):
                 return fp
-                
+
         # determine metrics
         # Not sure we need this many loops, \
         # but seemed like a good idea at the time
@@ -209,11 +209,11 @@ class CensusData:
             cls.df_dict[k] = v
 
         return None
-    
+
     @classmethod
     def get_data_values(cls, metric_name):
         return tuple(cls.data_metrics[metric_name].values())
-    
+
     @classmethod
     def __nest_percentages(cls, df, total_col_str):
         '''
@@ -269,7 +269,7 @@ class CensusData:
             race_df = geo_df.loc[:, race_values]
 
             # divides df by race_total column to calculate percentages
-            race_percent_df, pct_dict_series = cls.__nest_percentages(race_df, 'race_total')
+            race_percent_df, pct_dict_series = cls.__nest_percentages(race_df, 'race_total')  # noqa: E501
 
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
@@ -291,7 +291,7 @@ class CensusData:
             except ValueError:
                 geo_df.update(percentage_df)
             cls.df_dict[geo_area] = geo_df
-    
+
     @classmethod
     def __pd_process_poverty(cls):
         for geo_area in cls.df_dict:
@@ -387,6 +387,7 @@ def county_fips(reverse=False) -> dict:
                    for county in response_json if il_county_filter(county)}
 
     return il_json
+
 
 def bin_data(geo_data: dict):
     '''
