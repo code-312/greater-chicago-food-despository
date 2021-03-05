@@ -74,7 +74,7 @@ def main(geo_ls=["zip", "county"]):
     mph.record_current_memory_usage_if_enabled()
 
     CensusData.process_data(save=True)
-    # d_merged_dict = dict_merge.main(d_ls)
+    mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
 
     return None
