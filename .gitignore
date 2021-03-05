@@ -26,6 +26,8 @@ api_keys.py
 ## Secrets ##
 .env
 
+## ignore test script
+untitled.py
 ## Memory Profiling ##
 memory_profile_report.txt
 raw_memory_usage.txt

@@ -2,4 +2,4 @@
 
 export USE_MEMORY_PROFILING="True"
 
-python3 main.py || python main.py
+python3 src/main.py || python src/main.py

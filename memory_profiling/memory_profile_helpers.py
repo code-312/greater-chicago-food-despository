@@ -1,6 +1,6 @@
 import os
 import guppy
-import config
+import src.config as config
 import json
 import inspect
 
