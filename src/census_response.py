@@ -3,7 +3,10 @@ import json
 import requests
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
 from numpyencoder import NumpyEncoder
+=======
+>>>>>>> ac373b8b9285af7216d9dcdf7e37e05c4434429e
 # from numpy.lib.function_base import quantile
 
 
