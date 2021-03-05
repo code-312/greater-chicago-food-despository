@@ -32,7 +32,6 @@ def test_requirements():
 
 
 def test_auth():
-    # TODO determine why this fails on github
     db = uploadJson.auth_firebase()
     cook = db.reference('/county_data/17031').get()
     assert cook['NAME'] == 'Cook County, Illinois'

@@ -303,12 +303,12 @@ class CensusData:
             poverty_df = geo_df.loc[:, poverty_values]
             total_col = 'poverty_population_total'
             pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
-            # no further processing required, deleting pct_df
-            pct_df.to_pickle('final_jsons/pct_test.pkl')
+
             # create quantile bins
             q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))
             q_dict = q_df.to_dict(orient='list')
             cls.data_bins.update({'quantiles': q_dict})
+
             # A join would add the values as two new columns
             # Trying to merge creates the columns if they don't exist
             # and updates them if they do exist
