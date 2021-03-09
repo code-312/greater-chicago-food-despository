@@ -9,7 +9,7 @@ api_keys.py
 .pytest_cache/
 
 ### Data Files ###
-*.json
+final_jsons/*.json
 *.csv
 *.xlsx
 
