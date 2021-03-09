@@ -4,7 +4,6 @@ import requests
 import numpy as np
 import pandas as pd
 from numpyencoder import NumpyEncoder
-# from numpy.lib.function_base import quantile
 
 
 def get_census_response(table_url, get_ls, geo):
@@ -22,7 +21,7 @@ def get_census_response(table_url, get_ls, geo):
     # print(f"Calling for {geo}: {get_ls}")
     response = requests.get(url)
     # print(f"{response} Received")
-    return(response)
+    return (response)
 
 
 class CensusData:
@@ -113,13 +112,13 @@ class CensusData:
             # filter keeps Illinois zipcodes
             drop_ls = ['state'] if 'state' in typed_df else []
             drop_ls.append('NAME')
-            geo_df = typed_df.set_index('zip code tabulation area')\
-                             .drop(drop_ls, axis=1)\
-                             .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605, E501
+            geo_df = typed_df.set_index('zip code tabulation area') \
+                .drop(drop_ls, axis=1) \
+                .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605, E501
 
         # checks if df exists
         class_df = self.df_dict.get(geo, pd.DataFrame())
-        if not(class_df.empty):
+        if not (class_df.empty):
             # Removes NAME to avoid conflict
             geo_df = geo_df.drop(
                 ['NAME'], axis=1) if 'NAME' in class_df.columns else geo_df
@@ -147,7 +146,7 @@ class CensusData:
         # Add Meta Data Here (Bins, etc)
         class_json_dict['meta'] = {'data_metrics': cls.data_metrics,
                                    'data_bins': cls.data_bins}
-        if not(zip_df):
+        if not (zip_df):
             fp = 'final_jsons/df_dump.json'
             zip_dict = class_json_dict.copy()
             for k in cls.df_dict:
@@ -156,7 +155,7 @@ class CensusData:
             with open(fp, 'w') as f:
                 json.dump(zip_dict, f, separators=(',', ':'),
                           cls=NumpyEncoder)
-            if not(both):
+            if not (both):
                 return fp
 
         # determine metrics
@@ -224,7 +223,7 @@ class CensusData:
         metric = total_col_str[:str_idx]
         # divides df by total column to calculate percentages
         # rounds to save space
-        divide_by_total = lambda x: np.round(x/df[total_col_str], 6)  # noqa: E731, E501
+        divide_by_total = lambda x: np.round(x / df[total_col_str], 6)  # noqa: E731, E501
         # try:
         percent_df = df.apply(divide_by_total).drop(total_col_str, axis=1)
         # except:
@@ -304,6 +303,11 @@ class CensusData:
             total_col = 'poverty_population_total'
             pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
 
+            with open('out_pct_df.txt') as f:
+                f.write( pct_df.to_json())
+            with open('pct_series.txt') as f:
+                f.write( pct_series.to_json())
+
             # create quantile bins
             q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))
             q_dict = q_df.to_dict(orient='list')
@@ -380,42 +384,10 @@ def county_fips(reverse=False) -> dict:
     response_json = response.json()
 
     if reverse:
-        il_json = {county[1]+county[2]: county[0]
+        il_json = {county[1] + county[2]: county[0]
                    for county in response_json if il_county_filter(county)}
     else:
-        il_json = {county[0]: county[1]+county[2]
+        il_json = {county[0]: county[1] + county[2]
                    for county in response_json if il_county_filter(county)}
 
     return il_json
-
-
-def bin_data(geo_data: dict):
-    '''
-    Creates bins from functions described in this function
-
-    geoData:
-        keys: geo code
-        values: percentages or data to bin
-    '''
-
-    def quartiles(geo_value):
-        min_v = np.min(geo_value)
-        first = np.quantile(geo_value, 0.25)
-        second = np.quantile(geo_value, 0.5)
-        third = np.quantile(geo_value, 0.75)
-        max = np.max(geo_value)
-        q = [min_v, first, second, third, max]
-
-        return {'quartiles': q}
-
-    bin_dict = {}
-
-    for k in geo_data:
-        v = geo_data[k]
-        try:
-            q = quartiles(v)
-        except ValueError:
-            continue
-        bin_dict[k] = q
-
-    return bin_dict
