@@ -54,7 +54,7 @@ def census_data(geo_ls=["zip", "county"]):
     poverty.get_data()
     mph.record_current_memory_usage_if_enabled()
     fp = CensusData.df_to_json(zip_df=False)
-    # print(F"Data saved at {fp}")
+    print(F"Data saved at {fp}")
     # Record heap size.
 
     return None

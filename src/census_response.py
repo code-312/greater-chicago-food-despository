@@ -1,9 +1,11 @@
 from src.config import CENSUS_KEY
+import jenkspy
 import json
 import requests
 import numpy as np
 import pandas as pd
 from numpyencoder import NumpyEncoder
+from typing import Dict, List
 
 
 def get_census_response(table_url, get_ls, geo):
@@ -21,7 +23,7 @@ def get_census_response(table_url, get_ls, geo):
     # print(f"Calling for {geo}: {get_ls}")
     response = requests.get(url)
     # print(f"{response} Received")
-    return (response)
+    return response
 
 
 class CensusData:
@@ -303,14 +305,11 @@ class CensusData:
             total_col = 'poverty_population_total'
             pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
 
-            with open('out_pct_df.txt') as f:
-                f.write( pct_df.to_json())
-            with open('pct_series.txt') as f:
-                f.write( pct_series.to_json())
-
-            # create quantile bins
-            q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))
-            q_dict = q_df.to_dict(orient='list')
+            # create quantile bins using natural breaks algorithm. bin_count could be increased to > 4 if needed.
+            q_dict = calculate_natural_breaks_bins(pct_df, bin_count=4,
+                                                   column_names=["poverty_population_poverty",
+                                                                 "poverty_population_poverty_child"])
+            # quantiles works for now. Change this to a more generic name if bin_count is altered.
             cls.data_bins.update({'quantiles': q_dict})
 
             # A join would add the values as two new columns
@@ -391,3 +390,17 @@ def county_fips(reverse=False) -> dict:
                    for county in response_json if il_county_filter(county)}
 
     return il_json
+
+
+def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int, column_names: List[str]) -> Dict[str, List[float]]:
+    """
+    :param df: Pandas dataframe.
+    :param bin_count: Number of bins used to classify data.
+    :param column_names The dataframe column names to use to calculate jenks natural breaks
+    :return: Dictionary of column name and list of bin cutoff limits.
+    """
+    bin_dict = {}
+    for cn in column_names:
+        column_data = df[cn].dropna().to_list()
+        bin_dict[cn] = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
+    return bin_dict
