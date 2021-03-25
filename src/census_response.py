@@ -305,12 +305,16 @@ class CensusData:
             total_col = 'poverty_population_total'
             pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
 
+            q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+            q_dict = q_df.to_dict(orient='list')
+            cls.data_bins.update({'quantiles': q_dict})  # noqa: E501
+
             # create quantile bins using natural breaks algorithm. bin_count could be increased to > 4 if needed.
             q_dict = calculate_natural_breaks_bins(pct_df, bin_count=4,
                                                    column_names=["poverty_population_poverty",
                                                                  "poverty_population_poverty_child"])
-            # quantiles works for now. Change this to a more generic name if bin_count is altered.
-            cls.data_bins.update({'quantiles': q_dict})
+
+            cls.data_bins.update({'natural_breaks': q_dict})
 
             # A join would add the values as two new columns
             # Trying to merge creates the columns if they don't exist

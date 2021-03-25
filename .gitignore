@@ -10,6 +10,7 @@ api_keys.py
 
 ### Data Files ###
 final_jsons/*.json
+shape_files/*.json
 *.csv
 *.xlsx
 
@@ -28,6 +29,7 @@ final_jsons/*.json
 
 ## ignore test script
 untitled.py
+
 ## Memory Profiling ##
 memory_profile_report.txt
 raw_memory_usage.txt
