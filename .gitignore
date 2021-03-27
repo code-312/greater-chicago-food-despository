@@ -9,7 +9,8 @@ api_keys.py
 .pytest_cache/
 
 ### Data Files ###
-*.json
+final_jsons/*.json
+shape_files/*.json
 *.csv
 *.xlsx
 
@@ -28,6 +29,7 @@ api_keys.py
 
 ## ignore test script
 untitled.py
+
 ## Memory Profiling ##
 memory_profile_report.txt
 raw_memory_usage.txt
