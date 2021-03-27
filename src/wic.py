@@ -12,9 +12,9 @@ are missing. Data is for the month of January year 2021. WIC.py reads thru each 
 # use regular expression matching to find lines that start with certain words and save as variables:
 # find rows that start with Total (this includes Total Women, Total Infant and Total Children rows)
 Total_re = re.compile("Total")
-# find rows that start with LA Total (these rows include the subtotal values for the specific County)
-LA_Total_re = re.compile("LA Total")
-# find rows that start with three digits (these rows contain County ID and name)
+# It's not clear specifically what "LA Total" means, but these rows contains the subtotal values for the specific County
+County_Total_re = re.compile("LA Total")
+# find rows that start with three digits (these rows contain County ID and name, example: 031 COOK)
 County_re = re.compile(r"\d\d\d")
 
 # define column names
@@ -53,7 +53,7 @@ for p in pages:
                 data = data.append(pd.Series(new_line, index=data.columns), ignore_index=True)
             # finds lines that start with LA
             # appends to data
-            elif LA_Total_re.match(line):
+            elif County_Total_re.match(line):
                 new_line = (line.split(sep=" "))
                 new_line = County + new_line
                 data = data.append(pd.Series(new_line, index=data.columns), ignore_index=True)
