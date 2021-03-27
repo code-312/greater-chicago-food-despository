@@ -1,4 +1,4 @@
 #!/bin/bash
-pip3 install -r requirements.txt || pip install -r rquirements.txt
-
+pytest -p no:warnings tests/test_environment.py
+read -p "Press enter to continue..."
 python3 src/main.py || python src/main.py
