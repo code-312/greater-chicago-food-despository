@@ -46,10 +46,10 @@ def read_wic_data():
                 # maxsplit=1 because some counties have spaces in their name
                 if County_re.match(line):
                     County = (line.split(sep=" ", maxsplit=1))
-                # finds the lines that start with Total
+                # finds the lines that start with Total.
                 # appends to data
                 elif Total_re.match(line):
-                    new_line = (line.split(sep=" "))
+                    new_line = (line.split(sep=" ")) # This looks something like "Total", "Women", 1, 2, 3, 4
                     new_line = County + new_line
                     data = data.append(pd.Series(new_line, index=data.columns), ignore_index=True)
                 # finds lines that start with LA
@@ -59,7 +59,12 @@ def read_wic_data():
                     new_line = County + new_line
                     data = data.append(pd.Series(new_line, index=data.columns), ignore_index=True)
 
-    # Currently column WIC1 contains values "Total" and "LA" and WIC2 contains values such as "Women" "Children"
+    # Currently the data looks like this:
+    # WIC1      WIC2       etc
+    # Total     Women
+    # Total     Children
+    # LA        Total
+
     # We want to combine WIC1 and WIC2 columns into new column called WIC which will contain values such as "Total Women"
     # "Total Children" "Total Infants" and "LA Total"
     data.insert(2, "WIC", (data["WIC1"] + " " + data["WIC2"]))
