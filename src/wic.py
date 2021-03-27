@@ -35,6 +35,9 @@ def read_wic_data():
         # read each page of the pdf pages 1 thru 97. Skip page 0 because it shows Statewide totals which we don't need
         for p in range(1, 97):
             page = pdf.pages[p]
+
+            # extract_text() adds spaces where the horizontal distance between bits of text is greater than x_tolerance
+            # and adds newline characters where the vertical distance between bits of text is greater than y_tolerance.
             text = page.extract_text(x_tolerance=2, y_tolerance=0)
 
             # iterate thru each line on a page
@@ -58,7 +61,7 @@ def read_wic_data():
 
     # Currently column WIC1 contains values "Total" and "LA" and WIC2 contains values such as "Women" "Children"
     # We want to combine WIC1 and WIC2 columns into new column called WIC which will contain values such as "Total Women"
-    # "Total Children" "Total INfants" and "LA Total"
+    # "Total Children" "Total Infants" and "LA Total"
     data.insert(2, "WIC", (data["WIC1"] + " " + data["WIC2"]))
 
     # delete WIC1 and WIC 2 columns
