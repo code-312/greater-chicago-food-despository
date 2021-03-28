@@ -4,7 +4,7 @@ import pandas as pd
 
 
 '''
-GCFD staff provided a pdf IWIC.pdf which contains WIC data for 96 out of 102 IL Counties. We do not know why some counties
+GCFD staff provided a pdf illinois_wic_data_january_2021.pdf which contains WIC data for 96 out of 102 IL Counties. We do not know why some counties
 are missing. Data is for the month of January year 2021. wic.py reads thru each line of each page of the pdf looking
  for lines that contain the data we want and then saves that data to a dataframe. GCFD staff also requested a .csv version
  of the data'''
