@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 sys.path.append(os.path.abspath(''))
 # Raises linting error because not at top of file
 # Not sure how to resolve this with the pathing
@@ -71,7 +72,9 @@ def main(geo_ls=["zip", "county"]):
     # from src import dict_merge
 
     print("Reading WIC Data")
+    wic_start_time = time.time()
     src.wic.read_wic_data()
+    print("Reading WIC Data took: {0:.2f} seconds".format(time.time() - wic_start_time))
 
     print("Reading Census Data")
     mph.setup_memory_usage_file_if_enabled()
