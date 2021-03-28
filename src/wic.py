@@ -10,10 +10,11 @@ are missing. Data is for the month of January year 2021. WIC.py reads thru each 
  of the data'''
 
 def read_wic_data():
-    parse_wic_pdf("data_folder/illinois_wic_data_january_2021.pdf", "final_jsons/wic.csv")
+    # PDF has 97 pages. Skip page 0 because it shows Statewide totals which we don't need
+    parse_wic_pdf("data_folder/illinois_wic_data_january_2021.pdf", "final_jsons/wic.csv", 1, 96)
 
 
-def parse_wic_pdf(source_pdf_filepath: str, destination_csv_filepath: str):
+def parse_wic_pdf(source_pdf_filepath: str, destination_csv_filepath: str, first_page_zero_indexed: int, last_page_zero_indexed: int):
     # use regular expression matching to find lines that start with certain words and save as variables:
     # find rows that start with Total (this includes Total Women, Total Infant and Total Children rows)
     Total_re = re.compile("Total")
@@ -33,9 +34,9 @@ def parse_wic_pdf(source_pdf_filepath: str, destination_csv_filepath: str):
 
     with pdfplumber.open(source_pdf_filepath) as pdf:
     
-        # read each page of the pdf pages 1 thru 97. Skip page 0 because it shows Statewide totals which we don't need
-        if True:
-            page = pdf.pages[0]
+        # range() excludes the last value, so add one so we read the last page
+        for page_num in range(first_page_zero_indexed, last_page_zero_indexed + 1):
+            page = pdf.pages[page_num]
 
             # extract_text() adds spaces where the horizontal distance between bits of text is greater than x_tolerance
             # and adds newline characters where the vertical distance between bits of text is greater than y_tolerance.
