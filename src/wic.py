@@ -10,6 +10,10 @@ are missing. Data is for the month of January year 2021. WIC.py reads thru each 
  of the data'''
 
 def read_wic_data():
+    parse_wic_pdf("data_folder/illinois_wic_data_january_2021.pdf", "final_jsons/wic.csv")
+
+
+def parse_wic_pdf(source_pdf_filepath: str, destination_csv_filepath: str):
     # use regular expression matching to find lines that start with certain words and save as variables:
     # find rows that start with Total (this includes Total Women, Total Infant and Total Children rows)
     Total_re = re.compile("Total")
@@ -27,14 +31,11 @@ def read_wic_data():
     # create empty data frame with column names
     data = pd.DataFrame(columns=column_names)
 
-    # filepath to the PDF we want to read data from
-    filepath = "data_folder/illinois_wic_data_january_2021.pdf"
-
-    with pdfplumber.open(filepath) as pdf:
+    with pdfplumber.open(source_pdf_filepath) as pdf:
     
         # read each page of the pdf pages 1 thru 97. Skip page 0 because it shows Statewide totals which we don't need
-        for p in range(1, 97):
-            page = pdf.pages[p]
+        if True:
+            page = pdf.pages[0]
 
             # extract_text() adds spaces where the horizontal distance between bits of text is greater than x_tolerance
             # and adds newline characters where the vertical distance between bits of text is greater than y_tolerance.
@@ -72,7 +73,4 @@ def read_wic_data():
     # delete WIC1 and WIC 2 columns
     data.drop(['WIC1', 'WIC2'], axis=1, inplace=True)
 
-    # GCFD asked that we save the data to a csv and provide it to them
-    # save as csv
-    csv_filepath = "final_jsons/wic.csv"
-    data.to_csv(csv_filepath, index=False)
+    data.to_csv(destination_csv_filepath, index=False)
