@@ -13,6 +13,7 @@ final_jsons/*.json
 shape_files/*.json
 *.csv
 *.xlsx
+*.pkl
 
 ### Jupyter Notebook ###
 .ipynb_checkpoints/
