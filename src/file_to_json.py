@@ -20,7 +20,7 @@ def main(blacklist=[]):
             f_ext = f.split('.')[-1]
             table_ls = []
             if f_ext[:3] == 'xls':
-                table = pd.read_excel(fp, sheet_name=None)
+                table = pd.read_excel(fp, sheet_name=None, engine='openpyxl')
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
