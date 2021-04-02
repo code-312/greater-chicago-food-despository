@@ -4,16 +4,15 @@ sys.path.append(os.path.abspath(''))
 import pandas as pd
 
 
-def main(blacklist=[]):
+def file_to_json(blacklist=[]):
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    import os
     json_ls = list()
     f_walk = os.walk('data_folder')
 
-    for subdir, dir, files in f_walk:
+    for subdir, _, files in f_walk:
         for f in files:
             # pandas not only provides file reading functionality,
             # but outputs in a single format
@@ -44,7 +43,7 @@ def main(blacklist=[]):
                 # index 1: DataFrame
                 # breakpoint()
                 try:
-                    table_json = table_to_json(t[1], t[0], blacklist=blacklist)
+                    table_json = table_to_json(t[1], t[0])
                 except Exception as e:
                     print(e)
                     print(t)
@@ -87,7 +86,7 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df,  filename, blacklist=[]):
+def table_to_json(df, filename):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
@@ -100,18 +99,12 @@ def table_to_json(df,  filename, blacklist=[]):
         # determine fips function
         df = determine_fips(df)
         # return merged dataframe
-
-    # TODO nest data
+    
     df = df.set_index('fips')
     df_json_str = df.to_json(orient='index')
-    df_json_dict = json.loads(df_json_str)
-    # breakpoint()
-    df_values = [*df_json_dict.values()][0]
 
-    final_dict = {k: {filename: v} for k, v in df_values.items()}
-
-    return final_dict
+    return df_json_str
 
 
 if __name__ == '__main__':
-    main(blacklist=['Key'])
+    file_to_json(blacklist=['Key'])
