@@ -31,13 +31,13 @@ def parse_wic_pdf(
     # We'll use these regular expressions to find the lines we care about.
     # Find rows that start with Total (this includes Total Women, Total Infant
     # and Total Children rows)
-    Total_re = re.compile("Total")
+    total_re = re.compile("Total")
     # It's not clear specifically what "LA Total" means, but these rows
     # contains the subtotal values for the specific County
-    County_Total_re = re.compile("LA Total")
+    county_total_re = re.compile("LA Total")
     # find rows that start with three digits (these rows contain County ID and
     # name, example: 031 COOK)
-    County_re = re.compile(r"\d\d\d")
+    county_re = re.compile(r"\d\d\d")
 
     column_names = ["County_ID",
                     "County",
@@ -71,19 +71,19 @@ def parse_wic_pdf(
 
             # iterate thru each line on a page
             for line in text.split("\n"):
-                if County_re.match(line):
+                if county_re.match(line):
                     # We have to find the County information first because we
                     # insert it in every row maxsplit=1 because some counties
                     # have spaces in their name, example: Jo Daviess
                     County = (line.split(sep=" ", maxsplit=1))
-                elif Total_re.match(line):
+                elif total_re.match(line):
                     # Split out a list like ["Total", "Women", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
                     new_line = County + new_line
                     data = data.append(
                         pd.Series(new_line, index=data.columns),
                         ignore_index=True)
-                elif County_Total_re.match(line):
+                elif county_total_re.match(line):
                     # Split out a list like ["LA", "Total", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
                     new_line = County + new_line
