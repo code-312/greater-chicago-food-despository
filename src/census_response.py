@@ -224,10 +224,13 @@ class CensusData:
         str_idx = total_col_str.find('_')
         metric = total_col_str[:str_idx]
         # divides df by total column to calculate percentages
-        # rounds to save space
-        divide_by_total = lambda x: np.round(x / df[total_col_str], 6)  # noqa: E731, E501
-        # try:
-        percent_df = df.apply(divide_by_total).drop(total_col_str, axis=1)
+        divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
+        # Casts to type float64 for numpy interoperability
+        percent_df = df.apply(divide_by_total) \
+                       .drop(total_col_str, axis=1) \
+                       .astype('float64')
+        # Rounds to save space
+        percent_df = np.round(percent_df, 6)
         # except:
         #     print(df.dtypes)
         #     raise Exception
@@ -309,10 +312,11 @@ class CensusData:
             q_dict = q_df.to_dict(orient='list')
             cls.data_bins.update({'quantiles': q_dict})  # noqa: E501
 
-            # create quantile bins using natural breaks algorithm. bin_count could be increased to > 4 if needed.
+            # create quantile bins using natural breaks algorithm.
+            # bin_count could be increased to > 4 if needed.
             q_dict = calculate_natural_breaks_bins(pct_df, bin_count=4,
-                                                   column_names=["poverty_population_poverty",
-                                                                 "poverty_population_poverty_child"])
+                                                   column_names=["poverty_population_poverty",  # noqa: E501
+                                                                 "poverty_population_poverty_child"])  # noqa: E501
 
             cls.data_bins.update({'natural_breaks': q_dict})
 
@@ -396,11 +400,12 @@ def county_fips(reverse=False) -> dict:
     return il_json
 
 
-def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int, column_names: List[str]) -> Dict[str, List[float]]:
+def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
+                                  column_names: List[str]) -> Dict[str, List[float]]:  # noqa: 501
     """
     :param df: Pandas dataframe.
     :param bin_count: Number of bins used to classify data.
-    :param column_names The dataframe column names to use to calculate jenks natural breaks
+    :param column_names: dataframe column names used to calculate breaks
     :return: Dictionary of column name and list of bin cutoff limits.
     """
     bin_dict = {}
