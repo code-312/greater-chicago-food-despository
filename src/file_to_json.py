@@ -58,7 +58,7 @@ def determine_fips(df):
     Returns df with fips codes
     County name in df must be in the first column or named 'County Name'
     '''
-    from census_response import county_fips
+    from src.census_response import county_fips
 
     fips = county_fips()
     # Verifies county column
