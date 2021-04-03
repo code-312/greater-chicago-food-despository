@@ -21,7 +21,13 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
             f_name, f_ext = os.path.splitext(f) 
             table_ls = []
             if f_ext[:4] == '.xls':
-                table = pd.read_excel(fp, sheet_name=None, engine='openpyxl')
+                # openpyxl can open .xlsx but not .xls
+                # xlrd can open .xls but not .xlsx
+                if f_ext == '.xlsx':
+                    engine = 'openpyxl'
+                else:
+                    engine = 'xlrd'
+                table = pd.read_excel(fp, sheet_name=None, engine=engine)
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
