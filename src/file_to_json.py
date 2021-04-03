@@ -41,9 +41,8 @@ def file_to_json(blacklist=[]):
                 # table_ls is list of tuples
                 # index 0: unique name
                 # index 1: DataFrame
-                # breakpoint()
                 try:
-                    table_json = table_to_json(t[1], t[0])
+                    table_json = table_to_json(t[1])
                 except Exception as e:
                     print(e)
                     print(t)
@@ -86,12 +85,11 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df, filename):
+def table_to_json(df):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
     '''
-    import json
 
     # get county FIPs, if necessary
     columns = [c.lower() for c in df.columns]
