@@ -1,3 +1,4 @@
+import os
 import re
 import pdfplumber
 import pandas as pd
@@ -12,14 +13,27 @@ and then saves that data to a dataframe. GCFD staff also requested a .csv
 version of the data'''
 
 
-def read_wic_data() -> None:
-    # PDF has 97 pages. Skip page 0 because it shows Statewide totals which we
-    # don't need
-    parse_wic_pdf(
-        "data_folder/illinois_wic_data_january_2021.pdf",
-        "final_jsons/wic.csv",
-        1,
-        96)
+def is_up_to_date(input_file_path: str, output_file_path: str) -> bool:
+    try:
+        return os.path.getmtime(output_file_path) > \
+            os.path.getmtime(input_file_path)
+    except FileNotFoundError:
+        return False
+
+
+def read_wic_data(always_run: bool = False) -> None:
+
+    input_file_path = "data_folder/illinois_wic_data_january_2021.pdf"
+    output_file_path = "final_jsons/wic.csv"
+
+    if always_run or not is_up_to_date(input_file_path, output_file_path):
+        # PDF has 97 pages. Skip page 0 because it shows Statewide totals
+        # which we don't need
+        parse_wic_pdf(
+            input_file_path,
+            output_file_path,
+            1,
+            96)
 
 
 def parse_wic_pdf(
