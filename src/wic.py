@@ -39,21 +39,7 @@ def parse_wic_pdf(
     # name, example: 031 COOK)
     county_re = re.compile(r"\d\d\d")
 
-    column_names = ["County_ID",
-                    "County",
-                    "WIC1",
-                    "WIC2",
-                    "Amer. Indian or Alaskan Native",
-                    "Asian",
-                    "Black or African American",
-                    "Native Hawaii or Other Pacific Isl.",
-                    "White",
-                    "Multi-Racial",
-                    "Total Participants",
-                    "Hispanic or Latino"]
-
-    # create empty data frame with column names
-    data = pd.DataFrame(columns=column_names)
+    rows = []
 
     with pdfplumber.open(source_pdf_filepath) as pdf:
 
@@ -75,21 +61,31 @@ def parse_wic_pdf(
                     # We have to find the County information first because we
                     # insert it in every row maxsplit=1 because some counties
                     # have spaces in their name, example: Jo Daviess
-                    County = (line.split(sep=" ", maxsplit=1))
+                    county = (line.split(sep=" ", maxsplit=1))
                 elif total_re.match(line):
                     # Split out a list like ["Total", "Women", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
-                    new_line = County + new_line
-                    data = data.append(
-                        pd.Series(new_line, index=data.columns),
-                        ignore_index=True)
+                    rows.append(county + new_line)
+
                 elif county_total_re.match(line):
                     # Split out a list like ["LA", "Total", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
-                    new_line = County + new_line
-                    data = data.append(
-                        pd.Series(new_line, index=data.columns),
-                        ignore_index=True)
+                    rows.append(county + new_line)
+
+    column_names = ["County_ID",
+                    "County",
+                    "WIC1",
+                    "WIC2",
+                    "Amer. Indian or Alaskan Native",
+                    "Asian",
+                    "Black or African American",
+                    "Native Hawaii or Other Pacific Isl.",
+                    "White",
+                    "Multi-Racial",
+                    "Total Participants",
+                    "Hispanic or Latino"]
+
+    data = pd.DataFrame(rows, columns=column_names)
 
     # Currently the data looks like this:
     # WIC1      WIC2       etc
