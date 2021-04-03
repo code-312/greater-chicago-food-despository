@@ -12,9 +12,13 @@ api_keys.py
 final_jsons/*.json
 shape_files/*.json
 *.csv
+*.xls
 *.xlsx
 !data_folder/*.xlsx
 !data_folder/*.csv
+!tests/resources/*.xlsx
+!tests/resources/*.xls
+!tests/resources/*.csv
 
 ### Jupyter Notebook ###
 .ipynb_checkpoints/
