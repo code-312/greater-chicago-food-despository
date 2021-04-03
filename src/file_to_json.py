@@ -3,14 +3,12 @@ import sys
 sys.path.append(os.path.abspath(''))
 import pandas as pd
 
-
-def file_to_json(blacklist=[]):
+def file_to_json(input_dir, output_dir, blacklist=[]):
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    json_ls = list()
-    f_walk = os.walk('data_folder')
+    f_walk = os.walk(input_dir)
 
     for subdir, _, files in f_walk:
         for f in files:
@@ -19,38 +17,34 @@ def file_to_json(blacklist=[]):
             # if performance requires, other packages may be implemented,
             # that may require additional processing after reading in the file
             fp = os.path.join(subdir, f)
-            f_ext = f.split('.')[-1]
+            # using splitext allows '.' to appear in the filename
+            f_name, f_ext = os.path.splitext(f) 
             table_ls = []
-            if f_ext[:3] == 'xls':
+            if f_ext[:4] == '.xls':
                 table = pd.read_excel(fp, sheet_name=None, engine='openpyxl')
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
-                            table_ls.append((k+f, table[k]))
+                            table_ls.append((k+f_name, table[k]))
                         else:
                             continue
-            elif f_ext == 'csv':
-                table_ls.append((f, pd.read_csv(fp)))
-            elif f_ext == 'gitkeep':
-                # for directory processing
-                continue
+            elif f_ext == '.csv':
+                table_ls.append((f_name, pd.read_csv(fp)))
             else:
-                return Exception('File Type Not Supported')
+                # need to account for e.g. .gitkeep and PDF files
+                print('Skipping unsupported file {}'.format(f))
+                continue
 
             for t in table_ls:
                 # table_ls is list of tuples
                 # index 0: unique name
                 # index 1: DataFrame
                 try:
-                    table_json = table_to_json(t[1])
+                    table_to_json(t[1], os.path.join(output_dir, t[0] + '.json'))
                 except Exception as e:
                     print(e)
                     print(t)
                     print('-'*10)
-                    table_json = []
-                json_ls.append(table_json)
-
-    return(json_ls)
 
 
 def determine_fips(df):
@@ -85,7 +79,7 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df):
+def table_to_json(df, filepath):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
@@ -99,10 +93,8 @@ def table_to_json(df):
         # return merged dataframe
     
     df = df.set_index('fips')
-    df_json_str = df.to_json(orient='index')
-
-    return df_json_str
+    df.to_json(filepath, orient='index')
 
 
 if __name__ == '__main__':
-    file_to_json(blacklist=['Key'])
+    file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
