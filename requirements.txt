@@ -18,3 +18,5 @@ python-dotenv==0.15.0
 guppy3==3.1.0
 # pdf parsing
 pdfplumber==0.5.27
+# linting
+flake8==3.9.0
