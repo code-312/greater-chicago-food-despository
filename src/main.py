@@ -62,7 +62,7 @@ def census_data(geo_ls=["zip", "county"]):
     return None
 
 
-def main(geo_ls=["zip", "county"]):
+def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
     Calls censusData function to create CensusData instances
     and return list of dictionaries
@@ -74,7 +74,8 @@ def main(geo_ls=["zip", "county"]):
     print("Reading WIC Data")
     wic_start_time = time.time()
     src.wic.read_wic_data()
-    print("Reading WIC Data took: {0:.2f} seconds".format(time.time() - wic_start_time))
+    if (verbose):
+        print("Reading WIC Data took: {0:.2f} seconds".format(time.time() - wic_start_time))
 
     print("Reading Census Data")
     mph.setup_memory_usage_file_if_enabled()
