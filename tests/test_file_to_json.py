@@ -4,9 +4,9 @@ import sys
 sys.path.append(os.path.abspath(''))
 from src.file_to_json import file_to_json
 
-def test_output(actual, expected):
-    with open(actual) as actual_file:
-        with open(expected) as expected_file:
+def test_output(actual_path, expected_path):
+    with open(actual_path) as actual_file:
+        with open(expected_path) as expected_file:
             assert actual_file.read() == expected_file.read()
 
 def clean_output(filepath):
