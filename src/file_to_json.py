@@ -90,6 +90,7 @@ def table_to_json(df, filepath):
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
     '''
+    import json
 
     # get county FIPs, if necessary
     columns = [c.lower() for c in df.columns]
@@ -99,7 +100,13 @@ def table_to_json(df, filepath):
         # return merged dataframe
     
     df = df.set_index('fips')
-    df.to_json(filepath, orient='index')
+    json_str = df.to_json(orient='index')
+    #normalize line endings to LF
+    json_str = json_str.replace('\\r\\n', '\\n').replace('\\r', '\\n')
+    final_json = json.loads(json_str)
+    with open(filepath, 'w') as json_file:
+        # separators option here minimizes whitespace
+        json.dump(final_json, json_file, separators=(',',':'))
 
 
 if __name__ == '__main__':
