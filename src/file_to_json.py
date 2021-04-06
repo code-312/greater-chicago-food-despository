@@ -1,7 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.abspath(''))
-import pandas as pd
+import pandas as pd  # noqa: E402
+
 
 def file_to_json(input_dir, output_dir, blacklist=[]):
     '''
@@ -18,7 +19,7 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
             # that may require additional processing after reading in the file
             fp = os.path.join(subdir, f)
             # using splitext allows '.' to appear in the filename
-            f_name, f_ext = os.path.splitext(f) 
+            f_name, f_ext = os.path.splitext(f)
             table_ls = []
             if f_ext[:4] == '.xls':
                 # openpyxl can open .xlsx but not .xls
@@ -46,7 +47,8 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
                 # index 0: unique name
                 # index 1: DataFrame
                 try:
-                    table_to_json(t[1], os.path.join(output_dir, t[0] + '.json'))
+                    table_to_json(t[1], os.path.join(output_dir,
+                                                     t[0] + '.json'))
                 except Exception as e:
                     print(e)
                     print(t)
@@ -97,7 +99,7 @@ def table_to_json(df, filepath):
         # determine fips function
         df = determine_fips(df)
         # return merged dataframe
-    
+
     df = df.set_index('fips')
     df.to_json(filepath, orient='index')
 

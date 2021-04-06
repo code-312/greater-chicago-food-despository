@@ -5,7 +5,7 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 from src.census_response import CensusData  # noqa: E402
-from src.file_to_json import file_to_json
+from src.file_to_json import file_to_json  # noqa: E402
 
 '''
 Defines and calls Census data requests
