@@ -97,9 +97,7 @@ def table_to_json(df, filepath):
     # get county FIPs, if necessary
     columns = [c.lower() for c in df.columns]
     if 'fips' not in columns:
-        # determine fips function
         df = determine_fips(df)
-        # return merged dataframe
 
     df = df.set_index('fips')
     json_str = df.to_json(orient='index')
