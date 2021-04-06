@@ -103,12 +103,12 @@ def table_to_json(df, filepath):
 
     df = df.set_index('fips')
     json_str = df.to_json(orient='index')
-    #normalize line endings to LF
+    # normalize line endings to LF
     json_str = json_str.replace('\\r\\n', '\\n').replace('\\r', '\\n')
     final_json = json.loads(json_str)
     with open(filepath, 'w') as json_file:
         # separators option here minimizes whitespace
-        json.dump(final_json, json_file, separators=(',',':'))
+        json.dump(final_json, json_file, separators=(',', ':'))
 
 
 if __name__ == '__main__':
