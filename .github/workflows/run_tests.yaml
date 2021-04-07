@@ -16,7 +16,6 @@ jobs:
       - run: python3 -m pip install --upgrade pip
       - run: pip install -r requirements.txt
       - run: pytest
-      - run: flake8
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
@@ -33,7 +32,6 @@ jobs:
       - run: py -m pip install --upgrade pip
       - run: pip install -r requirements.txt
       - run: pytest
-      - run: flake8
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
@@ -50,7 +48,6 @@ jobs:
       - run: python3 -m pip install --upgrade pip
       - run: pip install -r requirements.txt
       - run: pytest
-      - run: flake8
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
