@@ -1,6 +1,15 @@
 import pandas as pd
 from src.census_response import calculate_natural_breaks_bins
+from src.census_response import CensusData
 
+def test_census():
+    geo_ls=["zip", "county"]
+
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+
+    race_metrics = ('race', {'B03002_001E': 'race_total'})
+    race = CensusData(race_metrics, detailed_table, geo_ls)
+    dataframes = race.get_data()
 
 def test_calculate_natural_breaks_bins_correctly_categorizes_valid_data():
     test_zip_pct_df = {
