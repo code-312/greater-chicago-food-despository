@@ -31,6 +31,9 @@ shape_files/*.json
 ## ignore test script
 untitled.py
 
+## ignore test output
+tests/output
+
 ## Memory Profiling ##
 memory_profile_report.txt
 raw_memory_usage.txt

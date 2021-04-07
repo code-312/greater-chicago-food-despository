@@ -17,18 +17,14 @@ def clean_output(filepath):
 
 
 def test_file_to_json():
-    try:
-        file_to_json('tests/resources', 'tests/resources', blacklist=['Key'])
-        check_output('tests/resources/Countytest_food_insecurity_xls.json',
-                     'tests/resources/test_food_insecurity_expected.json')
-        check_output('tests/resources/Countytest_food_insecurity_xlsx.json',
-                     'tests/resources/test_food_insecurity_expected.json')
-        check_output('tests/resources/test_food_insecurity_csv.json',
-                     'tests/resources/test_food_insecurity_expected.json')
-    finally:
-        clean_output('tests/resources/Countytest_food_insecurity_xls.json')
-        clean_output('tests/resources/Countytest_food_insecurity_xlsx.json')
-        clean_output('tests/resources/test_food_insecurity_csv.json')
+    file_to_json('tests/resources', 'tests/resources/output',
+                 blacklist=['Key'])
+    check_output('tests/output/Countytest_food_insecurity_xls.json',
+                 'tests/resources/test_food_insecurity_expected.json')
+    check_output('tests/output/Countytest_food_insecurity_xlsx.json',
+                 'tests/resources/test_food_insecurity_expected.json')
+    check_output('tests/output/test_food_insecurity_csv.json',
+                 'tests/resources/test_food_insecurity_expected.json')
 
 
 if __name__ == '__main__':
