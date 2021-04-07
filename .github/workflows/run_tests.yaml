@@ -19,6 +19,7 @@ jobs:
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
+      - run: flake8
   run-tests-windows:
     runs-on: windows-latest
     strategy:
@@ -35,6 +36,7 @@ jobs:
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
+      - run: flake8
   run-tests-mac-os:
     runs-on: macos-latest
     strategy:
@@ -51,4 +53,5 @@ jobs:
         env:
           CENSUS_KEY: ${{ secrets.CENSUS_KEY }}
           FIREBASE_SERVICE_KEY: ${{ secrets.FIREBASE_SERVICE_KEY }}
+      - run: flake8
 
