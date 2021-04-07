@@ -1,11 +1,13 @@
 import os
 import sys
+import time
 sys.path.append(os.path.abspath(''))
 # Raises linting error because not at top of file
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 from src.census_response import CensusData  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
+import src.wic  # noqa: E402
 
 '''
 Defines and calls Census data requests
@@ -61,7 +63,7 @@ def census_data(geo_ls=["zip", "county"]):
     return None
 
 
-def main(geo_ls=["zip", "county"]):
+def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
     Calls censusData function to create CensusData instances
     and return list of dictionaries
@@ -69,6 +71,15 @@ def main(geo_ls=["zip", "county"]):
     and save jsons to file
     '''
     # from src import dict_merge
+
+    print("Reading WIC Data")
+    wic_start_time = time.time()
+    src.wic.read_wic_data()
+    if (verbose):
+        wic_duration = time.time() - wic_start_time
+        print("Reading WIC Data took: {0:.2f} seconds".format(wic_duration))
+
+    print("Reading Census Data")
     mph.setup_memory_usage_file_if_enabled()
     mph.record_current_memory_usage_if_enabled()
     census_data(geo_ls)

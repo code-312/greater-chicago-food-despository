@@ -20,5 +20,7 @@ guppy3==3.1.0
 openpyxl==3.0.7
 # read xls files
 xlrd==2.0.1
+# pdf parsing
+pdfplumber==0.5.27
 # linting
 flake8==3.9.0
