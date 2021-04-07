@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 from src.census_response import CensusData  # noqa: E402
-import src.wic
+import src.wic  # noqa: E402
 
 '''
 Defines and calls Census data requests
@@ -75,7 +75,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     wic_start_time = time.time()
     src.wic.read_wic_data()
     if (verbose):
-        print("Reading WIC Data took: {0:.2f} seconds".format(time.time() - wic_start_time))
+        wic_duration = time.time() - wic_start_time
+        print("Reading WIC Data took: {0:.2f} seconds".format(wic_duration))
 
     print("Reading Census Data")
     mph.setup_memory_usage_file_if_enabled()
