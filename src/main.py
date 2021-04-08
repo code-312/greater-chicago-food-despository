@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 from src.census_response import CensusData  # noqa: E402
+from src.file_to_json import file_to_json  # noqa: E402
 import src.wic  # noqa: E402
 
 '''
@@ -87,6 +88,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     CensusData.process_data(save=True)
     mph.record_current_memory_usage_if_enabled()
 
+    file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
+    mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
 
     return None

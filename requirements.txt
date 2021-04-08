@@ -16,6 +16,10 @@ geojson==2.5.0
 python-dotenv==0.15.0
 # memory profiling
 guppy3==3.1.0
+# read xlsx files
+openpyxl==3.0.7
+# read xls files
+xlrd==2.0.1
 # pdf parsing
 pdfplumber==0.5.27
 # linting
