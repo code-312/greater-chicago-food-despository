@@ -81,12 +81,12 @@ class CensusData:
         return df_ls
 
     @classmethod
-    def process_data(cls, save=False):
+    def process_data(cls, save=False) -> None:
         cls.__pd_process_race()
         cls.__pd_process_poverty()
 
         if save:
-            cls.df_to_json(both=True)
+            cls.df_to_json(should_output_dump=True, should_output_merged=True)
 
     def __panda_from_json(self, response_json, geo):
         '''
@@ -135,7 +135,11 @@ class CensusData:
         return geo_df
 
     @classmethod
-    def df_to_json(cls, zip_df=True, both=False):
+    def df_to_json(cls,
+                   should_output_dump=False,
+                   should_output_merged=True,
+                   dump_output_path='final_jsons/df_dump.json',
+                   merged_output_path='final_jsons/df_merged_json.json') -> None:
         '''
         Saves df to file
         Default: zips dataframe by geo_code
@@ -143,13 +147,13 @@ class CensusData:
         Otherwise: saves df.to_json() in dictionary to json
             This format loads with load_df()
         '''
-        zip_df = False if both else zip_df
         class_json_dict = dict()
         # Add Meta Data Here (Bins, etc)
         class_json_dict['meta'] = {'data_metrics': cls.data_metrics,
                                    'data_bins': cls.data_bins}
-        if not (zip_df):
-            fp = 'final_jsons/df_dump.json'
+
+        if should_output_dump:
+            fp = dump_output_path
             zip_dict = class_json_dict.copy()
             for k in cls.df_dict:
                 zip_dict[k] = cls.df_dict[k].to_dict()
@@ -157,40 +161,37 @@ class CensusData:
             with open(fp, 'w') as f:
                 json.dump(zip_dict, f, separators=(',', ':'),
                           cls=NumpyEncoder)
-            if not (both):
-                return fp
+            print(f'Data updated at {fp}')
 
-        # determine metrics
-        # Not sure we need this many loops, \
-        # but seemed like a good idea at the time
-        for geo in cls.df_dict:
-            geo_dict = dict()
-            for geo_area in cls.df_dict[geo].itertuples():
-                geo_area_dict = {f'{m}_data': dict()
-                                 for m in cls.data_metrics.keys()}
-                for name in geo_area._fields:
-                    if name == "Index":
-                        continue
-                    for metric in cls.data_metrics.keys():
-                        metric_name = f'{metric}_data'
-                        geo_area_dict[metric_name]
-                        if metric in name:
-                            geo_area_dict[metric_name][name] = getattr(
-                                geo_area, name)
-                            break
-                    else:
-                        geo_area_dict[name] = getattr(geo_area, name)
-                geo_dict[geo_area.Index] = geo_area_dict
-            class_json_dict[f'{geo}_data'] = geo_dict
+        if should_output_merged:
+            # determine metrics
+            # Not sure we need this many loops, \
+            # but seemed like a good idea at the time
+            for geo in cls.df_dict:
+                geo_dict = dict()
+                for geo_area in cls.df_dict[geo].itertuples():
+                    geo_area_dict = {f'{m}_data': dict()
+                                    for m in cls.data_metrics.keys()}
+                    for name in geo_area._fields:
+                        if name == "Index":
+                            continue
+                        for metric in cls.data_metrics.keys():
+                            metric_name = f'{metric}_data'
+                            geo_area_dict[metric_name]
+                            if metric in name:
+                                geo_area_dict[metric_name][name] = getattr(
+                                    geo_area, name)
+                                break
+                        else:
+                            geo_area_dict[name] = getattr(geo_area, name)
+                    geo_dict[geo_area.Index] = geo_area_dict
+                class_json_dict[f'{geo}_data'] = geo_dict
 
-        fp = 'final_jsons/df_merged_json.json'
-        with open(fp, 'w') as f:
-            json.dump(class_json_dict, f, separators=(',', ':'),
-                      cls=NumpyEncoder, sort_keys=True)
-
-        fp = 'final_jsons/' if both else fp
-        print(f'Data updated at {fp}')
-        return fp
+            fp = merged_output_path
+            with open(fp, 'w') as f:
+                json.dump(class_json_dict, f, separators=(',', ':'),
+                        cls=NumpyEncoder, sort_keys=True)
+            print(f'Data updated at {fp}')
 
     @classmethod
     def load_df(cls, fp='final_jsons/df_dump.json'):
@@ -212,11 +213,11 @@ class CensusData:
         return None
 
     @classmethod
-    def get_data_values(cls, metric_name):
+    def get_data_values(cls, metric_name: str):
         return tuple(cls.data_metrics[metric_name].values())
 
     @classmethod
-    def __nest_percentages(cls, df, total_col_str):
+    def __nest_percentages(cls, df: pd.DataFrame, total_col_str: str):
         '''
         Calculates percentages and removes NaN for dict conversion
         Returns calculated percent_df and series of dictionaries
@@ -244,7 +245,11 @@ class CensusData:
         return percent_df, dict_series
 
     @classmethod
-    def __pd_process_race(cls):
+    def __pd_process_race(cls) -> None:
+
+        if 'race' not in cls.data_metrics:
+            return
+
         def majority(series):
             '''
             Returns majority race demographic
@@ -297,7 +302,11 @@ class CensusData:
             cls.df_dict[geo_area] = geo_df
 
     @classmethod
-    def __pd_process_poverty(cls):
+    def __pd_process_poverty(cls) -> None:
+
+        if 'poverty' not in cls.data_metrics:
+            return
+
         for geo_area in cls.df_dict:
             geo_df = cls.df_dict[geo_area]
 

@@ -8,13 +8,15 @@ def test_census():
 
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
 
-    race_metrics = ('race', {'B03002_001E': 'race_total'})
+    race_metrics = ('race', {'B03002_001E': 'race_total',
+                             'B03002_005E': 'race_native'})
     race = CensusData(race_metrics, detailed_table, geo_ls)
     race.get_data()
 
-    json_file_path = CensusData.df_to_json(zip_df=False)
+    CensusData.df_to_json(should_output_dump=True)
+    CensusData.process_data(save=True)
 
-    with open(json_file_path) as actual_output_file:
+    with open("final_jsons/df_dump.json") as actual_output_file:
         actual_output_text = actual_output_file.read()
 
         with open("tests/resources/census_race_expected_output.json") \
