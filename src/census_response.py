@@ -29,6 +29,66 @@ def get_census_response(table_url: str,
     return response
 
 
+def global_df_to_json(data_metrics: Dict,
+                      data_bins: Dict,
+                      df_dict: Dict,
+                      should_output_dump=False,
+                      should_output_merged=True,
+                      dump_output_path='final_jsons/df_dump.json',
+                      merged_output_path='final_jsons/df_merged_json.json') -> None:  # noqa: E501
+    '''
+    Saves df to file
+    Default: zips dataframe by geo_code
+    Both: overrides zip_df, saves both
+    Otherwise: saves df.to_json() in dictionary to json
+        This format loads with load_df()
+    '''
+    class_json_dict = dict()
+    # Add Meta Data Here (Bins, etc)
+    class_json_dict['meta'] = {'data_metrics': data_metrics,
+                               'data_bins': data_bins}
+
+    if should_output_dump:
+        fp = dump_output_path
+        zip_dict = class_json_dict.copy()
+        for k in df_dict:
+            zip_dict[k] = df_dict[k].to_dict()
+
+        with open(fp, 'w') as f:
+            json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder)
+        print(f'Data updated at {fp}')
+
+    if should_output_merged:
+        # determine metrics
+        # Not sure we need this many loops, \
+        # but seemed like a good idea at the time
+        for geo in df_dict:
+            geo_dict = dict()
+            for geo_area in df_dict[geo].itertuples():
+                geo_area_dict = {f'{m}_data': dict()
+                                 for m in data_metrics.keys()}
+                for name in geo_area._fields:
+                    if name == "Index":
+                        continue
+                    for metric in data_metrics.keys():
+                        metric_name = f'{metric}_data'
+                        geo_area_dict[metric_name]
+                        if metric in name:
+                            geo_area_dict[metric_name][name] = getattr(
+                                geo_area, name)
+                            break
+                    else:
+                        geo_area_dict[name] = getattr(geo_area, name)
+                geo_dict[geo_area.Index] = geo_area_dict
+            class_json_dict[f'{geo}_data'] = geo_dict
+
+        fp = merged_output_path
+        with open(fp, 'w') as f:
+            json.dump(class_json_dict, f, separators=(',', ':'),
+                      cls=NumpyEncoder, sort_keys=True)
+        print(f'Data updated at {fp}')
+
+
 class CensusData:
     '''
     Stores and Updates Census Data in df_dict
@@ -148,51 +208,13 @@ class CensusData:
         Otherwise: saves df.to_json() in dictionary to json
             This format loads with load_df()
         '''
-        class_json_dict = dict()
-        # Add Meta Data Here (Bins, etc)
-        class_json_dict['meta'] = {'data_metrics': cls.data_metrics,
-                                   'data_bins': cls.data_bins}
-
-        if should_output_dump:
-            fp = dump_output_path
-            zip_dict = class_json_dict.copy()
-            for k in cls.df_dict:
-                zip_dict[k] = cls.df_dict[k].to_dict()
-
-            with open(fp, 'w') as f:
-                json.dump(zip_dict, f, separators=(',', ':'),
-                          cls=NumpyEncoder)
-            print(f'Data updated at {fp}')
-
-        if should_output_merged:
-            # determine metrics
-            # Not sure we need this many loops, \
-            # but seemed like a good idea at the time
-            for geo in cls.df_dict:
-                geo_dict = dict()
-                for geo_area in cls.df_dict[geo].itertuples():
-                    geo_area_dict = {f'{m}_data': dict()
-                                     for m in cls.data_metrics.keys()}
-                    for name in geo_area._fields:
-                        if name == "Index":
-                            continue
-                        for metric in cls.data_metrics.keys():
-                            metric_name = f'{metric}_data'
-                            geo_area_dict[metric_name]
-                            if metric in name:
-                                geo_area_dict[metric_name][name] = getattr(
-                                    geo_area, name)
-                                break
-                        else:
-                            geo_area_dict[name] = getattr(geo_area, name)
-                    geo_dict[geo_area.Index] = geo_area_dict
-                class_json_dict[f'{geo}_data'] = geo_dict
-
-            fp = merged_output_path
-            with open(fp, 'w') as f:
-                json.dump(class_json_dict, f, separators=(',', ':'),
-                          cls=NumpyEncoder, sort_keys=True)
-            print(f'Data updated at {fp}')
+        global_df_to_json(cls.data_metrics,
+                          cls.data_bins,
+                          cls.df_dict,
+                          should_output_dump=should_output_dump,
+                          should_output_merged=should_output_merged,
+                          dump_output_path=dump_output_path,
+                          merged_output_path=merged_output_path)
 
     @classmethod
     def load_df(cls, fp='final_jsons/df_dump.json'):
