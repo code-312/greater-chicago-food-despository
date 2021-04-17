@@ -81,12 +81,9 @@ class CensusData:
         return df_ls
 
     @classmethod
-    def process_data(cls, save=False) -> None:
+    def process_data(cls) -> None:
         cls.__pd_process_race()
         cls.__pd_process_poverty()
-
-        if save:
-            cls.df_to_json(should_output_dump=True, should_output_merged=True)
 
     def __panda_from_json(self, response_json, geo):
         '''

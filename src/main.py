@@ -82,7 +82,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     census_data(geo_ls)
     mph.record_current_memory_usage_if_enabled()
 
-    CensusData.process_data(save=True)
+    CensusData.process_data()
     mph.record_current_memory_usage_if_enabled()
 
     mph.generate_report_if_enabled()

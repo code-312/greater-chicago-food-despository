@@ -13,8 +13,8 @@ def test_census():
     race = CensusData(race_metrics, detailed_table, geo_ls)
     race.get_data()
 
-    CensusData.df_to_json(should_output_dump=True)
-    CensusData.process_data(save=True)
+    CensusData.process_data()
+    CensusData.df_to_json(should_output_dump=True, should_output_merged=True)
 
     with open("final_jsons/df_dump.json") as actual_output_file:
         actual_output_text = actual_output_file.read()
