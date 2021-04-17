@@ -8,7 +8,9 @@ from numpyencoder import NumpyEncoder
 from typing import Dict, List
 
 
-def get_census_response(table_url: str, get_ls: List[str], geo: str) -> List[List[str]]:
+def get_census_response(table_url: str,
+                        get_ls: List[str],
+                        geo: str) -> List[List[str]]:
     '''
     Concatenates url string and returns response from census api query
     input:
@@ -75,7 +77,9 @@ class CensusData:
         get_ls = list(self.var_dict.keys())
         df_ls = []
         for g in self.geo_ls:
-            self.response_json = get_census_response(self.table, get_ls, geo_dict[g])
+            self.response_json = get_census_response(self.table,
+                                                     get_ls,
+                                                     geo_dict[g])
             df = self.__panda_from_json(self.response_json, g)
             df_ls.append(df)
         return df_ls
@@ -136,7 +140,7 @@ class CensusData:
                    should_output_dump=False,
                    should_output_merged=True,
                    dump_output_path='final_jsons/df_dump.json',
-                   merged_output_path='final_jsons/df_merged_json.json') -> None:
+                   merged_output_path='final_jsons/df_merged_json.json') -> None:  # noqa: E501
         '''
         Saves df to file
         Default: zips dataframe by geo_code
@@ -168,7 +172,7 @@ class CensusData:
                 geo_dict = dict()
                 for geo_area in cls.df_dict[geo].itertuples():
                     geo_area_dict = {f'{m}_data': dict()
-                                    for m in cls.data_metrics.keys()}
+                                     for m in cls.data_metrics.keys()}
                     for name in geo_area._fields:
                         if name == "Index":
                             continue
@@ -187,7 +191,7 @@ class CensusData:
             fp = merged_output_path
             with open(fp, 'w') as f:
                 json.dump(class_json_dict, f, separators=(',', ':'),
-                        cls=NumpyEncoder, sort_keys=True)
+                          cls=NumpyEncoder, sort_keys=True)
             print(f'Data updated at {fp}')
 
     @classmethod
