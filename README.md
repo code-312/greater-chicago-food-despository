@@ -5,8 +5,7 @@
 <u>To run:</u>
 
 1. Obtain a Census API key [here](https://api.census.gov/data/key_signup.html)
-2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing
-   secrets.
+2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
 3. Add the following to the `.env`:
 
 ```
@@ -18,7 +17,9 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
          - Mac/Linux: `pip3 install -r requirements.txt`
          - Windows: `pip install -r requirements.txt`
      - For initial run:
-       - On Mac/Linux: run `start.sh` via terminal or double click
+       - On Mac/Linux: 
+         - Make script executable `chmod 755 start.sh`
+         - run `start.sh` via terminal or double click
        - On Windows: run `start.bat` via command line or double click
        - If tests do not pass, check `.env` or package versions
      - After environment set up, run with:
