@@ -8,7 +8,7 @@ from numpyencoder import NumpyEncoder
 from typing import Dict, List
 
 
-def get_census_response(table_url: str, get_ls: List[str], geo: str):
+def get_census_response(table_url: str, get_ls: List[str], geo: str) -> List[List[str]]:
     '''
     Concatenates url string and returns response from census api query
     input:
@@ -16,13 +16,14 @@ def get_census_response(table_url: str, get_ls: List[str], geo: str):
         get_ls (ls): list of tables to get data from
         geo (str): geographic area and filter
     output:
-        response (requests.response): api response
+        list of rows. first row is header:
+            [NAME, <elements of get_ls>, state, county]
     '''
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
     # print(f"Calling for {geo}: {get_ls}")
-    response = requests.get(url)
-    # print(f"{response} Received")
+    response = requests.get(url).json()
+    # print(f"{response.json()} Received")
     return response
 
 
@@ -74,8 +75,7 @@ class CensusData:
         get_ls = list(self.var_dict.keys())
         df_ls = []
         for g in self.geo_ls:
-            response = get_census_response(self.table, get_ls, geo_dict[g])
-            self.response_json = response.json()
+            self.response_json = get_census_response(self.table, get_ls, geo_dict[g])
             df = self.__panda_from_json(self.response_json, g)
             df_ls.append(df)
         return df_ls
