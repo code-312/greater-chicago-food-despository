@@ -8,7 +8,7 @@ from numpyencoder import NumpyEncoder
 from typing import Dict, List
 
 
-def get_census_response(table_url, get_ls, geo):
+def get_census_response(table_url: str, get_ls: List[str], geo: str):
     '''
     Concatenates url string and returns response from census api query
     input:
@@ -63,7 +63,7 @@ class CensusData:
         self.table = table
         self.geo_ls = geo_ls
 
-    def get_data(self):
+    def get_data(self) -> List[pd.DataFrame]:
         '''
         Calls getCensusResponse on each geography
         Sends response json to __panda_from_json function
@@ -186,7 +186,7 @@ class CensusData:
         fp = 'final_jsons/df_merged_json.json'
         with open(fp, 'w') as f:
             json.dump(class_json_dict, f, separators=(',', ':'),
-                      cls=NumpyEncoder)
+                      cls=NumpyEncoder, sort_keys=True)
 
         fp = 'final_jsons/' if both else fp
         print(f'Data updated at {fp}')
