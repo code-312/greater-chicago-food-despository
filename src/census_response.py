@@ -378,7 +378,6 @@ def county_fips(reverse=False) -> dict:
     input: reverse (bool) reverses keys and values in output
     output: il_json (dict) {'county name': 'fip'}
     '''
-    import requests
 
     url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
 
