@@ -34,6 +34,8 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
          2. View the report: `memory_profiling\memory_profile_report.txt`
  1. Explore Data:
       - After code runs, then you can open the dataframes in `getting_started/example.ipynb`
+        - With VSCode, Python and Jupyter extensions enable opening Notebook files
+        - Alternatively: getting started with [JupyterLab](https://jupyter.org/install)
 <details>
 <summary><u>ACS5 Data Tables</u></summary>
 
