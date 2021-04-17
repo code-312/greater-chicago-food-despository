@@ -3,7 +3,7 @@ from src.census_response import calculate_natural_breaks_bins
 from src.census_response import CensusData
 
 
-def test_census():
+def test_census_dump():
     geo_ls = ["zip", "county"]
 
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
@@ -14,12 +14,41 @@ def test_census():
     race.get_data()
 
     CensusData.process_data()
-    CensusData.df_to_json(should_output_dump=True, should_output_merged=True)
 
-    with open("final_jsons/df_dump.json") as actual_output_file:
+    actual_output_path = "final_jsons/census_race_dump_actual_output.json"
+    CensusData.df_to_json(should_output_dump=True,
+                          should_output_merged=False,
+                          dump_output_path=actual_output_path)
+
+    with open(actual_output_path) as actual_output_file:
         actual_output_text = actual_output_file.read()
 
-        with open("tests/resources/census_race_expected_output.json") \
+        with open("tests/resources/census_race_dump_expected_output.json") \
+                as expected_output_file:
+            assert actual_output_text == expected_output_file.read()
+
+
+def test_census_merged():
+    geo_ls = ["zip", "county"]
+
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+
+    race_metrics = ('race', {'B03002_001E': 'race_total',
+                             'B03002_005E': 'race_native'})
+    race = CensusData(race_metrics, detailed_table, geo_ls)
+    race.get_data()
+
+    CensusData.process_data()
+
+    actual_output_path = "final_jsons/census_race_merged_actual_output.json"
+    CensusData.df_to_json(should_output_dump=False,
+                          should_output_merged=True,
+                          merged_output_path=actual_output_path)
+
+    with open(actual_output_path) as actual_output_file:
+        actual_output_text = actual_output_file.read()
+
+        with open("tests/resources/census_race_merged_expected_output.json") \
                 as expected_output_file:
             assert actual_output_text == expected_output_file.read()
 
