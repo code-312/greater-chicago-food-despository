@@ -7,6 +7,52 @@ import pandas as pd
 from numpyencoder import NumpyEncoder
 from typing import Dict, List, Tuple
 
+def download_census_data(geo_ls=["zip", "county"]) -> None:
+    '''
+    Top level function to run the queries
+    '''
+
+    # Census tables
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+
+    # define race instance
+    # Values name format: topic_property_subproperty...
+    # B03002_003E: Does not include people of hispanic/latino origin
+    race_metrics = ('race',
+                    {'B03002_001E': 'race_total', 'B03002_005E': 'race_native',
+                     'B03002_004E': 'race_black', 'B03002_003E': 'race_white',
+                     'B03002_009E': 'race_twoplus_total',
+                     'B03002_007E': 'race_pacific',
+                     'B03002_008E': 'race_other', 'B03002_006E': 'race_asian',
+                     'B03002_012E': 'race_hispaniclatino_total'})
+    # race_functions = [processRaceData]
+    # variable does not need to be defined, but it is for readability
+    race = CensusData(race_metrics, detailed_table, geo_ls)
+
+    # define poverty instance
+    poverty_metrics = ('poverty',
+                       {'S1701_C01_001E': 'poverty_population_total',
+                        'S1701_C02_001E': 'poverty_population_poverty',
+                        'S1701_C02_002E': 'poverty_population_poverty_child'})
+    # If additional subdivision are needed
+    # 'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
+    # 'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
+    # poverty_functions = [processPovertyData]
+    poverty = CensusData(poverty_metrics, subject_table, geo_ls)
+
+    race.get_data()
+    poverty.get_data()
+    CensusData.process_data()
+    global_df_to_json(CensusData.data_metrics,
+                      CensusData.data_bins,
+                      CensusData.df_dict,
+                      should_output_dump=True,
+                      should_output_merged=True,
+                      dump_output_path='final_jsons/df_dump.json',
+                      merged_output_path='final_jsons/df_merged_json.json')
+
+    return None
 
 def get_census_response(table_url: str,
                         get_ls: List[str],
@@ -34,8 +80,8 @@ def global_df_to_json(data_metrics: Dict,
                       df_dict: Dict,
                       should_output_dump=False,
                       should_output_merged=True,
-                      dump_output_path='final_jsons/df_dump.json',
-                      merged_output_path='final_jsons/df_merged_json.json') -> None:  # noqa: E501
+                      dump_output_path: str = '',
+                      merged_output_path: str = '') -> None:
     '''
     Saves df to file
     Default: zips dataframe by geo_code
@@ -139,7 +185,7 @@ class CensusData:
             Default loads unzipped saved file, described above
     '''
     df_dict = {}  # maps geographic area ('zip' or 'county') to dataframe
-    data_metrics = dict()
+    data_metrics = dict() # maps metric names to map of census variable to variable names
     data_bins = dict()
 
     def __init__(self, var_metrics: Tuple[str, dict],
