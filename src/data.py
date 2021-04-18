@@ -4,6 +4,17 @@ import pickle
 import json
 from numpyencoder import NumpyEncoder
 
+'''
+Defines data structure and relationships
+Classes:
+    DataObject
+
+Methods:
+    load_data - loads data from disk
+    get_data - returns data from memory
+    export_data - saves data to merged JSON
+'''
+
 gcfd_data = {}
 
 
@@ -12,13 +23,16 @@ class DataObject:
     name: str
     df: pd.DataFrame
     parent: str = None
+    fp: str = None
 
     def __post_init__(self):
+        if self.fp is None:
+            self.fp = f"data_objects/{self.name}.pkl"
         self.to_pickle()
         gcfd_data[self.name] = self
     
     def to_pickle(self):
-        with open(f"data_objects/{self.name}.pkl", "wb") as f:
+        with open(self.fp, "wb") as f:
             pickle.dump(self, f)
     
     def to_dict(self):
@@ -54,7 +68,8 @@ def export_data():
             # final_dict[v.parent][v.name] = v_dict
             parent = final_dict[v.parent]
             for k in parent:
-                parent[k][v.name] = dict(v_dict[k].values())
+                # breakpoint()
+                parent[k][v.name] = dict(v_dict[k][v.name])
                 
         elif v.parent:
             parent_dict[v.parent] = v
