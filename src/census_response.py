@@ -44,7 +44,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     race.get_data()
     poverty.get_data()
     CensusData.process_data()
-    global_df_to_json(CensusData.data_metrics,
+    df_to_json(CensusData.data_metrics,
                       CensusData.data_bins,
                       CensusData.df_dict,
                       should_output_dump=True,
@@ -75,7 +75,7 @@ def get_census_response(table_url: str,
     return response
 
 
-def global_df_to_json(data_metrics: Dict,
+def df_to_json(data_metrics: Dict,
                       data_bins: Dict,
                       df_dict: Dict,
                       should_output_dump=False,
@@ -83,11 +83,8 @@ def global_df_to_json(data_metrics: Dict,
                       dump_output_path: str = '',
                       merged_output_path: str = '') -> None:
     '''
-    Saves df to file
-    Default: zips dataframe by geo_code
-    Both: overrides zip_df, saves both
-    Otherwise: saves df.to_json() in dictionary to json
-        This format loads with load_df()
+    Saves dataframe to file as json
+    This format loads with load_df()
     '''
     class_json_dict = dict()
     # Add Meta Data Here (Bins, etc)
@@ -268,27 +265,6 @@ class CensusData:
             self.df_dict[geo] = geo_df
 
         return geo_df
-
-    @classmethod
-    def df_to_json(cls,
-                   should_output_dump=False,
-                   should_output_merged=True,
-                   dump_output_path='final_jsons/df_dump.json',
-                   merged_output_path='final_jsons/df_merged_json.json') -> None:  # noqa: E501
-        '''
-        Saves df to file
-        Default: zips dataframe by geo_code
-        Both: overrides zip_df, saves both
-        Otherwise: saves df.to_json() in dictionary to json
-            This format loads with load_df()
-        '''
-        global_df_to_json(cls.data_metrics,
-                          cls.data_bins,
-                          cls.df_dict,
-                          should_output_dump=should_output_dump,
-                          should_output_merged=should_output_merged,
-                          dump_output_path=dump_output_path,
-                          merged_output_path=merged_output_path)
 
     @classmethod
     def load_df(cls, fp='final_jsons/df_dump.json'):

@@ -1,5 +1,5 @@
 import pandas as pd
-from src.census_response import calculate_natural_breaks_bins, CensusData, global_df_to_json
+from src.census_response import calculate_natural_breaks_bins, CensusData, df_to_json
 
 
 def test_census_dump():
@@ -15,7 +15,7 @@ def test_census_dump():
     CensusData.process_data()
 
     actual_output_path = "final_jsons/census_race_dump_actual_output.json"
-    global_df_to_json(CensusData.data_metrics,
+    df_to_json(CensusData.data_metrics,
                       CensusData.data_bins,
                       CensusData.df_dict,
                       should_output_dump=True,
@@ -43,7 +43,7 @@ def test_census_merged():
     CensusData.process_data()
 
     actual_output_path = "final_jsons/census_race_merged_actual_output.json"
-    global_df_to_json(CensusData.data_metrics,
+    df_to_json(CensusData.data_metrics,
                       CensusData.data_bins,
                       CensusData.df_dict,
                       should_output_dump=False,
