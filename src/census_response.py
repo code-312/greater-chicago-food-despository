@@ -5,7 +5,7 @@ import requests
 import numpy as np
 import pandas as pd
 from numpyencoder import NumpyEncoder
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
 def get_census_response(table_url: str,
@@ -89,6 +89,34 @@ def global_df_to_json(data_metrics: Dict,
         print(f'Data updated at {fp}')
 
 
+def nest_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
+    '''
+    Calculates percentages and removes NaN for dict conversion
+    Returns calculated percent_df and series of dictionaries
+    '''
+    str_idx = total_col_str.find('_')
+    metric = total_col_str[:str_idx]
+    # divides df by total column to calculate percentages
+    divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
+    # Casts to type float64 for numpy interoperability
+    percent_df = df.apply(divide_by_total) \
+                    .drop(total_col_str, axis=1) \
+                    .astype('float64')
+    # Rounds to save space
+    percent_df = np.round(percent_df, 6)
+    # except:
+    #     print(df.dtypes)
+    #     raise Exception
+    # converts NAN to None, for proper JSON encoding
+    working_df = percent_df.where(pd.notnull(percent_df), None)
+    # creates series of race percentages as a dictionary
+    # this allows us to add percentages to the main table,
+    # without adding many more columns
+    dict_series = working_df.apply(pd.Series.to_dict, axis=1)
+    dict_series.name = f'{metric}_percentages'
+    return percent_df, dict_series
+
+
 class CensusData:
     '''
     Stores and Updates Census Data in df_dict
@@ -110,11 +138,11 @@ class CensusData:
         Load dataframe using CensusData.load_df()
             Default loads unzipped saved file, described above
     '''
-    df_dict = {}
+    df_dict = {}  # maps geographic area ('zip' or 'county') to dataframe
     data_metrics = dict()
     data_bins = dict()
 
-    def __init__(self, var_metrics: tuple,
+    def __init__(self, var_metrics: Tuple[str, dict],
                  table: str, geo_ls: list = ["zip", "county"]):
         '''
         Initialized instance
@@ -149,7 +177,7 @@ class CensusData:
         cls.__pd_process_race()
         cls.__pd_process_poverty()
 
-    def __panda_from_json(self, response_json, geo):
+    def __panda_from_json(self, response_json: List[List[str]], geo: str):
         '''
         Called by getData method
         Updates CensusData.zip_df and returns response_df
@@ -240,34 +268,6 @@ class CensusData:
         return tuple(cls.data_metrics[metric_name].values())
 
     @classmethod
-    def __nest_percentages(cls, df: pd.DataFrame, total_col_str: str):
-        '''
-        Calculates percentages and removes NaN for dict conversion
-        Returns calculated percent_df and series of dictionaries
-        '''
-        str_idx = total_col_str.find('_')
-        metric = total_col_str[:str_idx]
-        # divides df by total column to calculate percentages
-        divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
-        # Casts to type float64 for numpy interoperability
-        percent_df = df.apply(divide_by_total) \
-                       .drop(total_col_str, axis=1) \
-                       .astype('float64')
-        # Rounds to save space
-        percent_df = np.round(percent_df, 6)
-        # except:
-        #     print(df.dtypes)
-        #     raise Exception
-        # converts NAN to None, for proper JSON encoding
-        working_df = percent_df.where(pd.notnull(percent_df), None)
-        # creates series of race percentages as a dictionary
-        # this allows us to add percentages to the main table,
-        # without adding many more columns
-        dict_series = working_df.apply(pd.Series.to_dict, axis=1)
-        dict_series.name = f'{metric}_percentages'
-        return percent_df, dict_series
-
-    @classmethod
     def __pd_process_race(cls) -> None:
 
         if 'race' not in cls.data_metrics:
@@ -301,7 +301,7 @@ class CensusData:
             race_df = geo_df.loc[:, race_values]
 
             # divides df by race_total column to calculate percentages
-            race_percent_df, pct_dict_series = cls.__nest_percentages(race_df, 'race_total')  # noqa: E501
+            race_percent_df, pct_dict_series = nest_percentages(race_df, 'race_total')  # noqa: E501
 
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
@@ -338,7 +338,7 @@ class CensusData:
             poverty_values = cls.get_data_values('poverty')
             poverty_df = geo_df.loc[:, poverty_values]
             total_col = 'poverty_population_total'
-            pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
+            pct_df, pct_series = nest_percentages(poverty_df, total_col)
 
             q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
             q_dict = q_df.to_dict(orient='list')
