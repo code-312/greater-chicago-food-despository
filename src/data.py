@@ -41,8 +41,8 @@ class DataObject:
         return d_dict
 
 
-def load_data():
-    with open("data_objects/test_zip.pkl", "rb") as f:
+def load_data(fp="data_objects/test_zip.pkl"):
+    with open(fp, "rb") as f:
         d = pickle.load(f)
         gcfd_data[d.name] = d
 
@@ -51,7 +51,7 @@ def get_data():
     return gcfd_data.copy()
 
 
-def export_data():
+def export_data(fp="final_jsons/test_data_obj.json"):
     final_dict = {}
     parent_dict = {}
     for v in gcfd_data.values():
@@ -76,5 +76,6 @@ def export_data():
         else:
             final_dict[v.name] = v_dict
 
-    with open("final_jsons/test_data_obj.json", "w") as f:
-        json.dump(final_dict, f, cls=NumpyEncoder)
+    with open(fp, "w") as f:
+        json.dump(final_dict, f, separators=(',', ':'),
+                  cls=NumpyEncoder)
