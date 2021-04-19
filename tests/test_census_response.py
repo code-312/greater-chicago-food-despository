@@ -1,5 +1,5 @@
 import pandas as pd
-from src.census_response import calculate_natural_breaks_bins, CensusData, df_to_json
+from src.census_response import calculate_natural_breaks_bins, CensusData, get_and_save_census_data
 
 
 def test_census_dump():
@@ -10,17 +10,9 @@ def test_census_dump():
     race_metrics = ('race', {'B03002_001E': 'race_total',
                              'B03002_005E': 'race_native'})
     race = CensusData(race_metrics, detailed_table, geo_ls)
-    race.get_data()
-
-    CensusData.process_data()
 
     actual_output_path = "final_jsons/census_race_dump_actual_output.json"
-    df_to_json(CensusData.data_metrics,
-                      CensusData.data_bins,
-                      CensusData.df_dict,
-                      should_output_dump=True,
-                      should_output_merged=False,
-                      dump_output_path=actual_output_path)
+    get_and_save_census_data([race], dump_output_path=actual_output_path)
 
     with open(actual_output_path) as actual_output_file:
         actual_output_text = actual_output_file.read()
@@ -38,17 +30,9 @@ def test_census_merged():
     race_metrics = ('race', {'B03002_001E': 'race_total',
                              'B03002_005E': 'race_native'})
     race = CensusData(race_metrics, detailed_table, geo_ls)
-    race.get_data()
-
-    CensusData.process_data()
 
     actual_output_path = "final_jsons/census_race_merged_actual_output.json"
-    df_to_json(CensusData.data_metrics,
-                      CensusData.data_bins,
-                      CensusData.df_dict,
-                      should_output_dump=False,
-                      should_output_merged=True,
-                      merged_output_path=actual_output_path)
+    get_and_save_census_data([race], merged_output_path=actual_output_path)
 
     with open(actual_output_path) as actual_output_file:
         actual_output_text = actual_output_file.read()

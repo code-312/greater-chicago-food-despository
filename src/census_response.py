@@ -41,18 +41,30 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     # poverty_functions = [processPovertyData]
     poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
-    race.get_data()
-    poverty.get_data()
+    get_and_save_census_data([race, poverty],
+                              dump_output_path='final_jsons/df_dump.json',
+                              merged_output_path='final_jsons/df_merged_json.json')
+
+
+def get_and_save_census_data(data_requests: list,
+                             dump_output_path: str = "",
+                             merged_output_path: str = "") -> None:
+
+    for request in data_requests:
+        request.get_data()
+
+    should_output_dump = dump_output_path != ""
+    should_output_merged = merged_output_path != ""
+
     CensusData.process_data()
     df_to_json(CensusData.data_metrics,
                       CensusData.data_bins,
                       CensusData.df_dict,
-                      should_output_dump=True,
-                      should_output_merged=True,
-                      dump_output_path='final_jsons/df_dump.json',
-                      merged_output_path='final_jsons/df_merged_json.json')
+                      should_output_dump=should_output_dump,
+                      should_output_merged=should_output_merged,
+                      dump_output_path=dump_output_path,
+                      merged_output_path=merged_output_path)
 
-    return None
 
 def get_census_response(table_url: str,
                         get_ls: List[str],
@@ -183,7 +195,10 @@ class CensusData:
     '''
     df_dict = {}  # maps geographic area ('zip' or 'county') to dataframe
     data_metrics = dict() # maps metric names to map of census variable to variable names
-    data_bins = dict()
+
+    # maps bin type to metric name to list of boundaries for the bins.
+    # e.g. {"quantiles": {"poverty_population_poverty": [1, 2, 3, 4, 5]}}
+    data_bins = dict() 
 
     def __init__(self, var_metrics: Tuple[str, dict],
                  table: str, geo_ls: list = ["zip", "county"]):
