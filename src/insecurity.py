@@ -31,5 +31,6 @@ def merge_insecurity_data():
 
     save_with_insecurity(merged_data)
 
+
 if __name__ == '__main__':
     merge_insecurity_data()
