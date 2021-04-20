@@ -32,7 +32,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     src.census_response.download_census_data()
     if (verbose):
         census_duration = time.time() - census_start_time
-        print("Reading Census Data took: {0:.2f} seconds".format(census_duration))
+        print("Reading Census Data took: {0:.2f} seconds".format(census_duration))  # noqa: E501
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()

@@ -1,10 +1,12 @@
 import pandas as pd
-from src.census_response import calculate_natural_breaks_bins, CensusData, get_and_save_census_data
+from src.census_response import calculate_natural_breaks_bins, CensusData, get_and_save_census_data  # noqa: E501
+
 
 def assert_file_contents_equal(path_a: str, path_b: str):
     with open(path_a) as file_a:
         with open(path_b) as file_b:
             assert file_a.read() == file_b.read()
+
 
 def test_race_dump():
     geo_ls = ["zip", "county"]
@@ -18,7 +20,7 @@ def test_race_dump():
     actual_output_path = "final_jsons/census_race_dump_actual_output.json"
     get_and_save_census_data([race], dump_output_path=actual_output_path)
 
-    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_dump_expected_output.json")
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_dump_expected_output.json")  # noqa: E501
 
 
 def test_race_merged():
@@ -33,7 +35,7 @@ def test_race_merged():
     actual_output_path = "final_jsons/census_race_merged_actual_output.json"
     get_and_save_census_data([race], merged_output_path=actual_output_path)
 
-    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_merged_expected_output.json")
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_merged_expected_output.json")  # noqa: E501
 
 
 def test_poverty_dump():
@@ -41,15 +43,15 @@ def test_poverty_dump():
 
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
 
-    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',
-                                   'S1701_C02_001E': 'poverty_population_poverty',
-                                   'S1701_C02_002E': 'poverty_population_poverty_child'})
+    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',  # noqa: E501
+                                   'S1701_C02_001E': 'poverty_population_poverty',  # noqa: E501
+                                   'S1701_C02_002E': 'poverty_population_poverty_child'})  # noqa: E501
     poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
     actual_output_path = "final_jsons/census_poverty_dump_actual_output.json"
     get_and_save_census_data([poverty], dump_output_path=actual_output_path)
 
-    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_dump_expected_output.json")
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_dump_expected_output.json")  # noqa: E501
 
 
 def test_poverty_merged():
@@ -57,15 +59,15 @@ def test_poverty_merged():
 
     subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
 
-    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',
-                                   'S1701_C02_001E': 'poverty_population_poverty',
-                                   'S1701_C02_002E': 'poverty_population_poverty_child'})
+    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',  # noqa: E501
+                                   'S1701_C02_001E': 'poverty_population_poverty',  # noqa: E501
+                                   'S1701_C02_002E': 'poverty_population_poverty_child'})  # noqa: E501
     poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
     actual_output_path = "final_jsons/census_poverty_merged_actual_output.json"
     get_and_save_census_data([poverty], merged_output_path=actual_output_path)
 
-    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")  # noqa: E501
 
 
 def test_calculate_natural_breaks_bins_correctly_categorizes_valid_data():

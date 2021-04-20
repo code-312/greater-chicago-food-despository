@@ -7,6 +7,7 @@ import pandas as pd
 from numpyencoder import NumpyEncoder
 from typing import Dict, List, Tuple
 
+
 def download_census_data(geo_ls=["zip", "county"]) -> None:
     '''
     Top level function to run the queries
@@ -42,8 +43,8 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     poverty = CensusData(poverty_metrics, subject_table, geo_ls)
 
     get_and_save_census_data([race, poverty],
-                              dump_output_path='final_jsons/df_dump.json',
-                              merged_output_path='final_jsons/df_merged_json.json')
+                             dump_output_path='final_jsons/df_dump.json',
+                             merged_output_path='final_jsons/df_merged_json.json')  # noqa: E501
 
 
 def get_census_response(table_url: str,
@@ -68,10 +69,10 @@ def get_census_response(table_url: str,
 
 
 def df_to_json(data_metrics: Dict,
-                      data_bins: Dict,
-                      df_dict: Dict,
-                      dump_output_path: str = '',
-                      merged_output_path: str = '') -> None:
+               data_bins: Dict,
+               df_dict: Dict,
+               dump_output_path: str = '',
+               merged_output_path: str = '') -> None:
     '''
     Saves dataframe to file as json
     This format loads with load_df()
@@ -133,8 +134,8 @@ def nest_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
     divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
     # Casts to type float64 for numpy interoperability
     percent_df = df.apply(divide_by_total) \
-                    .drop(total_col_str, axis=1) \
-                    .astype('float64')
+                   .drop(total_col_str, axis=1) \
+                   .astype('float64')
     # Rounds to save space
     percent_df = np.round(percent_df, 6)
     # except:
@@ -172,11 +173,13 @@ class CensusData:
             Default loads unzipped saved file, described above
     '''
     df_dict = {}  # maps geographic area ('zip' or 'county') to dataframe
-    data_metrics = dict() # maps metric names to map of census variable to variable names
+
+    # maps metric names to map of census variable to variable names
+    data_metrics = dict()
 
     # maps bin type to metric name to list of boundaries for the bins.
     # e.g. {"quantiles": {"poverty_population_poverty": [1, 2, 3, 4, 5]}}
-    data_bins = dict() 
+    data_bins = dict()
 
     def __init__(self, var_metrics: Tuple[str, dict],
                  table: str, geo_ls: list = ["zip", "county"]):
@@ -470,7 +473,7 @@ def get_and_save_census_data(data_requests: List[CensusData],
 
     CensusData.process_data()
     df_to_json(CensusData.data_metrics,
-                      CensusData.data_bins,
-                      CensusData.df_dict,
-                      dump_output_path=dump_output_path,
-                      merged_output_path=merged_output_path)
+               CensusData.data_bins,
+               CensusData.df_dict,
+               dump_output_path=dump_output_path,
+               merged_output_path=merged_output_path)
