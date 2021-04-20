@@ -24,3 +24,5 @@ xlrd==2.0.1
 pdfplumber==0.5.27
 # linting
 flake8==3.9.0
+# type checks
+mypy==0.812

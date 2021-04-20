@@ -47,9 +47,9 @@ class CensusData:
         Load dataframe using CensusData.load_df()
             Default loads unzipped saved file, described above
     '''
-    df_dict = {}
-    data_metrics = dict()
-    data_bins = dict()
+    df_dict: Dict[str, pd.DataDrame] = {}
+    data_metrics: Dict[str, Dict[str, str]] = dict()
+    data_bins: Dict[str, Dict[str, List[float]]] = dict()
 
     def __init__(self, var_metrics: tuple,
                  table: str, geo_ls: list = ["zip", "county"]):
