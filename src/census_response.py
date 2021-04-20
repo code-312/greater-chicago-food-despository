@@ -46,26 +46,6 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
                               merged_output_path='final_jsons/df_merged_json.json')
 
 
-def get_and_save_census_data(data_requests: list,
-                             dump_output_path: str = "",
-                             merged_output_path: str = "") -> None:
-
-    for request in data_requests:
-        request.get_data()
-
-    should_output_dump = dump_output_path != ""
-    should_output_merged = merged_output_path != ""
-
-    CensusData.process_data()
-    df_to_json(CensusData.data_metrics,
-                      CensusData.data_bins,
-                      CensusData.df_dict,
-                      should_output_dump=should_output_dump,
-                      should_output_merged=should_output_merged,
-                      dump_output_path=dump_output_path,
-                      merged_output_path=merged_output_path)
-
-
 def get_census_response(table_url: str,
                         get_ls: List[str],
                         geo: str) -> List[List[str]]:
@@ -481,3 +461,23 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
         column_data = df[cn].dropna().to_list()
         bin_dict[cn] = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
     return bin_dict
+
+
+def get_and_save_census_data(data_requests: List[CensusData],
+                             dump_output_path: str = "",
+                             merged_output_path: str = "") -> None:
+
+    for request in data_requests:
+        request.get_data()
+
+    should_output_dump = dump_output_path != ""
+    should_output_merged = merged_output_path != ""
+
+    CensusData.process_data()
+    df_to_json(CensusData.data_metrics,
+                      CensusData.data_bins,
+                      CensusData.df_dict,
+                      should_output_dump=should_output_dump,
+                      should_output_merged=should_output_merged,
+                      dump_output_path=dump_output_path,
+                      merged_output_path=merged_output_path)
