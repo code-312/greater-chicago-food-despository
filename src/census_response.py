@@ -70,8 +70,6 @@ def get_census_response(table_url: str,
 def df_to_json(data_metrics: Dict,
                       data_bins: Dict,
                       df_dict: Dict,
-                      should_output_dump=False,
-                      should_output_merged=True,
                       dump_output_path: str = '',
                       merged_output_path: str = '') -> None:
     '''
@@ -83,7 +81,7 @@ def df_to_json(data_metrics: Dict,
     class_json_dict['meta'] = {'data_metrics': data_metrics,
                                'data_bins': data_bins}
 
-    if should_output_dump:
+    if dump_output_path != "":
         fp = dump_output_path
         zip_dict = class_json_dict.copy()
         for k in df_dict:
@@ -93,7 +91,7 @@ def df_to_json(data_metrics: Dict,
             json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder)
         print(f'Data updated at {fp}')
 
-    if should_output_merged:
+    if merged_output_path != "":
         # determine metrics
         # Not sure we need this many loops, \
         # but seemed like a good idea at the time
@@ -470,14 +468,9 @@ def get_and_save_census_data(data_requests: List[CensusData],
     for request in data_requests:
         request.get_data()
 
-    should_output_dump = dump_output_path != ""
-    should_output_merged = merged_output_path != ""
-
     CensusData.process_data()
     df_to_json(CensusData.data_metrics,
                       CensusData.data_bins,
                       CensusData.df_dict,
-                      should_output_dump=should_output_dump,
-                      should_output_merged=should_output_merged,
                       dump_output_path=dump_output_path,
                       merged_output_path=merged_output_path)
