@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(''))
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 from src.census_response import CensusData  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
+from src.insecurity import merge_ins_data  # noqa: E402
 import src.wic  # noqa: E402
 
 '''
@@ -89,6 +90,9 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     mph.record_current_memory_usage_if_enabled()
 
     file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
+    merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
+                   'final_jsons/df_merged_json.json',
+                   'final_jsons/df_merged_with_insecurity.json')
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
 
