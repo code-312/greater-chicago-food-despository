@@ -1,55 +1,58 @@
-import pandas as pd
+import os
+import sys
+sys.path.append(os.path.abspath(''))
+import pandas as pd  # noqa: E402
 
 
-def main(blacklist=[]):
+def file_to_json(input_dir, output_dir, blacklist=[]):
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    import os
-    json_ls = list()
-    f_walk = os.walk('data_folder')
+    f_walk = os.walk(input_dir)
 
-    for subdir, dir, files in f_walk:
+    for subdir, _, files in f_walk:
         for f in files:
             # pandas not only provides file reading functionality,
             # but outputs in a single format
             # if performance requires, other packages may be implemented,
             # that may require additional processing after reading in the file
             fp = os.path.join(subdir, f)
-            f_ext = f.split('.')[-1]
+            # using splitext allows '.' to appear in the filename
+            f_name, f_ext = os.path.splitext(f)
             table_ls = []
-            if f_ext[:3] == 'xls':
-                table = pd.read_excel(fp, sheet_name=None)
+            if f_ext[:4] == '.xls':
+                # openpyxl can open .xlsx but not .xls
+                # xlrd can open .xls but not .xlsx
+                if f_ext == '.xlsx':
+                    engine = 'openpyxl'
+                else:
+                    engine = 'xlrd'
+                table = pd.read_excel(fp, sheet_name=None, engine=engine)
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
-                            table_ls.append((k+f, table[k]))
+                            table_ls.append((k+f_name, table[k]))
                         else:
                             continue
-            elif f_ext == 'csv':
-                table_ls.append((f, pd.read_csv(fp)))
-            elif f_ext == 'gitkeep':
-                # for directory processing
-                continue
+            elif f_ext == '.csv':
+                table_ls.append((f_name, pd.read_csv(fp)))
             else:
-                return Exception('File Type Not Supported')
+                # need to account for e.g. .gitkeep and PDF files
+                print('Skipping unsupported file {}'.format(f))
+                continue
 
             for t in table_ls:
                 # table_ls is list of tuples
                 # index 0: unique name
                 # index 1: DataFrame
-                # breakpoint()
                 try:
-                    table_json = table_to_json(t[1], t[0], blacklist=blacklist)
+                    table_to_json(t[1], os.path.join(output_dir,
+                                                     t[0] + '.json'))
                 except Exception as e:
                     print(e)
                     print(t)
                     print('-'*10)
-                    table_json = []
-                json_ls.append(table_json)
-
-    return(json_ls)
 
 
 def determine_fips(df):
@@ -57,7 +60,7 @@ def determine_fips(df):
     Returns df with fips codes
     County name in df must be in the first column or named 'County Name'
     '''
-    from census_response import county_fips
+    from src.census_response import county_fips
 
     fips = county_fips()
     # Verifies county column
@@ -84,7 +87,7 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df,  filename, blacklist=[]):
+def table_to_json(df, filepath):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
@@ -94,21 +97,17 @@ def table_to_json(df,  filename, blacklist=[]):
     # get county FIPs, if necessary
     columns = [c.lower() for c in df.columns]
     if 'fips' not in columns:
-        # determine fips function
         df = determine_fips(df)
-        # return merged dataframe
 
-    # TODO nest data
     df = df.set_index('fips')
-    df_json_str = df.to_json(orient='index')
-    df_json_dict = json.loads(df_json_str)
-    # breakpoint()
-    df_values = [*df_json_dict.values()][0]
-
-    final_dict = {k: {filename: v} for k, v in df_values.items()}
-
-    return final_dict
+    json_str = df.to_json(orient='index')
+    # normalize line endings to LF
+    json_str = json_str.replace('\\r\\n', '\\n').replace('\\r', '\\n')
+    final_json = json.loads(json_str)
+    with open(filepath, 'w') as json_file:
+        # separators option here minimizes whitespace
+        json.dump(final_json, json_file, separators=(',', ':'))
 
 
 if __name__ == '__main__':
-    main(blacklist=['Key'])
+    file_to_json('data_folder', 'final_jsons', blacklist=['Key'])

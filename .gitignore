@@ -12,7 +12,9 @@ api_keys.py
 final_jsons/*.json
 shape_files/*.json
 *.csv
+*.xls
 *.xlsx
+*.pkl
 
 ### Jupyter Notebook ###
 .ipynb_checkpoints/
@@ -29,6 +31,9 @@ shape_files/*.json
 
 ## ignore test script
 untitled.py
+
+## ignore test output
+tests/output
 
 ## Memory Profiling ##
 memory_profile_report.txt

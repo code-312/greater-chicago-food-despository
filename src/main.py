@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
+from src.file_to_json import file_to_json  # noqa: E402
 import src.wic  # noqa: E402
 
 
@@ -20,19 +21,27 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
 
     print("Reading WIC Data")
     mph.record_current_memory_usage_if_enabled()
-    wic_start_time = time.time()
+    start_time = time.time()
     src.wic.read_wic_data()
     if (verbose):
-        wic_duration = time.time() - wic_start_time
-        print("Reading WIC Data took: {0:.2f} seconds".format(wic_duration))
+        duration = time.time() - start_time
+        print("Reading WIC Data took: {0:.2f} seconds".format(duration))
 
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
-    census_start_time = time.time()
+    start_time = time.time()
     src.census_response.download_census_data()
     if (verbose):
-        census_duration = time.time() - census_start_time
-        print("Reading Census Data took: {0:.2f} seconds".format(census_duration))  # noqa: E501
+        duration = time.time() - start_time
+        print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+
+    print("Reading Food Insecurity Data")
+    mph.record_current_memory_usage_if_enabled()
+    start_time = time.time()
+    file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
+    if (verbose):
+        duration = time.time() - start_time
+        print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()

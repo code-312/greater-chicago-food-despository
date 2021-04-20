@@ -5,8 +5,7 @@
 <u>To run:</u>
 
 1. Obtain a Census API key [here](https://api.census.gov/data/key_signup.html)
-2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing
-   secrets.
+2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
 3. Add the following to the `.env`:
 
 ```
@@ -14,17 +13,29 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
 ```
 
 4. Run scripts:
-    - test_jsons.py: runs all scripts and tests their output
-        - Verifies scripts produce valid jsons
-    - main.py: produces JSON files
-        - To run with memory profiling on MacOS/Linux:
-            1. Make sure the script is executable: `chmod 755 memory_profiling/run_main.sh`
-            2. Run the script: `./memory_profiling/run_main.sh`
-            3. View the report: `memory_profiling/memory_profile_report.txt`
-        - To run with memory profiling on Windows (TODO need a Windows user to write this):
-            1. Make sure the script is executable
-            2. Run the script:
-            3. View the report: `memory_profiling\memory_profile_report.txt`
+     - Install required modules in requirements.txt
+         - Mac/Linux: `pip3 install -r requirements.txt`
+         - Windows: `pip install -r requirements.txt`
+     - For initial run:
+       - On Mac/Linux: 
+         - Make script executable `chmod 755 start.sh`
+         - run `start.sh` via terminal or double click
+       - On Windows: run `start.bat` via command line or double click
+       - If tests do not pass, check `.env` or package versions
+     - After environment set up, run with:
+       - Mac/Linux: `python3 src/main.py`
+       - Windows: `python src\main.py`
+     - To run with memory profiling on MacOS/Linux:
+         1. Make sure the script is executable: `chmod 755 memory_profiling/run_main.sh`
+         2. Run the script: `./memory_profiling/run_main.sh`
+         3. View the report: `memory_profiling/memory_profile_report.txt`
+     - To run with memory profiling on Windows CMD/Powershell:
+         1. Run the script: `.\memory_profiling\run_main.bat`
+         2. View the report: `memory_profiling\memory_profile_report.txt`
+ 1. Explore Data:
+      - After code runs, then you can open the dataframes in `getting_started/example.ipynb`
+        - With VSCode, Python and Jupyter extensions enable opening Notebook files
+        - Alternatively: getting started with [JupyterLab](https://jupyter.org/install)
 <details>
 <summary><u>ACS5 Data Tables</u></summary>
 
