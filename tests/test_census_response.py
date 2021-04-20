@@ -1,8 +1,12 @@
 import pandas as pd
 from src.census_response import calculate_natural_breaks_bins, CensusData, get_and_save_census_data
 
+def assert_file_contents_equal(path_a: str, path_b: str):
+    with open(path_a) as file_a:
+        with open(path_b) as file_b:
+            assert file_a.read() == file_b.read()
 
-def test_census_dump():
+def test_race_dump():
     geo_ls = ["zip", "county"]
 
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
@@ -14,15 +18,10 @@ def test_census_dump():
     actual_output_path = "final_jsons/census_race_dump_actual_output.json"
     get_and_save_census_data([race], dump_output_path=actual_output_path)
 
-    with open(actual_output_path) as actual_output_file:
-        actual_output_text = actual_output_file.read()
-
-        with open("tests/resources/census_race_dump_expected_output.json") \
-                as expected_output_file:
-            assert actual_output_text == expected_output_file.read()
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_dump_expected_output.json")
 
 
-def test_census_merged():
+def test_race_merged():
     geo_ls = ["zip", "county"]
 
     detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
@@ -34,12 +33,39 @@ def test_census_merged():
     actual_output_path = "final_jsons/census_race_merged_actual_output.json"
     get_and_save_census_data([race], merged_output_path=actual_output_path)
 
-    with open(actual_output_path) as actual_output_file:
-        actual_output_text = actual_output_file.read()
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_race_merged_expected_output.json")
 
-        with open("tests/resources/census_race_merged_expected_output.json") \
-                as expected_output_file:
-            assert actual_output_text == expected_output_file.read()
+
+def test_poverty_dump():
+    geo_ls = ["zip", "county"]
+
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+
+    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',
+                                   'S1701_C02_001E': 'poverty_population_poverty',
+                                   'S1701_C02_002E': 'poverty_population_poverty_child'})
+    poverty = CensusData(poverty_metrics, subject_table, geo_ls)
+
+    actual_output_path = "final_jsons/census_poverty_dump_actual_output.json"
+    get_and_save_census_data([poverty], dump_output_path=actual_output_path)
+
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_dump_expected_output.json")
+
+
+def test_poverty_merged():
+    geo_ls = ["zip", "county"]
+
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+
+    poverty_metrics = ('poverty', {'S1701_C01_001E': 'poverty_population_total',
+                                   'S1701_C02_001E': 'poverty_population_poverty',
+                                   'S1701_C02_002E': 'poverty_population_poverty_child'})
+    poverty = CensusData(poverty_metrics, subject_table, geo_ls)
+
+    actual_output_path = "final_jsons/census_poverty_merged_actual_output.json"
+    get_and_save_census_data([poverty], merged_output_path=actual_output_path)
+
+    assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")
 
 
 def test_calculate_natural_breaks_bins_correctly_categorizes_valid_data():
