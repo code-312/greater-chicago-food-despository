@@ -47,7 +47,7 @@ class CensusData:
         Load dataframe using CensusData.load_df()
             Default loads unzipped saved file, described above
     '''
-    df_dict: Dict[str, pd.DataDrame] = {}
+    df_dict: Dict[str, pd.DataFrame] = {}
     data_metrics: Dict[str, Dict[str, str]] = dict()
     data_bins: Dict[str, Dict[str, List[float]]] = dict()
 
