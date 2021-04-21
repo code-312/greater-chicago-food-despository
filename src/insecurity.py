@@ -15,7 +15,8 @@ def save_merged(data, dst_path: str) -> None:
         json.dump(data, dst_file)
 
 
-def merge_ins_data(insecurity_src: str, merged_src: str, merged_dst: str) -> None:
+def merge_ins_data(insecurity_src: str,
+                   merged_src: str, merged_dst: str) -> None:
     ins_df = pd.read_json(insecurity_src, orient='index')
 
     # Remove County Name column because it already exists in merged_src
@@ -47,6 +48,7 @@ def merge_ins_data(insecurity_src: str, merged_src: str, merged_dst: str) -> Non
         county_data['insecurity_data'] = ins_dict[int(fips)]
 
     save_merged(merged_data, merged_dst)
+
 
 if __name__ == '__main__':
     merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
