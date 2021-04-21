@@ -12,7 +12,8 @@ def load_merged(src_path: str):
 
 def save_merged(data, dst_path: str) -> None:
     with open(dst_path, 'w') as dst_file:
-        json.dump(data, dst_file)
+        # Separators option here minimizes whitespace
+        json.dump(data, dst_file, separators=(',', ':'))
 
 
 def merge_ins_data(insecurity_src: str,
@@ -26,8 +27,11 @@ def merge_ins_data(insecurity_src: str,
     ins_df.columns = ['2018', '2020_projected',
                       '2018_child', '2020_child_projected']
 
-    # Note that the dictionary keys will be ints, not strs
-    ins_dict = ins_df.to_dict(orient='index')
+    # This is a little roundabout way of doing things,
+    # but it preserves the FIPS code as a string,
+    # and avoids some floating-point rounding issues
+    # that cropped up doing a straight df.to_dict()
+    ins_dict = json.loads(ins_df.to_json(orient='index'))
     merged_data = load_merged(merged_src)
 
     # merged_dst should be shaped like this:
@@ -45,12 +49,6 @@ def merge_ins_data(insecurity_src: str,
     # }
 
     for fips, county_data in merged_data['county_data'].items():
-        county_data['insecurity_data'] = ins_dict[int(fips)]
+        county_data['insecurity_data'] = ins_dict[fips]
 
     save_merged(merged_data, merged_dst)
-
-
-if __name__ == '__main__':
-    merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
-                   'final_jsons/df_merged_json.json',
-                   'final_jsons/df_merged_with_insecurity.json')
