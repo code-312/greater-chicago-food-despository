@@ -20,19 +20,6 @@ import src.config as config  # noqa: E402
 #         v_geojson = geojson.loads(v_str)
 #         assert v_geojson.is_valid == True
 
-
-def test_requirements():
-    import pkg_resources
-
-    requirements_path = "requirements.txt"
-    with open(requirements_path) as f:
-        requirements = pkg_resources.parse_requirements(f)
-        for r in requirements:
-            r = str(r)
-            pkg_resources.require(r)
-            # breakpoint()
-
-
 def test_auth():
     db = uploadJson.auth_firebase()
     cook = db.reference('/county_data/17031').get()
