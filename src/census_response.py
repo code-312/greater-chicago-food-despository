@@ -172,14 +172,13 @@ class CensusData:
         Load dataframe using CensusData.load_df()
             Default loads unzipped saved file, described above
     '''
-    df_dict = {}  # maps geographic area ('zip' or 'county') to dataframe
-
+    # maps geographic area ('zip' or 'county') to dataframe
+    df_dict: Dict[str, pd.DataFrame] = {}
     # maps metric names to map of census variable to variable names
-    data_metrics = dict()
-
+    data_metrics: Dict[str, Dict[str, str]] = dict()
     # maps bin type to metric name to list of boundaries for the bins.
     # e.g. {"quantiles": {"poverty_population_poverty": [1, 2, 3, 4, 5]}}
-    data_bins = dict()
+    data_bins: Dict[str, Dict[str, List[float]]] = dict()
 
     def __init__(self, var_metrics: Tuple[str, dict],
                  table: str, geo_ls: list = ["zip", "county"]):
