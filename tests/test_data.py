@@ -10,28 +10,29 @@ import sys
 sys.path.append(os.path.abspath(''))
 
 import pandas as pd  # noqa: E402
-import src.data as GCFDData  # noqa: E402
+from src.data import GCFDData  # noqa: E402
 
 
 def read_data():
-    if GCFDData.get_data() != {}:
-        GCFDData.gcfd_data = {}
+    assert GCFDData.get_data() == {}
     base = pd.read_pickle('./tests/resources/data_60002_base.xz')
     pct = pd.read_pickle('./tests/resources/data_60002_pct.xz')
-    GCFDData.DataObject('zip', base, fp="./tests/resources/base_obj.pkl")
-    GCFDData.DataObject('poverty_percentages', pct,
-                        parent='zip', fp='./tests/resources/pct_obj.pkl')
+    GCFDData('zip', base, fp="./tests/resources/base_obj.pkl")
+    GCFDData('poverty_percentages', pct,
+             parent='zip', fp='./tests/resources/pct_obj.pkl')
+    return GCFDData
 
 
 def test_pickle_output():
     read_data()
     data_copy_zip = GCFDData.get_data()['zip']
-    GCFDData.gcfd_data = {}
+    GCFDData.clear_data()
     assert GCFDData.get_data() == {}
     GCFDData.load_data("./tests/resources/base_obj.pkl")
     data_new_zip = GCFDData.get_data()['zip']
     assert type(data_copy_zip) == type(data_new_zip)
     assert data_copy_zip.to_dict() == data_new_zip.to_dict()
+    GCFDData.clear_data()
 
 
 def test_export_output():
@@ -41,3 +42,4 @@ def test_export_output():
     with open('./tests/resources/test_data_class_main.json') as main:
         with open(fp) as f:
             assert main.read() == f.read()
+    GCFDData.clear_data()
