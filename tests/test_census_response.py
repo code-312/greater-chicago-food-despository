@@ -92,7 +92,7 @@ def test_calculate_natural_breaks_bins_correctly_categorizes_valid_data():
     df = pd.DataFrame.from_dict(test_zip_pct_df)
     column_names = ["poverty_population_poverty",
                     "poverty_population_poverty_child"]
-    actual = calculate_natural_breaks_bins(df, 4, column_names)
+    actual = calculate_natural_breaks_bins(df, 4, column_names).to_dict()
 
     expected = {
         'poverty_population_poverty': [
