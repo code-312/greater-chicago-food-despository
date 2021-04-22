@@ -100,7 +100,7 @@ def df_to_json(data_metrics: Dict,
             geo_dict = dict()
             for geo_area in df_dict[geo].itertuples():
                 geo_area_dict: Dict = {f'{m}_data': dict()
-                                 for m in data_metrics.keys()}
+                                       for m in data_metrics.keys()}
                 for name in geo_area._fields:
                     if name == "Index":
                         continue
