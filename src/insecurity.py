@@ -1,16 +1,43 @@
-import os
-import sys
 import json
 import pandas as pd
-sys.path.append(os.path.abspath(''))
+from typing import Any
 
 
-def load_merged(src_path: str):
+# the data returned from load_merged
+# should be shaped like this:
+#
+# {
+#     meta:{ ... }
+#     zip_data: {...}
+#     county_data: {
+#         <fips>: {
+#             race_data:{...}
+#             poverty_data:{...}
+#             NAME:{...}
+#         }
+#     }
+# }
+def load_merged(src_path: str) -> Any:
     with open(src_path) as src_file:
         return json.load(src_file)
 
 
-def save_merged(data, dst_path: str) -> None:
+# the data written by save_merged
+# should be shaped like this:
+#
+# {
+#     meta:{ ... }
+#     zip_data: {...}
+#     county_data: {
+#         <fips>: {
+#             race_data:{...}
+#             poverty_data:{...}
+#             insecurity_data:{...}
+#             NAME:{...}
+#         }
+#     }
+# }
+def save_merged(data: Any, dst_path: str) -> None:
     with open(dst_path, 'w') as dst_file:
         # Separators option here minimizes whitespace
         json.dump(data, dst_file, separators=(',', ':'))
@@ -33,20 +60,6 @@ def merge_ins_data(insecurity_src: str,
     # that cropped up doing a straight df.to_dict()
     ins_dict = json.loads(ins_df.to_json(orient='index'))
     merged_data = load_merged(merged_src)
-
-    # merged_dst should be shaped like this:
-    # {
-    #     meta:{ ... }
-    #     zip_data: {...}
-    #     county_data: {
-    #         <fips>: {
-    #             race_data:{...}
-    #             poverty_data:{...}
-    #             insecurity_data:{...}
-    #             NAME:{...}
-    #         }
-    #     }
-    # }
 
     for fips, county_data in merged_data['county_data'].items():
         county_data['insecurity_data'] = ins_dict[fips]

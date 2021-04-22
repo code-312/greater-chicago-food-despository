@@ -16,7 +16,3 @@ def test_insecurity_merge():
                    'tests/output/df_merged_with_insecurity_actual.json')
     check_output('tests/output/df_merged_with_insecurity_actual.json',
                  'tests/resources/df_merged_with_insecurity_expected.json')
-
-
-if __name__ == '__main__':
-    test_insecurity_merge()
