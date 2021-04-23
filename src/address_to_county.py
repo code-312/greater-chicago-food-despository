@@ -30,5 +30,4 @@ def address_to_county(street_addr: str, zip: str) -> tuple:
 
 
 if __name__ == "__main__":
-    print(address_to_county('318 Rosalind Ave', '61616'))
     print(address_to_county('1104 Dempster', '60202'))
