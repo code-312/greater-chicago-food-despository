@@ -358,6 +358,8 @@ class CensusData:
             pct_df, pct_series = nest_percentages(poverty_df, total_col)
 
             q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+            # round for space and avoid floating point imprecision
+            q_df = np.round(q_df, 6)
             q_dict = q_df.to_dict(orient='list')
             cls.data_bins.update({'quantiles': q_dict})  # noqa: E501
 
