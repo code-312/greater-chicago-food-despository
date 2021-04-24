@@ -66,7 +66,7 @@ def get_census_response(table_url: str,
     try:
         data_table = response.json()
     except json.JSONDecodeError:
-        print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text())  # noqa: E501
+        print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text)  # noqa: E501
         data_table = []
     return data_table
 
