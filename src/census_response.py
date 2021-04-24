@@ -5,10 +5,51 @@ import requests
 import numpy as np
 import pandas as pd
 from numpyencoder import NumpyEncoder
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 
-def get_census_response(table_url, get_ls, geo):
+def download_census_data(geo_ls=["zip", "county"]) -> None:
+    '''
+    Top level function to run the queries
+    '''
+
+    # Census tables
+    detailed_table = 'https://api.census.gov/data/2018/acs/acs5?'
+    subject_table = 'https://api.census.gov/data/2018/acs/acs5/subject?'
+
+    # define race instance
+    # Values name format: topic_property_subproperty...
+    # B03002_003E: Does not include people of hispanic/latino origin
+    race_metrics = ('race',
+                    {'B03002_001E': 'race_total', 'B03002_005E': 'race_native',
+                     'B03002_004E': 'race_black', 'B03002_003E': 'race_white',
+                     'B03002_009E': 'race_twoplus_total',
+                     'B03002_007E': 'race_pacific',
+                     'B03002_008E': 'race_other', 'B03002_006E': 'race_asian',
+                     'B03002_012E': 'race_hispaniclatino_total'})
+    # race_functions = [processRaceData]
+    # variable does not need to be defined, but it is for readability
+    race = CensusData(race_metrics, detailed_table, geo_ls)
+
+    # define poverty instance
+    poverty_metrics = ('poverty',
+                       {'S1701_C01_001E': 'poverty_population_total',
+                        'S1701_C02_001E': 'poverty_population_poverty',
+                        'S1701_C02_002E': 'poverty_population_poverty_child'})
+    # If additional subdivision are needed
+    # 'S1701_C02_003E' = AGE!!Under 18 years!! Under 5 years!!
+    # 'S1701_C02_004E' = AGE!!Under 18 years!! 5 to 17 years!!
+    # poverty_functions = [processPovertyData]
+    poverty = CensusData(poverty_metrics, subject_table, geo_ls)
+
+    get_and_save_census_data([race, poverty],
+                             dump_output_path='final_jsons/df_dump.json',
+                             merged_output_path='final_jsons/df_merged_json.json')  # noqa: E501
+
+
+def get_census_response(table_url: str,
+                        get_ls: List[str],
+                        geo: str) -> List[List[str]]:
     '''
     Concatenates url string and returns response from census api query
     input:
@@ -16,14 +57,98 @@ def get_census_response(table_url, get_ls, geo):
         get_ls (ls): list of tables to get data from
         geo (str): geographic area and filter
     output:
-        response (requests.response): api response
+        list of rows. first row is header:
+            [NAME, <elements of get_ls>, state, county]
     '''
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
     # print(f"Calling for {geo}: {get_ls}")
-    response = requests.get(url)
-    # print(f"{response} Received")
+    response = requests.get(url).json()
+    # print(f"{response.json()} Received")
     return response
+
+
+def df_to_json(data_metrics: Dict,
+               data_bins: Dict,
+               df_dict: Dict,
+               dump_output_path: str = '',
+               merged_output_path: str = '') -> None:
+    '''
+    Saves dataframe to file as json
+    This format loads with load_df()
+    '''
+    class_json_dict = dict()
+    # Add Meta Data Here (Bins, etc)
+    class_json_dict['meta'] = {'data_metrics': data_metrics,
+                               'data_bins': data_bins}
+
+    if dump_output_path != "":
+        fp = dump_output_path
+        zip_dict = class_json_dict.copy()
+        for k in df_dict:
+            zip_dict[k] = df_dict[k].to_dict()
+
+        with open(fp, 'w') as f:
+            json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder)
+        print(f'Data updated at {fp}')
+
+    if merged_output_path != "":
+        # determine metrics
+        # Not sure we need this many loops, \
+        # but seemed like a good idea at the time
+        for geo in df_dict:
+            geo_dict = dict()
+            for geo_area in df_dict[geo].itertuples():
+                geo_area_dict: Dict = {f'{m}_data': dict()
+                                       for m in data_metrics.keys()}
+                for name in geo_area._fields:
+                    if name == "Index":
+                        continue
+                    for metric in data_metrics.keys():
+                        metric_name = f'{metric}_data'
+                        geo_area_dict[metric_name]
+                        if metric in name:
+                            geo_area_dict[metric_name][name] = getattr(
+                                geo_area, name)
+                            break
+                    else:
+                        geo_area_dict[name] = getattr(geo_area, name)
+                geo_dict[geo_area.Index] = geo_area_dict
+            class_json_dict[f'{geo}_data'] = geo_dict
+
+        fp = merged_output_path
+        with open(fp, 'w') as f:
+            json.dump(class_json_dict, f, separators=(',', ':'),
+                      cls=NumpyEncoder, sort_keys=True)
+        print(f'Data updated at {fp}')
+
+
+def nest_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
+    '''
+    Calculates percentages and removes NaN for dict conversion
+    Returns calculated percent_df and series of dictionaries
+    '''
+    str_idx = total_col_str.find('_')
+    metric = total_col_str[:str_idx]
+    # divides df by total column to calculate percentages
+    divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
+    # Casts to type float64 for numpy interoperability
+    percent_df = df.apply(divide_by_total) \
+                   .drop(total_col_str, axis=1) \
+                   .astype('float64')
+    # Rounds to save space
+    percent_df = np.round(percent_df, 6)
+    # except:
+    #     print(df.dtypes)
+    #     raise Exception
+    # converts NAN to None, for proper JSON encoding
+    working_df = percent_df.where(pd.notnull(percent_df), None)
+    # creates series of race percentages as a dictionary
+    # this allows us to add percentages to the main table,
+    # without adding many more columns
+    dict_series = working_df.apply(pd.Series.to_dict, axis=1)
+    dict_series.name = f'{metric}_percentages'
+    return percent_df, dict_series
 
 
 class CensusData:
@@ -47,11 +172,15 @@ class CensusData:
         Load dataframe using CensusData.load_df()
             Default loads unzipped saved file, described above
     '''
+    # maps geographic area ('zip' or 'county') to dataframe
     df_dict: Dict[str, pd.DataFrame] = {}
+    # maps metric names to map of census variable to variable names
     data_metrics: Dict[str, Dict[str, str]] = dict()
+    # maps bin type to metric name to list of boundaries for the bins.
+    # e.g. {"quantiles": {"poverty_population_poverty": [1, 2, 3, 4, 5]}}
     data_bins: Dict[str, Dict[str, List[float]]] = dict()
 
-    def __init__(self, var_metrics: tuple,
+    def __init__(self, var_metrics: Tuple[str, dict],
                  table: str, geo_ls: list = ["zip", "county"]):
         '''
         Initialized instance
@@ -63,7 +192,7 @@ class CensusData:
         self.table = table
         self.geo_ls = geo_ls
 
-    def get_data(self):
+    def get_data(self) -> List[pd.DataFrame]:
         '''
         Calls getCensusResponse on each geography
         Sends response json to __panda_from_json function
@@ -74,21 +203,19 @@ class CensusData:
         get_ls = list(self.var_dict.keys())
         df_ls = []
         for g in self.geo_ls:
-            response = get_census_response(self.table, get_ls, geo_dict[g])
-            self.response_json = response.json()
+            self.response_json = get_census_response(self.table,
+                                                     get_ls,
+                                                     geo_dict[g])
             df = self.__panda_from_json(self.response_json, g)
             df_ls.append(df)
         return df_ls
 
     @classmethod
-    def process_data(cls, save=False):
+    def process_data(cls) -> None:
         cls.__pd_process_race()
         cls.__pd_process_poverty()
 
-        if save:
-            cls.df_to_json(both=True)
-
-    def __panda_from_json(self, response_json, geo):
+    def __panda_from_json(self, response_json: List[List[str]], geo: str):
         '''
         Called by getData method
         Updates CensusData.zip_df and returns response_df
@@ -135,64 +262,6 @@ class CensusData:
         return geo_df
 
     @classmethod
-    def df_to_json(cls, zip_df=True, both=False):
-        '''
-        Saves df to file
-        Default: zips dataframe by geo_code
-        Both: overrides zip_df, saves both
-        Otherwise: saves df.to_json() in dictionary to json
-            This format loads with load_df()
-        '''
-        zip_df = False if both else zip_df
-        class_json_dict = dict()
-        # Add Meta Data Here (Bins, etc)
-        class_json_dict['meta'] = {'data_metrics': cls.data_metrics,
-                                   'data_bins': cls.data_bins}
-        if not (zip_df):
-            fp = 'final_jsons/df_dump.json'
-            zip_dict = class_json_dict.copy()
-            for k in cls.df_dict:
-                zip_dict[k] = cls.df_dict[k].to_dict()
-
-            with open(fp, 'w') as f:
-                json.dump(zip_dict, f, separators=(',', ':'),
-                          cls=NumpyEncoder)
-            if not (both):
-                return fp
-
-        # determine metrics
-        # Not sure we need this many loops, \
-        # but seemed like a good idea at the time
-        for geo in cls.df_dict:
-            geo_dict = dict()
-            for geo_area in cls.df_dict[geo].itertuples():
-                geo_area_dict = {f'{m}_data': dict()
-                                 for m in cls.data_metrics.keys()}
-                for name in geo_area._fields:
-                    if name == "Index":
-                        continue
-                    for metric in cls.data_metrics.keys():
-                        metric_name = f'{metric}_data'
-                        geo_area_dict[metric_name]
-                        if metric in name:
-                            geo_area_dict[metric_name][name] = getattr(
-                                geo_area, name)
-                            break
-                    else:
-                        geo_area_dict[name] = getattr(geo_area, name)
-                geo_dict[geo_area.Index] = geo_area_dict
-            class_json_dict[f'{geo}_data'] = geo_dict
-
-        fp = 'final_jsons/df_merged_json.json'
-        with open(fp, 'w') as f:
-            json.dump(class_json_dict, f, separators=(',', ':'),
-                      cls=NumpyEncoder)
-
-        fp = 'final_jsons/' if both else fp
-        print(f'Data updated at {fp}')
-        return fp
-
-    @classmethod
     def load_df(cls, fp='final_jsons/df_dump.json'):
         '''
         Loads df_dict from file saved from df_to_json
@@ -212,39 +281,15 @@ class CensusData:
         return None
 
     @classmethod
-    def get_data_values(cls, metric_name):
+    def get_data_values(cls, metric_name: str):
         return tuple(cls.data_metrics[metric_name].values())
 
     @classmethod
-    def __nest_percentages(cls, df, total_col_str):
-        '''
-        Calculates percentages and removes NaN for dict conversion
-        Returns calculated percent_df and series of dictionaries
-        '''
-        str_idx = total_col_str.find('_')
-        metric = total_col_str[:str_idx]
-        # divides df by total column to calculate percentages
-        divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
-        # Casts to type float64 for numpy interoperability
-        percent_df = df.apply(divide_by_total) \
-                       .drop(total_col_str, axis=1) \
-                       .astype('float64')
-        # Rounds to save space
-        percent_df = np.round(percent_df, 6)
-        # except:
-        #     print(df.dtypes)
-        #     raise Exception
-        # converts NAN to None, for proper JSON encoding
-        working_df = percent_df.where(pd.notnull(percent_df), None)
-        # creates series of race percentages as a dictionary
-        # this allows us to add percentages to the main table,
-        # without adding many more columns
-        dict_series = working_df.apply(pd.Series.to_dict, axis=1)
-        dict_series.name = f'{metric}_percentages'
-        return percent_df, dict_series
+    def __pd_process_race(cls) -> None:
 
-    @classmethod
-    def __pd_process_race(cls):
+        if 'race' not in cls.data_metrics:
+            return
+
         def majority(series):
             '''
             Returns majority race demographic
@@ -273,7 +318,7 @@ class CensusData:
             race_df = geo_df.loc[:, race_values]
 
             # divides df by race_total column to calculate percentages
-            race_percent_df, pct_dict_series = cls.__nest_percentages(race_df, 'race_total')  # noqa: E501
+            race_percent_df, pct_dict_series = nest_percentages(race_df, 'race_total')  # noqa: E501
 
             # creates series of majority race demographics
             majority_series = race_percent_df.apply(majority, axis=1)
@@ -297,7 +342,11 @@ class CensusData:
             cls.df_dict[geo_area] = geo_df
 
     @classmethod
-    def __pd_process_poverty(cls):
+    def __pd_process_poverty(cls) -> None:
+
+        if 'poverty' not in cls.data_metrics:
+            return
+
         for geo_area in cls.df_dict:
             geo_df = cls.df_dict[geo_area]
 
@@ -306,7 +355,7 @@ class CensusData:
             poverty_values = cls.get_data_values('poverty')
             poverty_df = geo_df.loc[:, poverty_values]
             total_col = 'poverty_population_total'
-            pct_df, pct_series = cls.__nest_percentages(poverty_df, total_col)
+            pct_df, pct_series = nest_percentages(poverty_df, total_col)
 
             q_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
             q_dict = q_df.to_dict(orient='list')
@@ -378,7 +427,6 @@ def county_fips(reverse=False) -> dict:
     input: reverse (bool) reverses keys and values in output
     output: il_json (dict) {'county name': 'fip'}
     '''
-    import requests
 
     url = 'https://api.census.gov/data/2010/dec/sf1?get=NAME&for=county:*'
 
@@ -413,3 +461,18 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
         column_data = df[cn].dropna().to_list()
         bin_dict[cn] = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
     return bin_dict
+
+
+def get_and_save_census_data(data_requests: List[CensusData],
+                             dump_output_path: str = "",
+                             merged_output_path: str = "") -> None:
+
+    for request in data_requests:
+        request.get_data()
+
+    CensusData.process_data()
+    df_to_json(CensusData.data_metrics,
+               CensusData.data_bins,
+               CensusData.df_dict,
+               dump_output_path=dump_output_path,
+               merged_output_path=merged_output_path)
