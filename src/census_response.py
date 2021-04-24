@@ -62,10 +62,13 @@ def get_census_response(table_url: str,
     '''
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
-    # print(f"Calling for {geo}: {get_ls}")
-    response = requests.get(url).json()
-    # print(f"{response.json()} Received")
-    return response
+    response = requests.get(url)
+    try:
+        data_table = response.json()
+    except:
+        print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text())  # noqa: E501
+        data_table = []
+    return data_table
 
 
 def df_to_json(data_metrics: Dict,
