@@ -2,6 +2,7 @@ import os
 import re
 import pdfplumber
 import pandas as pd
+from typing import List, Dict
 
 
 '''
@@ -36,6 +37,21 @@ def read_wic_data(always_run: bool = False) -> None:
             96)
 
 
+def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
+    columns = ["fips",  # County fips code
+               "NAME",  # County name
+               "race_amer_indian_or_alaskan_native",  # Amer. Indian or Alaskan Native
+               "race_asian",  # Asian
+               "race_black",  # Black or African American
+               "race_native_hawaii_or_pacific_islander",  # Native Hawaii or Other Pacific Isl.
+               "race_white",  # White
+               "race_multiracial",  # Multi-Racial
+               "total",  # Total Participants
+               "hispanic_or_latino"]  # Hispanic or Latino
+    return pd.DataFrame(data=rows, columns=columns)
+
+
+
 def parse_wic_pdf(
         source_pdf_filepath: str,
         destination_csv_filepath: str,
@@ -45,15 +61,20 @@ def parse_wic_pdf(
     # We'll use these regular expressions to find the lines we care about.
     # Find rows that start with Total (this includes Total Women, Total Infant
     # and Total Children rows)
-    total_re = re.compile("Total")
+    total_women_re = re.compile("Total Women")
+    total_infants_re = re.compile("Total Infants")
+    total_children_re = re.compile("Total Children")
     # It's not clear specifically what "LA Total" means, but these rows
     # contains the subtotal values for the specific County
     county_total_re = re.compile("LA Total")
     # find rows that start with three digits (these rows contain County ID and
     # name, example: 031 COOK)
-    county_re = re.compile(r"\d\d\d")
+    county_re = re.compile("[0-9][0-9][0-9]")
 
-    rows = []
+    women_rows = []
+    infants_rows = []
+    children_rows = []
+    total_rows = []
 
     with pdfplumber.open(source_pdf_filepath) as pdf:
 
@@ -69,50 +90,51 @@ def parse_wic_pdf(
             # greater than y_tolerance.
             text = page.extract_text(x_tolerance=2, y_tolerance=0)
 
+            county_info = ["", ""]  # fips, county name
+
             # iterate thru each line on a page
             for line in text.split("\n"):
                 if county_re.match(line):
                     # We have to find the County information first because we
                     # insert it in every row maxsplit=1 because some counties
                     # have spaces in their name, example: Jo Daviess
-                    county = (line.split(sep=" ", maxsplit=1))
-                elif total_re.match(line):
+                    county_info = (line.split(sep=" ", maxsplit=1))
+                    county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code
+                elif total_women_re.match(line):
                     # Split out a list like ["Total", "Women", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
-                    rows.append(county + new_line)
-
+                    women_rows.append(county_info + new_line[2:])
+                elif total_infants_re.match(line):
+                    # Split out a list like ["Total", "Infants", 1, 2, 3, 4]
+                    new_line = (line.split(sep=" "))
+                    infants_rows.append(county_info + new_line[2:])
+                elif total_children_re.match(line):
+                    # Split out a list like ["Total", "Children", 1, 2, 3, 4]
+                    new_line = (line.split(sep=" "))
+                    children_rows.append(county_info + new_line[2:])
                 elif county_total_re.match(line):
                     # Split out a list like ["LA", "Total", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
-                    rows.append(county + new_line)
+                    total_rows.append(county_info + new_line[2:])
 
-    column_names = ["County_ID",
-                    "County",
-                    "WIC1",
-                    "WIC2",
-                    "Amer. Indian or Alaskan Native",
-                    "Asian",
-                    "Black or African American",
-                    "Native Hawaii or Other Pacific Isl.",
-                    "White",
-                    "Multi-Racial",
-                    "Total Participants",
-                    "Hispanic or Latino"]
+    for row in women_rows:
+        assert len(row) == 10, "women " + row[1]
 
-    data = pd.DataFrame(rows, columns=column_names)
+    for row in children_rows:
+        assert len(row) == 10, "children " + row[1]
 
-    # Currently the data looks like this:
-    # WIC1      WIC2       etc
-    # Total     Women
-    # Total     Children
-    # LA        Total
+    for row in infants_rows:
+        assert len(row) == 10, "infants " + row[1]
 
-    # We want to combine WIC1 and WIC2 columns into new column called WIC
-    # which will contain values such as "Total Women" "Total Children"
-    # "Total Infants" and "LA Total"
-    data.insert(2, "WIC", (data["WIC1"] + " " + data["WIC2"]))
+    for row in total_rows:
+        assert len(row) == 10, "total " + row[1]
 
-    # delete WIC1 and WIC 2 columns
-    data.drop(['WIC1', 'WIC2'], axis=1, inplace=True)
+    dataframes: Dict[str, pd.DataFrame] = {
+        "wic_participation_women_data": dataframe_from_rows(women_rows),
+        "wic_participation_infants_data": dataframe_from_rows(infants_rows),
+        "wic_participation_children_data": dataframe_from_rows(children_rows),
+        "wic_participation_total_data": dataframe_from_rows(total_rows),
+    }
 
-    data.to_csv(destination_csv_filepath, index=False)
+    dataframes["wic_participation_women_data"].to_csv(destination_csv_filepath, index=False)
+
