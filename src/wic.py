@@ -22,19 +22,42 @@ def is_up_to_date(input_file_path: str, output_file_path: str) -> bool:
         return False
 
 
-def read_wic_data(always_run: bool = False) -> None:
+class WICParticipation:
+    def __init__(self,
+                 women: pd.DataFrame,
+                 infants: pd.DataFrame,
+                 children: pd.DataFrame,
+                 total: pd.DataFrame):
+        self.women = women
+        self.infants = infants
+        self.children = children
+        self.total = total
+
+
+def read_wic_data(always_run: bool = False) -> WICParticipation:
 
     input_file_path = "data_folder/illinois_wic_data_january_2021.pdf"
-    output_file_path = "final_jsons/wic.csv"
+    women_output_csv_path = "final_jsons/wic_participation_women.csv"
+    infants_output_csv_path = "final_jsons/wic_participation_infants.csv"
+    children_output_csv_path = "final_jsons/wic_participation_children.csv"
+    total_output_csv_path = "final_jsons/wic_participation_total.csv"
 
-    if always_run or not is_up_to_date(input_file_path, output_file_path):
+    if always_run or \
+       not is_up_to_date(input_file_path, women_output_csv_path) or \
+       not is_up_to_date(input_file_path, infants_output_csv_path) or \
+       not is_up_to_date(input_file_path, children_output_csv_path) or \
+       not is_up_to_date(input_file_path, total_output_csv_path):
         # PDF has 97 pages. Skip page 0 because it shows Statewide totals
         # which we don't need
-        parse_wic_pdf(
+        participation: WICParticipation = parse_wic_pdf(
             input_file_path,
-            output_file_path,
             1,
             96)
+        
+        participation.women.to_csv(women_output_csv_path, index=False)
+        participation.children.to_csv(children_output_csv_path, index=False)
+        participation.infants.to_csv(infants_output_csv_path, index=False)
+        participation.total.to_csv(total_output_csv_path, index=False)
 
 
 def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
@@ -53,9 +76,8 @@ def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
 
 def parse_wic_pdf(
         source_pdf_filepath: str,
-        destination_csv_filepath: str,
         first_page_zero_indexed: int,
-        last_page_zero_indexed: int) -> None:
+        last_page_zero_indexed: int) -> WICParticipation:
 
     # We'll use these regular expressions to find the lines we care about.
     # Find rows that start with Total (this includes Total Women, Total Infant
@@ -116,12 +138,12 @@ def parse_wic_pdf(
                     new_line = (line.split(sep=" "))
                     total_rows.append(county_info + new_line[2:])
 
-    dataframes: Dict[str, pd.DataFrame] = {
-        "wic_participation_women_data": dataframe_from_rows(women_rows),
-        "wic_participation_infants_data": dataframe_from_rows(infants_rows),
-        "wic_participation_children_data": dataframe_from_rows(children_rows),
-        "wic_participation_total_data": dataframe_from_rows(total_rows),
-    }
+    return WICParticipation(
+        women = dataframe_from_rows(women_rows),
+        infants = dataframe_from_rows(infants_rows),
+        children = dataframe_from_rows(children_rows),
+        total = dataframe_from_rows(total_rows))
 
-    dataframes["wic_participation_women_data"].to_csv(destination_csv_filepath, index=False)
 
+def merge_wic_data(participation: WICParticipation) -> None:
+    pass

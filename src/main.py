@@ -20,14 +20,6 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
     mph.setup_memory_usage_file_if_enabled()
 
-    print("Reading WIC Data")
-    mph.record_current_memory_usage_if_enabled()
-    start_time = time.time()
-    src.wic.read_wic_data()
-    if (verbose):
-        duration = time.time() - start_time
-        print("Reading WIC Data took: {0:.2f} seconds".format(duration))
-
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
@@ -35,6 +27,15 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     if (verbose):
         duration = time.time() - start_time
         print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+
+    print("Reading WIC Data")
+    mph.record_current_memory_usage_if_enabled()
+    start_time = time.time()
+    wic_participation = src.wic.read_wic_data()
+    src.wic.merge_wic_data(wic_participation)
+    if (verbose):
+        duration = time.time() - start_time
+        print("Reading WIC Data took: {0:.2f} seconds".format(duration))
 
     print("Reading Food Insecurity Data")
     mph.record_current_memory_usage_if_enabled()
