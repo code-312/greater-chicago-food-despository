@@ -1,21 +1,27 @@
+import json
+import pandas
 from src.wic import parse_wic_pdf
 
 
 def test_read_wic_data():
-    parse_wic_pdf(
+    participation = parse_wic_pdf(
         "tests/resources/wic_data_one_page.pdf",
-        "tests/resources/test_wic_actual_output.csv",
         0,
         0)
 
-    with open("tests/resources/test_wic_actual_output.csv") \
-            as actual_output_file:
+    do_json_test(participation.women, "tests/output/wic_women_actual.json", "tests/resources/wic_women_expected.json")
+    do_json_test(participation.infants, "tests/output/wic_infants_actual.json", "tests/resources/wic_infants_expected.json")
+    do_json_test(participation.children, "tests/output/wic_children_actual.json", "tests/resources/wic_children_expected.json")
+    do_json_test(participation.total, "tests/output/wic_total_actual.json", "tests/resources/wic_total_expected.json")
 
-        actual_output_text = actual_output_file.read()
 
-        with open("tests/resources/test_wic_expected_output.txt") \
-                as expected_output_file:
+def do_json_test(df: pandas.DataFrame, actual_output_path: str, expected_output_path: str):
+    data_dict = df.to_dict(orient="list")
+    json_str = json.dumps(data_dict, indent=4, sort_keys=True)
 
-            expected_output_text = expected_output_file.read()
+    with open(actual_output_path, "w") as actual_output:
+        actual_output.write(json_str)
 
-            assert actual_output_text == expected_output_text
+    with open(expected_output_path) as expected_output_file:
+        assert json_str == expected_output_file.read()
+
