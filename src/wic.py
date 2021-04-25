@@ -58,6 +58,13 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
         participation.children.to_csv(children_output_csv_path, index=False)
         participation.infants.to_csv(infants_output_csv_path, index=False)
         participation.total.to_csv(total_output_csv_path, index=False)
+        return participation
+    else:
+        return WICParticipation(
+            women=pd.read_csv(women_output_csv_path),
+            infants=pd.read_csv(infants_output_csv_path),
+            children=pd.read_csv(children_output_csv_path),
+            total=pd.read_csv(total_output_csv_path))
 
 
 def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
