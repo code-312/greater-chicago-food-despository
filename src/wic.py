@@ -2,7 +2,7 @@ import os
 import re
 import pdfplumber
 import pandas as pd
-from typing import List, Dict
+from typing import List
 
 
 '''
@@ -53,7 +53,7 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
             input_file_path,
             1,
             96)
-        
+
         participation.women.to_csv(women_output_csv_path, index=False)
         participation.children.to_csv(children_output_csv_path, index=False)
         participation.infants.to_csv(infants_output_csv_path, index=False)
@@ -63,10 +63,10 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
 def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
     columns = ["fips",  # County fips code
                "NAME",  # County name
-               "race_amer_indian_or_alaskan_native",  # Amer. Indian or Alaskan Native
+               "race_amer_indian_or_alaskan_native",  # Amer. Indian or Alaskan Native # noqa: E501
                "race_asian",  # Asian
                "race_black",  # Black or African American
-               "race_native_hawaii_or_pacific_islander",  # Native Hawaii or Other Pacific Isl.
+               "race_native_hawaii_or_pacific_islander",  # Native Hawaii or Other Pacific Isl. # noqa: E501
                "race_white",  # White
                "race_multiracial",  # Multi-Racial
                "total",  # Total Participants
@@ -120,7 +120,7 @@ def parse_wic_pdf(
                     # insert it in every row maxsplit=1 because some counties
                     # have spaces in their name, example: Jo Daviess
                     county_info = (line.split(sep=" ", maxsplit=1))
-                    county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code
+                    county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code # noqa: E501
                 elif total_women_re.match(line):
                     # Split out a list like ["Total", "Women", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
@@ -139,10 +139,10 @@ def parse_wic_pdf(
                     total_rows.append(county_info + new_line[2:])
 
     return WICParticipation(
-        women = dataframe_from_rows(women_rows),
-        infants = dataframe_from_rows(infants_rows),
-        children = dataframe_from_rows(children_rows),
-        total = dataframe_from_rows(total_rows))
+        women=dataframe_from_rows(women_rows),
+        infants=dataframe_from_rows(infants_rows),
+        children=dataframe_from_rows(children_rows),
+        total=dataframe_from_rows(total_rows))
 
 
 def merge_wic_data(participation: WICParticipation) -> None:
