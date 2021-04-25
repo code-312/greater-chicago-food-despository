@@ -51,7 +51,6 @@ def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
     return pd.DataFrame(data=rows, columns=columns)
 
 
-
 def parse_wic_pdf(
         source_pdf_filepath: str,
         destination_csv_filepath: str,
@@ -116,18 +115,6 @@ def parse_wic_pdf(
                     # Split out a list like ["LA", "Total", 1, 2, 3, 4]
                     new_line = (line.split(sep=" "))
                     total_rows.append(county_info + new_line[2:])
-
-    for row in women_rows:
-        assert len(row) == 10, "women " + row[1]
-
-    for row in children_rows:
-        assert len(row) == 10, "children " + row[1]
-
-    for row in infants_rows:
-        assert len(row) == 10, "infants " + row[1]
-
-    for row in total_rows:
-        assert len(row) == 10, "total " + row[1]
 
     dataframes: Dict[str, pd.DataFrame] = {
         "wic_participation_women_data": dataframe_from_rows(women_rows),
