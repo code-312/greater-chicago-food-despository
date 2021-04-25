@@ -1,7 +1,6 @@
 import os
-import sys
-sys.path.append(os.path.abspath(''))
-import pandas as pd  # noqa: E402
+import xlrd
+import pandas as pd
 
 
 def file_to_json(input_dir, output_dir, blacklist=[]):
@@ -28,7 +27,11 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
                     engine = 'openpyxl'
                 else:
                     engine = 'xlrd'
-                table = pd.read_excel(fp, sheet_name=None, engine=engine)
+                try:
+                    table = pd.read_excel(fp, sheet_name=None, engine=engine)
+                except xlrd.biffh.XLRDError as e:
+                    print(e)
+                    raise Exception("Error reading {0}. Close the file if you have it open.".format(fp))  # noqa: E501
                 if type(table) == dict:
                     for k in table:
                         if k not in blacklist:
