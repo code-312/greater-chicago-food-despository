@@ -72,6 +72,10 @@ def read_csv(path: str) -> pd.DataFrame:
     return pd.read_csv(path, index_col="fips")
 
 
+def read_json(path: str) -> pd.DataFrame:
+    return pd.read_json(path, orient="index", dtype={"fips": str})
+
+
 def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
     columns = ["fips",  # County fips code
                "NAME",  # County name
@@ -160,8 +164,28 @@ def parse_wic_pdf(
 
 def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:
     merged_data = merge_wic_data(participation, json.load(merged_src))
-    json.dump(merged_data)
+    json.dump(merged_data, sort_keys=True)
+
+
+def to_dict_for_merging(df: pd.DataFrame) -> Dict:
+    # calling df.to_dict() directly messes up all the types
+    data_dict = json.loads(df.to_json(orient='index'))
+    for county_blob in data_dict.values():
+        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data
+    return data_dict
 
 
 def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:
-    return dict()
+
+    women_dict = to_dict_for_merging(participation.women)
+    infants_dict = to_dict_for_merging(participation.infants)
+    children_dict = to_dict_for_merging(participation.children)
+    total_dict = to_dict_for_merging(participation.total)
+
+    for fips, county_data in merged_data['county_data'].items():
+        county_data['wic_participation_women_data'] = women_dict[fips]
+        county_data['wic_participation_infants_data'] = infants_dict[fips]
+        county_data['wic_participation_children_data'] = children_dict[fips]
+        county_data['wic_participation_total_data'] = total_dict[fips]
+
+    return merged_data

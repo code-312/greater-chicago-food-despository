@@ -26,10 +26,10 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
 
 def test_merge_wic():
     participation = wic.WICParticipation(
-            women=pd.read_json("tests/resources/wic_women_merge_input.json"),
-            infants=pd.read_json("tests/resources/wic_infants_merge_input.json"),
-            children=pd.read_json("tests/resources/wic_children_merge_input.json"),
-            total=pd.read_json("tests/resources/wic_total_merge_input.json"))
+            women=wic.read_json("tests/resources/wic_women_merge_input.json"),
+            infants=wic.read_json("tests/resources/wic_infants_merge_input.json"),
+            children=wic.read_json("tests/resources/wic_children_merge_input.json"),
+            total=wic.read_json("tests/resources/wic_total_merge_input.json"))
     
     with open("tests/resources/df_merged_without_wic.json") as merge_data_file:
         merged_data = json.load(merge_data_file)
