@@ -16,7 +16,10 @@ def query_census_api(street_addr: str, zip: str) -> Any:
         raise Exception(result.text)
     return json.loads(result.text)
 
-
+# given the input 
+#  '1060 W Addison St', '60613'
+# will return the tuple
+#  ('17031', 'Cook')
 def address_to_county(street_addr: str, zip: str) -> tuple:
     raw_result = query_census_api(street_addr, zip)
     matches = raw_result['result']['addressMatches']
