@@ -17,7 +17,3 @@ def coords_to_county(lat: float, long: float) -> tuple:
     raw_result = query_fcc_api(lat, long)
     county = raw_result['County']
     return (county['FIPS'], county['name'])
-
-
-if __name__ == "__main__":
-    print(coords_to_county(40.882501, -87.647331))

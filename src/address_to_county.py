@@ -27,7 +27,3 @@ def address_to_county(street_addr: str, zip: str) -> tuple:
         return (None, None)
     county = counties[0]
     return (county['GEOID'], county['BASENAME'])
-
-
-if __name__ == "__main__":
-    print(address_to_county('1104 Dempster', '60202'))
