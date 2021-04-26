@@ -1,0 +1,83 @@
+{
+    "meta": {
+        "data_metrics": {},
+        "data_bins": {}
+    },
+    "zip_data": {},
+    "county_data": {
+        "17001": {
+            "race_data": {
+                "race_total": 66427,
+                "race_native": 178,
+                "race_black": 2676,
+                "race_white": 61009,
+                "race_twoplus_total": 889,
+                "race_pacific": 42,
+                "race_other": 72,
+                "race_asian": 540,
+                "race_hispaniclatino_total": 1021,
+                "race_percentages": {
+                    "race_native": 0.00268,
+                    "race_black": 0.040285,
+                    "race_white": 0.918437,
+                    "race_twoplus_total": 0.013383,
+                    "race_pacific": 0.000632,
+                    "race_other": 0.001084,
+                    "race_asian": 0.008129,
+                    "race_hispaniclatino_total": 0.01537
+                },
+                "race_majority": "race_white"
+            },
+            "poverty_data": {
+                "poverty_population_total": 64844,
+                "poverty_population_poverty": 7874,
+                "poverty_population_poverty_child": 2385,
+                "poverty_percentages": {
+                    "poverty_population_poverty": 0.12143,
+                    "poverty_population_poverty_child": 0.036781
+                }
+            },
+            "NAME": "Adams County, Illinois",
+            "wic_participation_women_data": {
+                "race_amer_indian_or_alaskan_native":"0",
+                "race_asian":"0",
+                "race_black":"1",
+                "race_native_hawaii_or_pacific_islander":"0",
+                "race_white":"36",
+                "race_multiracial":"0",
+                "total":"37",
+                "hispanic_or_latino":"9"
+            },
+            "wic_participation_infants_data": {
+                "race_amer_indian_or_alaskan_native":"0",
+                "race_asian":"0",
+                "race_black":"2",
+                "race_native_hawaii_or_pacific_islander":"1",
+                "race_white":"36",
+                "race_multiracial":"1",
+                "total":"38",
+                "hispanic_or_latino":"9"
+            },
+            "wic_participation_children_data": {
+                "race_amer_indian_or_alaskan_native":"0",
+                "race_asian":"1",
+                "race_black":"7",
+                "race_native_hawaii_or_pacific_islander":"0",
+                "race_white":"85",
+                "race_multiracial":"0",
+                "total":"92",
+                "hispanic_or_latino":"15"
+            },
+            "wic_participation_total_data": {
+                "race_amer_indian_or_alaskan_native":"0",
+                "race_asian":"1",
+                "race_black":"10",
+                "race_native_hawaii_or_pacific_islander":"1",
+                "race_white":"157",
+                "race_multiracial":"1",
+                "total":"167",
+                "hispanic_or_latino":"33"
+            }
+        }
+    }
+}

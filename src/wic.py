@@ -2,7 +2,8 @@ import os
 import re
 import pdfplumber
 import pandas as pd
-from typing import List
+import json
+from typing import List, Dict, Any
 
 
 '''
@@ -61,10 +62,14 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
         return participation
     else:
         return WICParticipation(
-            women=pd.read_csv(women_output_csv_path),
-            infants=pd.read_csv(infants_output_csv_path),
-            children=pd.read_csv(children_output_csv_path),
-            total=pd.read_csv(total_output_csv_path))
+            women=read_csv(women_output_csv_path),
+            infants=read_csv(infants_output_csv_path),
+            children=read_csv(children_output_csv_path),
+            total=read_csv(total_output_csv_path))
+
+
+def read_csv(path: str) -> pd.DataFrame:
+    return pd.read_csv(path, index_col="fips")
 
 
 def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
@@ -78,7 +83,8 @@ def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
                "race_multiracial",  # Multi-Racial
                "total",  # Total Participants
                "hispanic_or_latino"]  # Hispanic or Latino
-    return pd.DataFrame(data=rows, columns=columns)
+    df = pd.DataFrame(data=rows, columns=columns)
+    return df.set_index('fips')
 
 
 def parse_wic_pdf(
@@ -152,5 +158,10 @@ def parse_wic_pdf(
         total=dataframe_from_rows(total_rows))
 
 
-def merge_wic_data(participation: WICParticipation) -> None:
-    pass
+def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:
+    merged_data = merge_wic_data(participation, json.load(merged_src))
+    json.dump(merged_data)
+
+
+def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:
+    return dict()
