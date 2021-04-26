@@ -1,13 +1,13 @@
 {
     "17085":{
         "NAME":"JO DAVIESS",
-        "race_amer_indian_or_alaskan_native":"0",
-        "race_asian":"1",
-        "race_black":"7",
-        "race_native_hawaii_or_pacific_islander":"0",
-        "race_white":"85",
-        "race_multiracial":"0",
-        "total":"92",
-        "hispanic_or_latino":"15"
+        "race_amer_indian_or_alaskan_native":0,
+        "race_asian":1,
+        "race_black":7,
+        "race_native_hawaii_or_pacific_islander":0,
+        "race_white":85,
+        "race_multiracial":0,
+        "total":92,
+        "hispanic_or_latino":15
     }
 }

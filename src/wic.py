@@ -91,6 +91,12 @@ def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
     return df.set_index('fips')
 
 
+def extract_columns_from_line(line: str) -> List[int]:
+    # Split out a list like ["Total", "Infants", "1", "2", "3", "4"]
+    str_list = line.split(sep=" ")
+    return [int(s) for s in str_list[2:]]
+
+
 def parse_wic_pdf(
         source_pdf_filepath: str,
         first_page_zero_indexed: int,
@@ -139,21 +145,13 @@ def parse_wic_pdf(
                     county_info = (line.split(sep=" ", maxsplit=1))
                     county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code # noqa: E501
                 elif total_women_re.match(line):
-                    # Split out a list like ["Total", "Women", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    women_rows.append(county_info + new_line[2:])
+                    women_rows.append(county_info + extract_columns_from_line(line))
                 elif total_infants_re.match(line):
-                    # Split out a list like ["Total", "Infants", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    infants_rows.append(county_info + new_line[2:])
+                    infants_rows.append(county_info + extract_columns_from_line(line))
                 elif total_children_re.match(line):
-                    # Split out a list like ["Total", "Children", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    children_rows.append(county_info + new_line[2:])
+                    children_rows.append(county_info + extract_columns_from_line(line))
                 elif county_total_re.match(line):
-                    # Split out a list like ["LA", "Total", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    total_rows.append(county_info + new_line[2:])
+                    total_rows.append(county_info + extract_columns_from_line(line))
 
     return WICParticipation(
         women=dataframe_from_rows(women_rows),
