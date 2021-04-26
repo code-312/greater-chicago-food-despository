@@ -161,8 +161,10 @@ def parse_wic_pdf(
 
 
 def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:
-    merged_data = merge_wic_data(participation, json.load(merged_src))
-    json.dump(merged_data, sort_keys=True)
+    with open(merged_src) as merged_src_file:
+        merged_data = merge_wic_data(participation, json.load(merged_src_file))
+    with open(merged_dst, "w") as merged_dst_file:
+        json.dump(merged_data, merged_dst_file)
 
 
 def to_dict_for_merging(df: pd.DataFrame) -> Dict:
@@ -181,9 +183,13 @@ def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any])
     total_dict = to_dict_for_merging(participation.total)
 
     for fips, county_data in merged_data['county_data'].items():
-        county_data['wic_participation_women_data'] = women_dict[fips]
-        county_data['wic_participation_infants_data'] = infants_dict[fips]
-        county_data['wic_participation_children_data'] = children_dict[fips]
-        county_data['wic_participation_total_data'] = total_dict[fips]
+        if fips in women_dict:
+            county_data['wic_participation_women_data'] = women_dict[fips]
+        if fips in infants_dict:
+            county_data['wic_participation_infants_data'] = infants_dict[fips]
+        if fips in children_dict:
+            county_data['wic_participation_children_data'] = children_dict[fips]
+        if fips in total_dict:
+            county_data['wic_participation_total_data'] = total_dict[fips]
 
     return merged_data
