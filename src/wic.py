@@ -145,13 +145,13 @@ def parse_wic_pdf(
                     county_info = (line.split(sep=" ", maxsplit=1))
                     county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code # noqa: E501
                 elif total_women_re.match(line):
-                    women_rows.append(county_info + extract_columns_from_line(line))
+                    women_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
                 elif total_infants_re.match(line):
-                    infants_rows.append(county_info + extract_columns_from_line(line))
+                    infants_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
                 elif total_children_re.match(line):
-                    children_rows.append(county_info + extract_columns_from_line(line))
+                    children_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
                 elif county_total_re.match(line):
-                    total_rows.append(county_info + extract_columns_from_line(line))
+                    total_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
 
     return WICParticipation(
         women=dataframe_from_rows(women_rows),
@@ -160,7 +160,7 @@ def parse_wic_pdf(
         total=dataframe_from_rows(total_rows))
 
 
-def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:
+def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:  # noqa: E501
     with open(merged_src) as merged_src_file:
         merged_data = merge_wic_data(participation, json.load(merged_src_file))
     with open(merged_dst, "w") as merged_dst_file:
@@ -171,11 +171,11 @@ def to_dict_for_merging(df: pd.DataFrame) -> Dict:
     # calling df.to_dict() directly messes up all the types
     data_dict = json.loads(df.to_json(orient='index'))
     for county_blob in data_dict.values():
-        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data
+        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data # noqa: E501
     return data_dict
 
 
-def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:
+def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:  # noqa: E501
 
     women_dict = to_dict_for_merging(participation.women)
     infants_dict = to_dict_for_merging(participation.infants)
@@ -188,7 +188,7 @@ def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any])
         if fips in infants_dict:
             county_data['wic_participation_infants_data'] = infants_dict[fips]
         if fips in children_dict:
-            county_data['wic_participation_children_data'] = children_dict[fips]
+            county_data['wic_participation_children_data'] = children_dict[fips]  # noqa: E501
         if fips in total_dict:
             county_data['wic_participation_total_data'] = total_dict[fips]
 
