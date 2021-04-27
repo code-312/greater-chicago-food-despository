@@ -188,7 +188,7 @@ class CensusData:
             drop_ls.append('NAME')
             geo_df = typed_df.set_index('zip code tabulation area') \
                 .drop(drop_ls, axis=1) \
-                .filter(regex='^(6[0-2])\d+', axis=0)  # noqa: W605, E501
+                .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
 
         return geo_df
 
