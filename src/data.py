@@ -4,7 +4,7 @@ import json
 from numpyencoder import NumpyEncoder
 from copy import deepcopy
 import os
-from typing import Dict
+from typing import Dict, List
 
 '''
 Defines data structure and relationships
@@ -26,14 +26,22 @@ def collect_data() -> None:
 
 
 class GCFDData:
+    '''
+    Goal:
+        Add parent/child nodes
+    Current:
+        Init:
+            Adds self to parent list
+                If no parent, raises error
+    '''
     __meta_dict = {
-        "bins": ['quantiles'],
-        "quantiles": list(),
-        "natural_breaks": list()
+        "bins": {
+            "quantiles": {},
+            "natural_breaks": {}
+        }
     }
 
     __obj_dict = {"zip": list(), "county": list()}
-    __obj_dict.update(__meta_dict)
 
     def __init__(self, metric: str, df: pd.DataFrame, 
                  parent: str = None, fp: str = None):
@@ -43,10 +51,10 @@ class GCFDData:
         self.df = df
         self.fp = fp
         self.parent = parent
-        self.set_parent(parent)
         self.__post_init__()
 
     def __post_init__(self):
+        self.__set_parent()
         if self.fp is None:
             self.fp = f"data_objects/{self.name}.pkl"
         self.to_pickle()
@@ -59,9 +67,10 @@ class GCFDData:
         s = f'GCFDData({self.name})'
         return s
     
-    def set_parent(self, parent):
+    def __set_parent(self):
+        # Why don't I just pass self?
         try:
-            p_ls = self.__obj_dict[parent]
+            p_ls = self.__obj_dict[self.parent]
             p_ls.append(self)
             # breakpoint()
         except TypeError:
@@ -82,6 +91,11 @@ class GCFDData:
         d_dict = self.df.to_dict(orient="index")
         # json_str = json.dumps(d_dict)
         return d_dict
+
+    def write_meta(self, meta_dict: dict):
+        self.__meta_dict.update(meta_dict)
+        return self.__meta_dict
+        
 
     @classmethod
     def load_data(cls, dir: str = "data_objects/") -> None:

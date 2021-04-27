@@ -21,7 +21,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     # define race instance
     # Values name format: topic_property_subproperty...
     # B03002_003E: Does not include people of hispanic/latino origin
-    race_variables = {'B03002_001E': 'race_total', 
+    race_variables = {'B03002_001E': 'race_total',
                       'B03002_005E': 'race_native',
                       'B03002_004E': 'race_black', 'B03002_003E': 'race_white',
                       'B03002_009E': 'race_twoplus_total',
@@ -235,7 +235,7 @@ class CensusData:
                            parent=self.name)
 
         q_df = pct_obj.df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
-        GCFDData(self.metric, q_df, "quantiles")
+        GCFDData.write_meta(q_df.to_dict())
 
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
@@ -243,7 +243,7 @@ class CensusData:
                                              column_names=["poverty_population_poverty",  # noqa: E501
                                                            "poverty_population_poverty_child"])  # noqa: E501
 
-        GCFDData(self.metric, n_df, "natural_breaks")
+        GCFDData.write_meta(n_df.to_dict())
 
 
 def search_table(table_json_ls: list, keyword_ls: list,
