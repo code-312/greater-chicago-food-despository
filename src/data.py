@@ -33,6 +33,8 @@ class GCFDData:
         Init:
             Adds self to parent list
                 If no parent, raises error
+        Unpacks percentages, but doesn't unpack metrics into zip.
+        Doesn't save meta to file
     '''
     __meta_dict = {
         "bins": {
@@ -92,9 +94,11 @@ class GCFDData:
         # json_str = json.dumps(d_dict)
         return d_dict
 
-    def write_meta(self, meta_dict: dict):
-        self.__meta_dict.update(meta_dict)
-        return self.__meta_dict
+
+    @classmethod
+    def write_meta(cls, meta_dict: dict):
+        cls.__meta_dict.update(meta_dict)
+        return cls.__meta_dict
         
 
     @classmethod
