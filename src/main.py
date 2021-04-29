@@ -20,14 +20,6 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
     mph.setup_memory_usage_file_if_enabled()
 
-    print("Reading WIC Data")
-    mph.record_current_memory_usage_if_enabled()
-    start_time = time.time()
-    src.wic.read_wic_data()
-    if (verbose):
-        duration = time.time() - start_time
-        print("Reading WIC Data took: {0:.2f} seconds".format(duration))
-
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
@@ -36,13 +28,24 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
         duration = time.time() - start_time
         print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
+    print("Reading WIC Data")
+    mph.record_current_memory_usage_if_enabled()
+    start_time = time.time()
+    wic_participation = src.wic.read_wic_data()
+    src.wic.merge_wic_data_file(wic_participation,
+                                'final_jsons/df_merged_json.json',
+                                'final_jsons/df_merged_with_wic.json')
+    if (verbose):
+        duration = time.time() - start_time
+        print("Reading WIC Data took: {0:.2f} seconds".format(duration))
+
     print("Reading Food Insecurity Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
     file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
     merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
-                   'final_jsons/df_merged_json.json',
-                   'final_jsons/df_merged_with_insecurity.json')
+                   'final_jsons/df_merged_with_wic.json',
+                   'final_jsons/df_merged_with_wic_and_insecurity.json')
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501

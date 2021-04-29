@@ -1,0 +1,13 @@
+{
+    "17001":{
+        "NAME":"ADAMS",
+        "race_amer_indian_or_alaskan_native":"0",
+        "race_asian":"1",
+        "race_black":"10",
+        "race_native_hawaii_or_pacific_islander":"1",
+        "race_white":"157",
+        "race_multiracial":"1",
+        "total":"167",
+        "hispanic_or_latino":"33"
+    }
+}

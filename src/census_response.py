@@ -318,7 +318,7 @@ class CensusData:
             # prevents conflicts with new columns
             # race_values = tuple(cls.data_metrics['race'].values())
             race_values = cls.get_data_values('race')
-            race_df = geo_df.loc[:, race_values]
+            race_df = geo_df.reindex(race_values, axis="columns")
 
             # divides df by race_total column to calculate percentages
             race_percent_df, pct_dict_series = nest_percentages(race_df, 'race_total')  # noqa: E501

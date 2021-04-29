@@ -2,6 +2,8 @@ import os
 import re
 import pdfplumber
 import pandas as pd
+import json
+from typing import List, Dict, Any
 
 
 '''
@@ -21,39 +23,102 @@ def is_up_to_date(input_file_path: str, output_file_path: str) -> bool:
         return False
 
 
-def read_wic_data(always_run: bool = False) -> None:
+class WICParticipation:
+    def __init__(self,
+                 women: pd.DataFrame,
+                 infants: pd.DataFrame,
+                 children: pd.DataFrame,
+                 total: pd.DataFrame):
+        self.women = women
+        self.infants = infants
+        self.children = children
+        self.total = total
+
+
+def read_wic_data(always_run: bool = False) -> WICParticipation:
 
     input_file_path = "data_folder/illinois_wic_data_january_2021.pdf"
-    output_file_path = "final_jsons/wic.csv"
+    women_output_csv_path = "final_jsons/wic_participation_women.csv"
+    infants_output_csv_path = "final_jsons/wic_participation_infants.csv"
+    children_output_csv_path = "final_jsons/wic_participation_children.csv"
+    total_output_csv_path = "final_jsons/wic_participation_total.csv"
 
-    if always_run or not is_up_to_date(input_file_path, output_file_path):
+    if always_run or \
+       not is_up_to_date(input_file_path, women_output_csv_path) or \
+       not is_up_to_date(input_file_path, infants_output_csv_path) or \
+       not is_up_to_date(input_file_path, children_output_csv_path) or \
+       not is_up_to_date(input_file_path, total_output_csv_path):
         # PDF has 97 pages. Skip page 0 because it shows Statewide totals
         # which we don't need
-        parse_wic_pdf(
+        participation: WICParticipation = parse_wic_pdf(
             input_file_path,
-            output_file_path,
             1,
             96)
+
+        participation.women.to_csv(women_output_csv_path, index=False)
+        participation.children.to_csv(children_output_csv_path, index=False)
+        participation.infants.to_csv(infants_output_csv_path, index=False)
+        participation.total.to_csv(total_output_csv_path, index=False)
+        return participation
+    else:
+        return WICParticipation(
+            women=read_csv(women_output_csv_path),
+            infants=read_csv(infants_output_csv_path),
+            children=read_csv(children_output_csv_path),
+            total=read_csv(total_output_csv_path))
+
+
+def read_csv(path: str) -> pd.DataFrame:
+    return pd.read_csv(path, index_col="fips")
+
+
+def read_json(path: str) -> pd.DataFrame:
+    return pd.read_json(path, orient="index", dtype={"fips": str})
+
+
+def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
+    columns = ["fips",  # County fips code
+               "NAME",  # County name
+               "race_amer_indian_or_alaskan_native",  # Amer. Indian or Alaskan Native # noqa: E501
+               "race_asian",  # Asian
+               "race_black",  # Black or African American
+               "race_native_hawaii_or_pacific_islander",  # Native Hawaii or Other Pacific Isl. # noqa: E501
+               "race_white",  # White
+               "race_multiracial",  # Multi-Racial
+               "total",  # Total Participants
+               "hispanic_or_latino"]  # Hispanic or Latino
+    df = pd.DataFrame(data=rows, columns=columns)
+    return df.set_index('fips')
+
+
+def extract_columns_from_line(line: str) -> List[int]:
+    # Split out a list like ["Total", "Infants", "1", "2", "3", "4"]
+    str_list = line.split(sep=" ")
+    return [int(s.replace(",", "")) for s in str_list[2:]]
 
 
 def parse_wic_pdf(
         source_pdf_filepath: str,
-        destination_csv_filepath: str,
         first_page_zero_indexed: int,
-        last_page_zero_indexed: int) -> None:
+        last_page_zero_indexed: int) -> WICParticipation:
 
     # We'll use these regular expressions to find the lines we care about.
     # Find rows that start with Total (this includes Total Women, Total Infant
     # and Total Children rows)
-    total_re = re.compile("Total")
+    total_women_re = re.compile("Total Women")
+    total_infants_re = re.compile("Total Infants")
+    total_children_re = re.compile("Total Children")
     # It's not clear specifically what "LA Total" means, but these rows
     # contains the subtotal values for the specific County
     county_total_re = re.compile("LA Total")
     # find rows that start with three digits (these rows contain County ID and
     # name, example: 031 COOK)
-    county_re = re.compile(r"\d\d\d")
+    county_re = re.compile("[0-9][0-9][0-9]")
 
-    rows = []
+    women_rows = []
+    infants_rows = []
+    children_rows = []
+    total_rows = []
 
     with pdfplumber.open(source_pdf_filepath) as pdf:
 
@@ -69,50 +134,62 @@ def parse_wic_pdf(
             # greater than y_tolerance.
             text = page.extract_text(x_tolerance=2, y_tolerance=0)
 
+            county_info = ["", ""]  # fips, county name
+
             # iterate thru each line on a page
             for line in text.split("\n"):
                 if county_re.match(line):
                     # We have to find the County information first because we
                     # insert it in every row maxsplit=1 because some counties
                     # have spaces in their name, example: Jo Daviess
-                    county = (line.split(sep=" ", maxsplit=1))
-                elif total_re.match(line):
-                    # Split out a list like ["Total", "Women", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    rows.append(county + new_line)
-
+                    county_info = (line.split(sep=" ", maxsplit=1))
+                    county_info[0] = "17" + county_info[0]  # the pdf doesn't have the leading 17 indicating Illinois in the fips code # noqa: E501
+                elif total_women_re.match(line):
+                    women_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
+                elif total_infants_re.match(line):
+                    infants_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
+                elif total_children_re.match(line):
+                    children_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
                 elif county_total_re.match(line):
-                    # Split out a list like ["LA", "Total", 1, 2, 3, 4]
-                    new_line = (line.split(sep=" "))
-                    rows.append(county + new_line)
+                    total_rows.append(county_info + extract_columns_from_line(line))  # type: ignore # noqa: E501
 
-    column_names = ["County_ID",
-                    "County",
-                    "WIC1",
-                    "WIC2",
-                    "Amer. Indian or Alaskan Native",
-                    "Asian",
-                    "Black or African American",
-                    "Native Hawaii or Other Pacific Isl.",
-                    "White",
-                    "Multi-Racial",
-                    "Total Participants",
-                    "Hispanic or Latino"]
+    return WICParticipation(
+        women=dataframe_from_rows(women_rows),
+        infants=dataframe_from_rows(infants_rows),
+        children=dataframe_from_rows(children_rows),
+        total=dataframe_from_rows(total_rows))
 
-    data = pd.DataFrame(rows, columns=column_names)
 
-    # Currently the data looks like this:
-    # WIC1      WIC2       etc
-    # Total     Women
-    # Total     Children
-    # LA        Total
+def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:  # noqa: E501
+    with open(merged_src) as merged_src_file:
+        merged_data = merge_wic_data(participation, json.load(merged_src_file))
+    with open(merged_dst, "w") as merged_dst_file:
+        json.dump(merged_data, merged_dst_file)
 
-    # We want to combine WIC1 and WIC2 columns into new column called WIC
-    # which will contain values such as "Total Women" "Total Children"
-    # "Total Infants" and "LA Total"
-    data.insert(2, "WIC", (data["WIC1"] + " " + data["WIC2"]))
 
-    # delete WIC1 and WIC 2 columns
-    data.drop(['WIC1', 'WIC2'], axis=1, inplace=True)
+def to_dict_for_merging(df: pd.DataFrame) -> Dict:
+    # calling df.to_dict() directly messes up all the types
+    data_dict = json.loads(df.to_json(orient='index'))
+    for county_blob in data_dict.values():
+        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data # noqa: E501
+    return data_dict
 
-    data.to_csv(destination_csv_filepath, index=False)
+
+def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:  # noqa: E501
+
+    women_dict = to_dict_for_merging(participation.women)
+    infants_dict = to_dict_for_merging(participation.infants)
+    children_dict = to_dict_for_merging(participation.children)
+    total_dict = to_dict_for_merging(participation.total)
+
+    for fips, county_data in merged_data['county_data'].items():
+        if fips in women_dict:
+            county_data['wic_participation_women_data'] = women_dict[fips]
+        if fips in infants_dict:
+            county_data['wic_participation_infants_data'] = infants_dict[fips]
+        if fips in children_dict:
+            county_data['wic_participation_children_data'] = children_dict[fips]  # noqa: E501
+        if fips in total_dict:
+            county_data['wic_participation_total_data'] = total_dict[fips]
+
+    return merged_data
