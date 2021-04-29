@@ -94,7 +94,7 @@ def dataframe_from_rows(rows: List[List[str]]) -> pd.DataFrame:
 def extract_columns_from_line(line: str) -> List[int]:
     # Split out a list like ["Total", "Infants", "1", "2", "3", "4"]
     str_list = line.split(sep=" ")
-    return [int(s) for s in str_list[2:]]
+    return [int(s.replace(",","")) for s in str_list[2:]]
 
 
 def parse_wic_pdf(
