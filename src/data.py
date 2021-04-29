@@ -43,51 +43,58 @@ class GCFDData:
         }
     }
 
-    __obj_dict = {"zip": list(), "county": list()}
+    __obj_dict = {"zip": {},
+                  "county": {}}
+
+    __obj_map = {"zip": dict(), "county": dict()}
 
     def __init__(self, metric: str, df: pd.DataFrame, 
-                 parent: str = None, fp: str = None):
+                 parent: List[str] = list(''), fp: str = None):
+        '''
+        parent is a list of strins
+        '''
         # replace with read/write?
         self.name = f"{parent}_{metric}"
         self.metric = metric
         self.df = df
         self.fp = fp
-        self.parent = parent
+        self.path = parent
+        self.parent = parent[-1]
         self.__post_init__()
 
     def __post_init__(self):
         self.__set_parent()
+
         if self.fp is None:
             self.fp = f"data_objects/{self.name}.pkl"
         self.to_pickle()
-        try:
-            self.__obj_dict[self.name] = list()
-        except TypeError:
-            print(self)
-    
-    def __repr__(self):
-        s = f'GCFDData({self.name})'
-        return s
+        # try:
+        #     self.__obj_dict[self.metric] = list()
+        # except TypeError:
+        #     print(self)
     
     def __set_parent(self):
-        # Why don't I just pass self?
-        try:
-            p_ls = self.__obj_dict[self.parent]
-            p_ls.append(self)
+        m = self.__obj_map
+        d = self.__obj_dict
+        for i, p in enumerate(self.path):
             # breakpoint()
-        except TypeError:
-            print(self)
+            m = m[p]
+            d_name = d[p].get('name', False)
+            d = d[d_name] if d_name else d[p]
+            # breakpoint()
+        m[self.metric] = {}
+        d[self.metric] = {"name": self.metric}
+        # breakpoint()
 
-    def get_path(self):
-        s = [self.parent, self.name]
-        s.insert(0, self.parent.get_path())
+    def __repr__(self):
+        s = f'GCFDData({self.name})'
         return s
 
     def to_pickle(self) -> None:
         with open(self.fp, "wb") as f:
             pickle.dump(self, f)
         with open('data_objects/obj_dict.pkl', 'wb') as f:
-            pickle.dump(self.__obj_dict, f)
+            pickle.dump(self.__obj_map, f)
     
     def to_dict(self) -> dict:
         d_dict = self.df.to_dict(orient="index")
@@ -113,15 +120,16 @@ class GCFDData:
                         continue
                     else:
                         if fp == 'obj_dict.pkl':
-                            cls.__obj_dict = d
+                            cls.__obj_map = d
 
     @classmethod
     def get_data(cls) -> dict:
-        return deepcopy(cls.__obj_dict)
+        return deepcopy(cls.__obj_map),\
+               deepcopy(cls.__obj_dict)
     
     @classmethod
     def clear_data(cls) -> None:
-        cls.__obj_dict = {}
+        cls.__obj_map = {}
 
     @classmethod
     def export_data(cls, fp: str = "final_jsons/test_data_obj.json") -> None:
