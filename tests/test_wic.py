@@ -48,3 +48,4 @@ def test_merge_wic():
 
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
+    assert dataframe.loc[17001, "total"] == 365
