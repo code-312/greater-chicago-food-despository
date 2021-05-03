@@ -1,6 +1,7 @@
 import pandas as pd
 from typing import Any
 
+
 def load_excel(src: str) -> Any:
     table = pd.read_excel(src, sheet_name=None, engine='openpyxl')
     for k in table:
@@ -8,7 +9,8 @@ def load_excel(src: str) -> Any:
         table[k].dropna(axis=0, how='any', inplace=True)
     return table
 
-def rename_columns(table: dict()) -> Any:
+
+def rename_columns(table: dict[str, Any]) -> Any:
     for k in table:
         age_group = 'age_' + k.lower()[4:]
         columns = []
@@ -23,8 +25,10 @@ def rename_columns(table: dict()) -> Any:
         table[k].columns = columns
     pass
 
-def add_fips_column(table: dict()) -> Any:
+
+def add_fips_column(table: dict[str, Any]) -> Any:
     pass
+
 
 def merge_snap_data(srcs: list) -> None:
     for src in srcs:
@@ -33,6 +37,7 @@ def merge_snap_data(srcs: list) -> None:
         add_fips_column(table)
         print(table)
     pass
+
 
 if __name__ == '__main__':
     merge_snap_data(['data_folder/SNAP_2019.xlsx'])
