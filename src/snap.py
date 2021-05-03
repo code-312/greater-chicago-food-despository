@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Any
+from typing import Any, Dict
 
 
 def load_excel(src: str) -> Any:
@@ -10,7 +10,7 @@ def load_excel(src: str) -> Any:
     return table
 
 
-def rename_columns(table: dict[str, Any]) -> Any:
+def rename_columns(table: Dict[str, Any]) -> Any:
     for k in table:
         age_group = 'age_' + k.lower()[4:]
         columns = []
@@ -26,7 +26,7 @@ def rename_columns(table: dict[str, Any]) -> Any:
     pass
 
 
-def add_fips_column(table: dict[str, Any]) -> Any:
+def add_fips_column(table: Dict[str, Any]) -> Any:
     pass
 
 
