@@ -221,18 +221,18 @@ class CensusData:
         # divides df by race_total column to calculate percentages
         pct_df = create_percentages(race_df, 'race_total')  # noqa: E501
         pct_obj = GCFDData('percentages', pct_df,
-                           path=tuple([self.geo, self.name]))
+                           path=tuple([self.geo, self.metric]))
         # breakpoint()
         # creates series of majority race demographics
         majority_series = pct_obj.df.apply(majority, axis=1)
         majority_df = pd.DataFrame(majority_series)
-        GCFDData('majority', majority_df, path=tuple([self.geo, self.name]))
+        GCFDData('majority', majority_df, path=tuple([self.geo, self.metric]))
 
     def __pd_process_poverty(self) -> None:
         poverty_df = self.df.loc[:, self.var_values]
         pct_df = create_percentages(poverty_df, 'poverty_population_total')
         pct_obj = GCFDData(f'percentages', pct_df,
-                           path=tuple([self.geo, self.name]))
+                           path=tuple([self.geo, self.metric]))
 
         q_df = pct_obj.df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
         GCFDData.write_meta(q_df.to_dict())

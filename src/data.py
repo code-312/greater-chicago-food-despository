@@ -43,7 +43,9 @@ class GCFDData:
         }
     }
 
-    __obj_list = [{"zip": {}}, {"county": {}}]
+    __obj_list = [{"zip": {"poverty": {}, "race": {}}},
+                  {"county": {"poverty": {}, "race": {}}}]
+    __obj_dict = {}
 
     def __init__(self, metric: str, df: pd.DataFrame, 
                  path: tuple = (), fp: str = None):
@@ -60,6 +62,7 @@ class GCFDData:
     def __post_init__(self):
         self.dict = self.__make_dict(self.path)
         self.__obj_list.append(self.dict)
+        self.__obj_dict[self.name] = self
         if self.fp is None:
             self.fp = f"data_objects/{self.name}.pkl"
         self.to_pickle()
@@ -108,12 +111,17 @@ class GCFDData:
                         continue
                     else:
                         if isinstance(d, GCFDData):
+                            cls.__obj_dict[d.name] = d
                             d = d.__make_dict(d.path)
                         cls.__obj_list.append(d)
 
     @classmethod
-    def get_data(cls) -> dict:
+    def get_dicts(cls) -> dict:
         return deepcopy(cls.__obj_list)
+    
+    @classmethod
+    def get_data(cls) -> dict:
+        return deepcopy(cls.__obj_dict)
 
     @classmethod
     def merge_dict(cls, d1, d2):
