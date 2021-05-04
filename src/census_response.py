@@ -47,7 +47,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
                           {'B01001_001E': 'total_pop'})
 
     population = CensusData(population_metrics, detailed_table,
-                            ["zip", "county", "state"])
+                            ["state"])
 
     get_and_save_census_data([race, poverty, population],
                              dump_output_path='final_jsons/df_dump.json',
