@@ -49,7 +49,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     population = CensusData(population_metrics, detailed_table,
                             ["zip", "county", "state"])
 
-    get_and_save_census_data([race, poverty],
+    get_and_save_census_data([race, poverty, population],
                              dump_output_path='final_jsons/df_dump.json',
                              merged_output_path='final_jsons/df_merged_json.json')  # noqa: E501
 
@@ -322,6 +322,9 @@ class CensusData:
                 return 'majority_minority'
 
         for geo_area in cls.df_dict:
+            if geo_area == 'state':
+                continue
+            
             geo_df = cls.df_dict[geo_area]
 
             # creates df using original columns
@@ -361,6 +364,8 @@ class CensusData:
             return
 
         for geo_area in cls.df_dict:
+            if geo_area == 'state':
+                continue
             geo_df = cls.df_dict[geo_area]
 
             # creates df using original columns
