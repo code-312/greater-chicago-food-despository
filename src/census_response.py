@@ -44,7 +44,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
 
     # define population instance
     population_metrics = ('population',
-                          {'B01001_001E' : 'total_pop'})
+                          {'B01001_001E': 'total_pop'})
 
     population = CensusData(population_metrics, detailed_table,
                             ["zip", "county", "state"])
@@ -324,7 +324,7 @@ class CensusData:
         for geo_area in cls.df_dict:
             if geo_area == 'state':
                 continue
-            
+
             geo_df = cls.df_dict[geo_area]
 
             # creates df using original columns
