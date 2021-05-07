@@ -80,6 +80,20 @@ def merge(wrapper: Wrapper) -> Merged:
     merged_data = Merged()
     merged_data.meta.data_bins.update(wrapper.meta.data_bins)
     merged_data.meta.data_metrics.update(wrapper.meta.data_metrics)
+
+    for metric in wrapper.county.keys():
+
+        metric_group_name = metric.split("_")[0] + "_data"
+
+        for fips in wrapper.county[metric]:
+            if fips not in merged_data.county_data:
+                merged_data.county_data[fips] = {}
+
+            if metric_group_name not in merged_data.county_data[fips]:
+                merged_data.county_data[fips][metric_group_name] = {}
+
+            merged_data.county_data[fips][metric_group_name][metric] = deepcopy(wrapper.county[metric][fips])
+
     return merged_data
 
 

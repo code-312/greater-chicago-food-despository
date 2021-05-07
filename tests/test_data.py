@@ -105,5 +105,5 @@ def test_merge():
     merged_data = data.merge(some_data)
     assert merged_data.meta.data_metrics == some_data.meta.data_metrics
     assert merged_data.meta.data_bins == some_data.meta.data_bins
-    assert merged_data.county_data["17001"]["race_native"] == 1234
-    assert merged_data.county_data["17001"]["race_total"] == 5678
+    assert merged_data.county_data["17001"]["race_data"]["race_native"] == 1234
+    assert merged_data.county_data["17001"]["race_data"]["race_total"] == 5678
