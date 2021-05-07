@@ -88,8 +88,19 @@ def test_dump_json():
     with open('./tests/resources/data_dump.json') as expected:
         assert expected.read() == json_str
 
+
 def test_from_dataframe():
     df = pd.DataFrame({"fips": ["17001"], "race_total": [1234]})
     df.set_index("fips", inplace=True)
     wrapper = data.from_county_dataframe(df)
     assert wrapper.county["race_total"]["17001"] == 1234
+
+
+def test_merge():
+    some_data = data.Wrapper()
+    some_data.meta.data_metrics = {"race": { "B03002_001E": "race_total" } }
+    some_data.meta.data_bins = { "quantiles": { "race_total": [0.1, 0.2, 0.3, 0.4, 0.5] } }
+
+    merged_data = data.merge(some_data)
+    assert merged_data.meta.data_metrics == some_data.meta.data_metrics
+    assert merged_data.meta.data_bins == some_data.meta.data_bins

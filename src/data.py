@@ -26,8 +26,14 @@ class MetaData:
 class Wrapper:
     def __init__(self):
         self.meta = MetaData()
-        self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
+        self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
+
+class Merged:
+    def __init__(self):
+        self.meta = MetaData()
+        self.county_data: Dict[str, Dict[str, Any]] = {}  # e.g. { "17001": { "NAME": "Adams County, Illinois" } } # noqa: E501
+        self.zip_data: Dict[str, Dict[str, Any]] = {}  # e.g. { "60002": { "race_total": 24066 } } # noqa: E501
 
 def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict]) -> Dict[str, Dict]:
     combined_dict = {}
@@ -68,6 +74,10 @@ def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
     wrapper = Wrapper()
     wrapper.county = df.to_dict()
     return wrapper
+
+
+def merge(wrapper: Wrapper) -> Merged:
+    return Merged()
 
 
 class GCFDData:
