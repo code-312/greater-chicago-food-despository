@@ -149,6 +149,10 @@ class GCFDData:
         return s
 
     def to_pickle(self) -> None:
+
+        if not os.path.exists(os.path.dirname(self.fp)):
+            os.makedirs(os.path.dirname(self.fp))
+
         with open(self.fp, "wb") as f:
             pickle.dump(self, f)
 

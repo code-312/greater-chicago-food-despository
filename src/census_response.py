@@ -128,7 +128,7 @@ def df_to_json(data_metrics: Dict,
         print(f'Data updated at {fp}')
 
 
-def nest_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
+def create_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
     '''
     Calculates percentages and removes NaN for dict conversion
     Returns calculated percent_df and series of dictionaries
@@ -371,7 +371,7 @@ def county_fips(reverse=False) -> dict:
 
 
 def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
-                                  column_names: List[str]) -> Dict[str, List[float]]:  # noqa: 501
+                                  column_names: List[str]) -> pd.DataFrame:  # noqa: 501
     """
     :param df: Pandas dataframe.
     :param bin_count: Number of bins used to classify data.
