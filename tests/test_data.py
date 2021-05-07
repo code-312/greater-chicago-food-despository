@@ -49,13 +49,17 @@ def test_combine():
     race_data.zip = { "race_total": { "60002": 24066 } }
     race_data.county = { "race_total": { "17001": 66427 } }
     race_data.meta.data_metrics = {"race": { "B03002_001E": "race_total" } }
-    race_data.meta.data_bins = {"quantiles": { "race_total": [0.1, 0.2, 0.3, 0.4, 0.5] } }
+    race_data.meta.data_bins = {
+        "quantiles": { "race_total": [0.1, 0.2, 0.3, 0.4, 0.5] },
+        "natural_breaks": { "race_total": [0.0, 0.2, 0.4, 0.6, 0.8] } }
 
     poverty_data = data.Wrapper()
     poverty_data.zip = { "poverty_population_total": { "60002": 24014 } }
     poverty_data.county = { "poverty_population_total": { "17001": 64844 } }
     poverty_data.meta.data_metrics = {"poverty": { "S1701_C01_001E": "poverty_population_total" } }
-    poverty_data.meta.data_bins = {"natural_breaks": { "poverty_population_total": [0.6, 0.7, 0.8, 0.9, 0.11] } }
+    poverty_data.meta.data_bins = {
+        "quantiles": { "poverty_population_total": [0.1, 0.3, 0.5, 0.7, 0.9] },
+        "natural_breaks": { "poverty_population_total": [0.6, 0.7, 0.8, 0.9, 0.11] } }
 
     combined_data = data.combine(race_data, poverty_data)
     assert combined_data.zip["race_total"]["60002"] == 24066
@@ -65,4 +69,6 @@ def test_combine():
     assert combined_data.meta.data_metrics["race"]["B03002_001E"] == "race_total"
     assert combined_data.meta.data_metrics["poverty"]["S1701_C01_001E"] == "poverty_population_total"
     assert combined_data.meta.data_bins["quantiles"]["race_total"] == [0.1, 0.2, 0.3, 0.4, 0.5]
+    assert combined_data.meta.data_bins["natural_breaks"]["race_total"] == [0.0, 0.2, 0.4, 0.6, 0.8]
+    assert combined_data.meta.data_bins["quantiles"]["poverty_population_total"] == [0.1, 0.3, 0.5, 0.7, 0.9]
     assert combined_data.meta.data_bins["natural_breaks"]["poverty_population_total"] == [0.6, 0.7, 0.8, 0.9, 0.11]
