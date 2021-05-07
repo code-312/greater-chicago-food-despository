@@ -1,5 +1,5 @@
 import pandas as pd
-from src.census_response import calculate_natural_breaks_bins, CensusData, CensusRequest, get_and_save_census_data  # noqa: E501
+from src.census_response import calculate_natural_breaks_bins, CensusRequest, get_and_save_census_data  # noqa: E501
 
 
 def assert_file_contents_equal(path_a: str, path_b: str):

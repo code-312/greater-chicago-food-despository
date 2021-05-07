@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from numpyencoder import NumpyEncoder
 from typing import Dict, List, Tuple
-from src.data import GCFDData
+from src import data
 
 
 def download_census_data(geo_ls=["zip", "county"]) -> None:
@@ -128,7 +128,7 @@ def df_to_json(data_metrics: Dict,
         print(f'Data updated at {fp}')
 
 
-def create_percentages(df: pd.DataFrame, total_col_str: str) -> tuple:
+def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
     '''
     Calculates percentages and removes NaN for dict conversion
     Returns calculated percent_df and series of dictionaries
@@ -161,148 +161,148 @@ class CensusRequest:
         self.variables = variables
 
 
-class CensusData:
-    '''
-    Stores and Updates Census Data in df_dict
-    input:
-        var_metrics (tuple):
-            [0] metric name (str) e.g. race, poverty
-            [1] variable (dict):
-                Keys: Census Table Codes
-                Values: Census Table Names/Aliases
-        table (str): link to ACS5 Data Tables
-        geo_ls (list): list of geographies to process
-    Instructions:
-        Create a class instance via input described above
-        Use the get_data method to update CensusData.df_dict
-            View dataframes: df_dict[key] (key='zip' or 'county')
-        Save dataframe using CensusData.df_to_json()
-            Default saves zipped by geo_code
-            Set zip_df = False to save dataframes without processing
-        Load dataframe using CensusData.load_df()
-            Default loads unzipped saved file, described above
-    '''
+# class CensusData:
+#     '''
+#     Stores and Updates Census Data in df_dict
+#     input:
+#         var_metrics (tuple):
+#             [0] metric name (str) e.g. race, poverty
+#             [1] variable (dict):
+#                 Keys: Census Table Codes
+#                 Values: Census Table Names/Aliases
+#         table (str): link to ACS5 Data Tables
+#         geo_ls (list): list of geographies to process
+#     Instructions:
+#         Create a class instance via input described above
+#         Use the get_data method to update CensusData.df_dict
+#             View dataframes: df_dict[key] (key='zip' or 'county')
+#         Save dataframe using CensusData.df_to_json()
+#             Default saves zipped by geo_code
+#             Set zip_df = False to save dataframes without processing
+#         Load dataframe using CensusData.load_df()
+#             Default loads unzipped saved file, described above
+#     '''
 
-    def __init__(self, request: CensusRequest, geo: str):
-        '''
-        Initialized instance
-        Adds metric to class set data_metrics
-        '''
-        self.metric = request.metric
-        self.var_dict = request.variables
-        self.var_keys = list(self.var_dict.keys())
-        self.var_values = list(self.var_dict.values())
-        self.table = request.table
-        self.geo = geo
+#     def __init__(self, request: CensusRequest, geo: str):
+#         '''
+#         Initialized instance
+#         Adds metric to class set data_metrics
+#         '''
+#         self.metric = request.metric
+#         self.var_dict = request.variables
+#         self.var_keys = list(self.var_dict.keys())
+#         self.var_values = list(self.var_dict.values())
+#         self.table = request.table
+#         self.geo = geo
 
-    def get_data(self) -> None:
-        '''
-        Calls getCensusResponse on each geography
-        Sends response json to __panda_from_json function
-        Returns list of DataFrames
-        '''
-        geo_dict = {'zip': 'zip code tabulation area:*',
-                    'county': 'county:*&in=state:17'}
-        geo_area = geo_dict[self.geo]
-        self.response_json = get_census_response(self.table,
-                                                 self.var_keys,
-                                                 geo_area)
-        self.df = self.__panda_from_json(self.response_json)
-        data_obj = GCFDData(self.metric, self.df, path=tuple([self.geo]))
-        self.name = data_obj.name
-        self.fp = data_obj.fp
+#     def get_data(self) -> None:
+#         '''
+#         Calls getCensusResponse on each geography
+#         Sends response json to __panda_from_json function
+#         Returns list of DataFrames
+#         '''
+#         geo_dict = {'zip': 'zip code tabulation area:*',
+#                     'county': 'county:*&in=state:17'}
+#         geo_area = geo_dict[self.geo]
+#         self.response_json = get_census_response(self.table,
+#                                                  self.var_keys,
+#                                                  geo_area)
+#         self.df = self.__panda_from_json(self.response_json)
+#         data_obj = GCFDData(self.metric, self.df, path=tuple([self.geo]))
+#         self.name = data_obj.name
+#         self.fp = data_obj.fp
             
-    def process_data(self) -> None:
-        if self.metric == "race":
-            self.__pd_process_race()
-        elif self.metric == "poverty":
-            self.__pd_process_poverty()
+#     def process_data(self) -> None:
+#         if self.metric == "race":
+#             self.__pd_process_race()
+#         elif self.metric == "poverty":
+#             self.__pd_process_poverty()
 
-    def __panda_from_json(self,
-                          response_json: List[List[str]]) -> pd.DataFrame:
-        '''
-        Called by getData method
-        Updates CensusData.zip_df and returns response_df
-        '''
-        # Name Columns
-        dict_values = list(self.var_dict.values())
-        columns = [self.var_dict.get(header, header)
-                   for header in response_json[0]]
-        # Creates DF
-        response_df = pd.DataFrame(response_json[1:], columns=columns)
-        # adds types for performance and predictable method output
-        string_df = response_df.astype('string')
-        # ignore error to keep NAN values
-        conversion_dict = {v: 'Int64' for v in dict_values}
-        typed_df = string_df.astype(conversion_dict)
-        # Processes geographies for output
-        if self.geo == 'county':
-            fip_series = typed_df.loc[:, 'state'] + typed_df.loc[:, 'county']
-            fip_series.rename('FIPS', inplace=True)
-            geo_df = pd.concat([typed_df, fip_series], axis=1)
-            geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
-        elif self.geo == 'zip':
-            # filter keeps Illinois zipcodes
-            drop_ls = ['state'] if 'state' in typed_df else []
-            drop_ls.append('NAME')
-            geo_df = typed_df.set_index('zip code tabulation area') \
-                .drop(drop_ls, axis=1) \
-                .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
+#     def __panda_from_json(self,
+#                           response_json: List[List[str]]) -> pd.DataFrame:
+#         '''
+#         Called by getData method
+#         Updates CensusData.zip_df and returns response_df
+#         '''
+#         # Name Columns
+#         dict_values = list(self.var_dict.values())
+#         columns = [self.var_dict.get(header, header)
+#                    for header in response_json[0]]
+#         # Creates DF
+#         response_df = pd.DataFrame(response_json[1:], columns=columns)
+#         # adds types for performance and predictable method output
+#         string_df = response_df.astype('string')
+#         # ignore error to keep NAN values
+#         conversion_dict = {v: 'Int64' for v in dict_values}
+#         typed_df = string_df.astype(conversion_dict)
+#         # Processes geographies for output
+#         if self.geo == 'county':
+#             fip_series = typed_df.loc[:, 'state'] + typed_df.loc[:, 'county']
+#             fip_series.rename('FIPS', inplace=True)
+#             geo_df = pd.concat([typed_df, fip_series], axis=1)
+#             geo_df = geo_df.set_index('FIPS').drop(['state', 'county'], axis=1)
+#         elif self.geo == 'zip':
+#             # filter keeps Illinois zipcodes
+#             drop_ls = ['state'] if 'state' in typed_df else []
+#             drop_ls.append('NAME')
+#             geo_df = typed_df.set_index('zip code tabulation area') \
+#                 .drop(drop_ls, axis=1) \
+#                 .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
 
-        return geo_df
+#         return geo_df
 
-    def __pd_process_race(self) -> None:
+#     def __pd_process_race(self) -> None:
 
-        def majority(series):
-            '''
-            Returns majority race demographic
-            for each geo_area
-            If no majority, returns 'majority_minority'
-            '''
-            # indexes max value, returns NA for NA rows
-            idx = series.idxmax()
-            try:
-                value = series[idx]
-            except KeyError:
-                # if NA row, idx = NA
-                return None
-            if value >= 0.5:
-                return idx
-            else:
-                return 'majority_minority'
+#         def majority(series):
+#             '''
+#             Returns majority race demographic
+#             for each geo_area
+#             If no majority, returns 'majority_minority'
+#             '''
+#             # indexes max value, returns NA for NA rows
+#             idx = series.idxmax()
+#             try:
+#                 value = series[idx]
+#             except KeyError:
+#                 # if NA row, idx = NA
+#                 return None
+#             if value >= 0.5:
+#                 return idx
+#             else:
+#                 return 'majority_minority'
 
-        # creates df using original columns
-        # prevents conflicts with new columns
-        # race_values = tuple(cls.data_metrics['race'].values())
-        # breakpoint()
-        race_df = self.df.loc[:, self.var_values]
+#         # creates df using original columns
+#         # prevents conflicts with new columns
+#         # race_values = tuple(cls.data_metrics['race'].values())
+#         # breakpoint()
+#         race_df = self.df.loc[:, self.var_values]
 
-        # divides df by race_total column to calculate percentages
-        pct_df = create_percentages(race_df, 'race_total')  # noqa: E501
-        pct_obj = GCFDData('percentages', pct_df,
-                           path=tuple([self.geo, self.metric]))
-        # breakpoint()
-        # creates series of majority race demographics
-        majority_series = pct_obj.df.apply(majority, axis=1)
-        majority_df = pd.DataFrame(majority_series)
-        GCFDData('majority', majority_df, path=tuple([self.geo, self.metric]))
+#         # divides df by race_total column to calculate percentages
+#         pct_df = create_percentages(race_df, 'race_total')  # noqa: E501
+#         pct_obj = GCFDData('percentages', pct_df,
+#                            path=tuple([self.geo, self.metric]))
+#         # breakpoint()
+#         # creates series of majority race demographics
+#         majority_series = pct_obj.df.apply(majority, axis=1)
+#         majority_df = pd.DataFrame(majority_series)
+#         GCFDData('majority', majority_df, path=tuple([self.geo, self.metric]))
 
-    def __pd_process_poverty(self) -> None:
-        poverty_df = self.df.loc[:, self.var_values]
-        pct_df = create_percentages(poverty_df, 'poverty_population_total')
-        pct_obj = GCFDData(f'percentages', pct_df,
-                           path=tuple([self.geo, self.metric]))
+#     def __pd_process_poverty(self) -> None:
+#         poverty_df = self.df.loc[:, self.var_values]
+#         pct_df = create_percentages(poverty_df, 'poverty_population_total')
+#         pct_obj = GCFDData(f'percentages', pct_df,
+#                            path=tuple([self.geo, self.metric]))
 
-        q_df = pct_obj.df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
-        GCFDData.write_meta(q_df.to_dict())
+#         q_df = pct_obj.df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+#         GCFDData.write_meta(q_df.to_dict())
 
-        # create quantile bins using natural breaks algorithm.
-        # bin_count could be increased to > 4 if needed.
-        n_df = calculate_natural_breaks_bins(pct_obj.df, bin_count=4,
-                                             column_names=["poverty_population_poverty",  # noqa: E501
-                                                           "poverty_population_poverty_child"])  # noqa: E501
+#         # create quantile bins using natural breaks algorithm.
+#         # bin_count could be increased to > 4 if needed.
+#         n_df = calculate_natural_breaks_bins(pct_obj.df, bin_count=4,
+#                                              column_names=["poverty_population_poverty",  # noqa: E501
+#                                                            "poverty_population_poverty_child"])  # noqa: E501
 
-        GCFDData.write_meta(n_df.to_dict())
+#         GCFDData.write_meta(n_df.to_dict())
 
 
 def county_fips(reverse=False) -> dict:
@@ -347,13 +347,28 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
     return pd.DataFrame(bin_dict)
 
 
+def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
+    return data.Wrapper()
+
+
 def get_and_save_census_data(data_requests: List[CensusRequest],
                              dump_output_path: str = "",
                              merged_output_path: str = "",
-                             geo_ls: List[str] = ["zip", "county"]) -> None:
+                             geo_ls: List[str] = ["zip", "county"],
+                             pretty_print: bool = False) -> None:
+
+    combined_data = data.Wrapper()
 
     for request in data_requests:
         for geo in geo_ls:
-            data = CensusData(request, geo)
-            data.get_data()
-            data.process_data()
+            new_data = get_census_data(request, geo)
+            combined_data = data.combine(combined_data, new_data)
+
+    if dump_output_path != "":
+        with open(dump_output_path, "w") as f:
+            f.write(data.to_json(combined_data, pretty_print=pretty_print))
+
+    if merged_output_path != "":
+        merged_data = data.merge(combined_data)
+        with open(dump_output_path, "w") as f:
+            f.write(data.to_json(merged_data, pretty_print=pretty_print))
