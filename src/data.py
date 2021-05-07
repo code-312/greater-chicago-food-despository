@@ -1,10 +1,8 @@
 import pandas as pd
 import pickle
-import json
-from numpyencoder import NumpyEncoder
 from copy import deepcopy
 import os
-from typing import Dict, List
+from typing import Dict, List, Any
 
 '''
 Defines data structure and relationships
@@ -16,6 +14,19 @@ Methods:
     get_data - returns data from memory
     export_data - saves data to merged JSON
 '''
+
+
+class MetaData:
+    def __init__(self):
+        self.data_metrics: Dict[str, Dict[str, str]] = {}  # e.g. { "race": {"B03002_001E": "race_total"} } # noqa: E501
+        self.data_bins = Dict[str, Dict[str, List[float]]] = {}  # e.g. { "quantiles": { "poverty_population_poverty": [1, 2, 3] } } # noqa: E501
+
+
+class DataWrapper:
+    def __init__(self):
+        self.meta = MetaData()
+        self.zip = Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
+        self.county = Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
 
 
 class GCFDData:
@@ -40,7 +51,7 @@ class GCFDData:
                   {"county": {"poverty": {}, "race": {}}}]
     __obj_dict = {}
 
-    def __init__(self, metric: str, df: pd.DataFrame, 
+    def __init__(self, metric: str, df: pd.DataFrame,
                  path: tuple = (), fp: str = None):
         # replace with read/write?
         self.parent = path[-1]
@@ -59,7 +70,7 @@ class GCFDData:
         if self.fp is None:
             self.fp = f"data_objects/{self.name}.pkl"
         self.to_pickle()
-    
+
     def __repr__(self):
         s = f'GCFDData({self.name})'
         return s
@@ -111,7 +122,7 @@ class GCFDData:
     @classmethod
     def get_dicts(cls) -> dict:
         return deepcopy(cls.__obj_list)
-    
+
     @classmethod
     def get_data(cls) -> dict:
         return deepcopy(cls.__obj_dict)
@@ -159,7 +170,7 @@ class GCFDData:
     #             else:
     #                 parent = v_dict
     #             final_dict[v.parent] = parent
-                    
+
     #         elif v.parent:
     #             print("Adding parent to parent_dict")
     #             parent_dict[v.parent] = v
@@ -171,4 +182,3 @@ class GCFDData:
     #     with open(fp, "w") as f:
     #         json.dump(final_dict, f, separators=(',', ':'),
     #                   cls=NumpyEncoder)
-
