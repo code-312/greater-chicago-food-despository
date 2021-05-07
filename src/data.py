@@ -34,6 +34,8 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     combined_data = Wrapper()
     combined_data.zip.update(data_1.zip)
     combined_data.zip.update(data_2.zip)
+    combined_data.county.update(data_1.county)
+    combined_data.county.update(data_2.county)
 
     return combined_data
 
