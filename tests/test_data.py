@@ -49,8 +49,8 @@ def test_merge():
     race_data.zip = { "race_total": { "60002": 24066 } }
 
     poverty_data = data.Wrapper()
-    poverty_data = { "poverty_population_total": { "60002": 24014} }
+    poverty_data.zip = { "poverty_population_total": { "60002": 24014} }
 
     combined_data = data.combine(race_data, poverty_data)
     assert combined_data.zip["race_total"]["60002"] == 24066
-    assert combined_data.zip["poverty_population_total"]["60002"] == 24066
+    assert combined_data.zip["poverty_population_total"]["60002"] == 24014

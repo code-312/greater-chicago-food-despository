@@ -30,7 +30,12 @@ class Wrapper:
 
 
 def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
-    return Wrapper()
+
+    combined_data = Wrapper()
+    combined_data.zip.update(data_1.zip)
+    combined_data.zip.update(data_2.zip)
+
+    return combined_data
 
 
 class GCFDData:
