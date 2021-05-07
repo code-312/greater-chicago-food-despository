@@ -3,7 +3,7 @@ import pickle
 import json
 from copy import deepcopy
 import os
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 
 '''
 Defines data structure and relationships
@@ -61,7 +61,7 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     return combined_data
 
 
-def json_dump(data: Wrapper, pretty_print: bool = False) -> str:
+def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
     if pretty_print:
         indent = 4
     else:
