@@ -97,6 +97,7 @@ def merge(wrapper: Wrapper) -> Merged:
     merged_data.meta.data_metrics.update(wrapper.meta.data_metrics)
 
     merge_internal(wrapper.county, merged_data.county_data)
+    merge_internal(wrapper.zip, merged_data.zip_data)
 
     return merged_data
 
