@@ -72,3 +72,18 @@ def test_combine():
     assert combined_data.meta.data_bins["natural_breaks"]["race_total"] == [0.0, 0.2, 0.4, 0.6, 0.8]
     assert combined_data.meta.data_bins["quantiles"]["poverty_population_total"] == [0.1, 0.3, 0.5, 0.7, 0.9]
     assert combined_data.meta.data_bins["natural_breaks"]["poverty_population_total"] == [0.6, 0.7, 0.8, 0.9, 0.11]
+
+
+def test_dump_json():
+
+    some_data = data.Wrapper()
+    some_data.zip = { "race_total": { "60002": 1234 } }
+    some_data.county = { "race_total": { "17001": 5678 } }
+    some_data.meta.data_metrics = {"race": { "B03002_001E": "race_total" } }
+    some_data.meta.data_bins = {
+        "quantiles": { "race_total": [0.1, 0.2, 0.3, 0.4, 0.5] },
+        "natural_breaks": { "race_total": [0.0, 0.2, 0.4, 0.6, 0.8] } }
+
+    json_str = data.json_dump(some_data, pretty_print=True)
+    with open('./tests/resources/data_dump.json') as expected:
+        assert expected.read() == json_str

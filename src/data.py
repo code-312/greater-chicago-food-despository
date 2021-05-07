@@ -1,5 +1,6 @@
 import pandas as pd
 import pickle
+import json
 from copy import deepcopy
 import os
 from typing import Dict, List, Any
@@ -52,6 +53,14 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)
 
     return combined_data
+
+
+def json_dump(data: Wrapper, pretty_print: bool = False) -> str:
+    if pretty_print:
+        indent = 4
+    else:
+        indent = None
+    return json.dumps(data, sort_keys=True, indent=indent, default=lambda o: o.__dict__)
 
 
 class GCFDData:
