@@ -63,6 +63,13 @@ def json_dump(data: Wrapper, pretty_print: bool = False) -> str:
     return json.dumps(data, sort_keys=True, indent=indent, default=lambda o: o.__dict__)
 
 
+def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
+
+    wrapper = Wrapper()
+    wrapper.county = df.to_dict()
+    return wrapper
+
+
 class GCFDData:
     '''
     Goal:

@@ -87,3 +87,9 @@ def test_dump_json():
     json_str = data.json_dump(some_data, pretty_print=True)
     with open('./tests/resources/data_dump.json') as expected:
         assert expected.read() == json_str
+
+def test_from_dataframe():
+    df = pd.DataFrame({"fips": ["17001"], "race_total": [1234]})
+    df.set_index("fips", inplace=True)
+    wrapper = data.from_county_dataframe(df)
+    assert wrapper.county["race_total"]["17001"] == 1234
