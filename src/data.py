@@ -76,23 +76,27 @@ def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
     return wrapper
 
 
+def merge_internal(input: Dict, output: Dict) -> None:
+    for metric in input.keys():
+
+        metric_group_name = metric.split("_")[0] + "_data"
+
+        for geo_area_id in input[metric]:
+            if geo_area_id not in output:
+                output[geo_area_id] = {}
+
+            if metric_group_name not in output[geo_area_id]:
+                output[geo_area_id][metric_group_name] = {}
+
+            output[geo_area_id][metric_group_name][metric] = deepcopy(input[metric][geo_area_id])
+
+
 def merge(wrapper: Wrapper) -> Merged:
     merged_data = Merged()
     merged_data.meta.data_bins.update(wrapper.meta.data_bins)
     merged_data.meta.data_metrics.update(wrapper.meta.data_metrics)
 
-    for metric in wrapper.county.keys():
-
-        metric_group_name = metric.split("_")[0] + "_data"
-
-        for fips in wrapper.county[metric]:
-            if fips not in merged_data.county_data:
-                merged_data.county_data[fips] = {}
-
-            if metric_group_name not in merged_data.county_data[fips]:
-                merged_data.county_data[fips][metric_group_name] = {}
-
-            merged_data.county_data[fips][metric_group_name][metric] = deepcopy(wrapper.county[metric][fips])
+    merge_internal(wrapper.county, merged_data.county_data)
 
     return merged_data
 
