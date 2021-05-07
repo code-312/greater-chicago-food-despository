@@ -38,6 +38,8 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     combined_data.county.update(data_2.county)
     combined_data.meta.data_metrics.update(data_1.meta.data_metrics)
     combined_data.meta.data_metrics.update(data_2.meta.data_metrics)
+    combined_data.meta.data_bins.update(data_1.meta.data_bins)
+    combined_data.meta.data_bins.update(data_2.meta.data_bins)
 
     return combined_data
 
