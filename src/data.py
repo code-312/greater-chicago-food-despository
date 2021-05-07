@@ -77,7 +77,10 @@ def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
 
 
 def merge(wrapper: Wrapper) -> Merged:
-    return Merged()
+    merged_data = Merged()
+    merged_data.meta.data_bins.update(wrapper.meta.data_bins)
+    merged_data.meta.data_metrics.update(wrapper.meta.data_metrics)
+    return merged_data
 
 
 class GCFDData:
