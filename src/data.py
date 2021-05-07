@@ -18,13 +18,6 @@ Methods:
 '''
 
 
-def collect_data() -> None:
-    '''
-    Top level function 
-    '''
-    pass
-
-
 class GCFDData:
     '''
     Goal:
@@ -75,7 +68,7 @@ class GCFDData:
         with open(self.fp, "wb") as f:
             pickle.dump(self, f)
 
-    def __make_dict(self, path):
+    def __make_dict(self, path: tuple):
         if len(path) >= 2:
             k, v = path[:2]
             n_d = self.__make_dict(path[2:])
