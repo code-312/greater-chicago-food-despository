@@ -28,6 +28,17 @@ class Wrapper:
         self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
 
+def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict]) -> Dict[str, Dict]:
+    combined_dict = {}
+    combined_dict.update(dict_1)
+
+    for key in dict_2:
+        if key in combined_dict:
+            combined_dict[key].update(dict_2[key])
+        else:
+            combined_dict[key] = dict_2[key]
+    return combined_dict
+
 
 def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
 
@@ -38,8 +49,7 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     combined_data.county.update(data_2.county)
     combined_data.meta.data_metrics.update(data_1.meta.data_metrics)
     combined_data.meta.data_metrics.update(data_2.meta.data_metrics)
-    combined_data.meta.data_bins.update(data_1.meta.data_bins)
-    combined_data.meta.data_bins.update(data_2.meta.data_bins)
+    combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)
 
     return combined_data
 
