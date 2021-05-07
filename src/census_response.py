@@ -92,7 +92,8 @@ def df_to_json(data_metrics: Dict,
             zip_dict[k] = df_dict[k].to_dict()
 
         with open(fp, 'w') as f:
-            json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder)
+            json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder,
+                      sort_keys=True)
         print(f'Data updated at {fp}')
 
     if merged_output_path != "":
