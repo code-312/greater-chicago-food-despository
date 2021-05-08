@@ -1,6 +1,7 @@
 import pandas as pd
 import pickle
 import json
+import numpy
 from copy import deepcopy
 import os
 from typing import Dict, List, Any, Union
@@ -60,6 +61,12 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
 
     return combined_data
 
+def json_encoder(object: Any) -> Any:
+    if isinstance(object, numpy.int64):
+        return int(object)
+    else:
+        return object.__dict__  # serialize objects as dictionaries
+
 
 def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
     if pretty_print:
@@ -72,7 +79,7 @@ def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
                       sort_keys=True,  # make the output deterministic
                       indent=indent,  # turn on or off new lines and indents
                       separators=separators,  # turn on or off trimming whitespace
-                      default=lambda o: o.__dict__)  # serialize objects as dictionaries
+                      default=json_encoder)
 
 
 def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
