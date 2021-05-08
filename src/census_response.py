@@ -153,11 +153,7 @@ def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
     # Rounds to save space
     percent_df = np.round(percent_df, 6)
 
-    # converts NAN to None, for proper JSON encoding
-    # working_df = percent_df.where(pd.notnull(percent_df), None)
-    working_df = percent_df
-
-    return working_df
+    return percent_df
 
 
 class CensusRequest:
@@ -404,6 +400,18 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
         majority_series.name = 'race_majority'
 
         dataframe = pd.concat([dataframe, majority_series], axis=1)
+
+        # converts NAN to None, for proper JSON encoding
+        working_df = pct_df.where(pd.notnull(pct_df), None)
+        # creates series of race percentages as a dictionary
+        # this allows us to add percentages to the main table,
+        # without adding many more columns
+        pct_series = working_df.apply(pd.Series.to_dict, axis=1)
+        pct_series.name = 'race_percentages'
+
+        dataframe = dataframe.merge(pct_series,
+                                      left_index=True, right_index=True,
+                                      suffixes=(False, False))
         
     elif request.metric == "poverty":
         pass
