@@ -382,6 +382,7 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
     dataframe = pd.DataFrame(columns=columns, data=all_rows[1:])
 
     # Without forcing the types, the numbers end up as strings
+    dataframe = dataframe.astype('string') # without this, you get "TypeError: object cannot be converted to an IntegerDtype"
     conversion_dict = {v: 'Int64' for v in request.variables.values()}
     dataframe = dataframe.astype(conversion_dict)
 
@@ -396,11 +397,14 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
         raise ValueError("Unsupported geography type: " + geography_type)
 
     if request.metric == "race":
-        pct_df = create_percentages(dataframe, 'race_total')
+        race_df = dataframe.loc[:, request.variables.values()] # we don't need the non-numeric columns
+        pct_df = create_percentages(race_df, 'race_total')
         # creates series of majority race demographics
         majority_series = pct_df.apply(majority, axis=1)
-        majority_df = pd.DataFrame(majority_series)
-        breakpoint()
+        majority_series.name = 'race_majority'
+
+        dataframe = pd.concat([dataframe, majority_series], axis=1)
+        
     elif request.metric == "poverty":
         pass
     else:
