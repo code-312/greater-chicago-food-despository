@@ -147,8 +147,7 @@ def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
     # Casts to type float64 for numpy interoperability
     percent_df: pd.DataFrame = df.apply(divide_by_total) \
                                  .drop(total_col_str, axis=1) \
-                                 .astype('float64') \
-                                 .dropna()
+                                 .astype('float64')
 
     # Rounds to save space
     percent_df = np.round(percent_df, 6)
@@ -388,7 +387,9 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
         dataframe = pd.concat([dataframe, fip_series], axis=1)
         dataframe = dataframe.set_index('FIPS').drop(['state', 'county'], axis=1)
     elif geography_type == "zip":
-        pass
+        dataframe = dataframe.set_index('zip code tabulation area') \
+                 .drop(['NAME', 'state'], axis=1) \
+                 .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
 
@@ -399,19 +400,21 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
         majority_series = pct_df.apply(majority, axis=1)
         majority_series.name = 'race_majority'
 
-        dataframe = pd.concat([dataframe, majority_series], axis=1)
-
         # converts NAN to None, for proper JSON encoding
         working_df = pct_df.where(pd.notnull(pct_df), None)
         # creates series of race percentages as a dictionary
         # this allows us to add percentages to the main table,
         # without adding many more columns
-        pct_series = working_df.apply(pd.Series.to_dict, axis=1)
-        pct_series.name = 'race_percentages'
+        pct_dict_series = working_df.apply(pd.Series.to_dict, axis=1)
+        pct_dict_series.name = 'race_percentages'
 
-        dataframe = dataframe.merge(pct_series,
-                                      left_index=True, right_index=True,
-                                      suffixes=(False, False))
+        # creates df from the series for merging
+        pct_and_majority_df = pd.concat([pct_dict_series,
+                                       majority_series], axis=1)
+
+        dataframe = dataframe.merge(pct_and_majority_df,
+                                    left_index=True, right_index=True,
+                                    suffixes=(False, False))
         
     elif request.metric == "poverty":
         pass

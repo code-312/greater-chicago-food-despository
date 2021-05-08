@@ -66,7 +66,11 @@ def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
         indent = 4
     else:
         indent = None
-    return json.dumps(data, sort_keys=True, indent=indent, default=lambda o: o.__dict__)
+    return json.dumps(data,
+                      sort_keys=True,  # make the output deterministic
+                      indent=indent,  # turn on or off pretty printing
+                      separators=(',', ':'),  # remove whitespace
+                      default=lambda o: o.__dict__)  # serialize objects as dictionaries
 
 
 def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
