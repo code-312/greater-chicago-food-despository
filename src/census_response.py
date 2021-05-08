@@ -59,10 +59,17 @@ def get_census_response(table_url: str,
         geo (str): geographic area and filter
     output:
         list of rows. first row is header:
-            [NAME, <elements of get_ls>, state, county]
+            [NAME, <elements of get_ls>, state, county/zip header]
     '''
+    if geo == 'zip':
+        geo_parameter = 'zip code tabulation area:*'
+    elif geo == 'county':
+        geo_parameter = 'county:*&in=state:17'
+    else:
+        raise ValueError('Unsupported geography type: ' + geo)
+
     get = 'NAME,' + ",".join(get_ls)
-    url = f'{table_url}get={get}&for={geo}&key={CENSUS_KEY}'
+    url = f'{table_url}get={get}&for={geo_parameter}&key={CENSUS_KEY}'
     response = requests.get(url)
     try:
         data_table = response.json()
@@ -155,9 +162,9 @@ def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
 
 class CensusRequest:
     def __init__(self, metric: str, 
-                 table: str, variables: Dict[str, str]) -> None:
+                 table_url: str, variables: Dict[str, str]) -> None:
         self.metric = metric
-        self.table = table
+        self.table_url = table_url
         self.variables = variables
 
 
@@ -347,8 +354,34 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
     return pd.DataFrame(bin_dict)
 
 
+def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str) -> pd.DataFrame:
+    dataframe = pd.DataFrame(columns=all_rows[0], data=all_rows[1:])
+
+    if geography_type == "county":
+        fip_series = dataframe.loc[:, 'state'] + dataframe.loc[:, 'county']
+        fip_series.rename('FIPS', inplace=True)
+        dataframe = pd.concat([dataframe, fip_series], axis=1)
+        dataframe = dataframe.set_index('FIPS').drop(['state', 'county'], axis=1)
+    elif geography_type == "zip":
+        pass
+    else:
+        raise ValueError("Unsupported geography type: " + geography_type)
+
+    return dataframe
+
+
 def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
-    return data.Wrapper()
+    census_rows = get_census_response(request.table_url, request.variables.keys(), geography_type)
+    dataframe = dataframe_from_census_rows(census_rows, geography_type)
+
+    if geography_type == "county":
+        wrapper = data.from_county_dataframe(dataframe)
+    elif geography_type == "zip":
+        wrapper = data.from_zip_dataframe(dataframe)
+    else:
+        raise ValueError("Unsupported geography type: " + geography_type)
+
+    return wrapper
 
 
 def get_and_save_census_data(data_requests: List[CensusRequest],

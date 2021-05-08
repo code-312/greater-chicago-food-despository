@@ -70,9 +70,14 @@ def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
 
 
 def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
-
     wrapper = Wrapper()
     wrapper.county = df.to_dict()
+    return wrapper
+
+
+def from_zip_dataframe(df: pd.DataFrame) -> Wrapper:
+    wrapper = Wrapper()
+    wrapper.zip = df.to_dict()
     return wrapper
 
 
