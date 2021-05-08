@@ -459,5 +459,5 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
 
     if merged_output_path != "":
         merged_data = data.merge(combined_data)
-        with open(dump_output_path, "w") as f:
+        with open(merged_output_path, "w") as f:
             f.write(data.to_json(merged_data, pretty_print=pretty_print))
