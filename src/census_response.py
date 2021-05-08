@@ -383,7 +383,7 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
 
     # Without forcing the types, the numbers end up as strings
     dataframe = dataframe.astype('string') # without this, you get "TypeError: object cannot be converted to an IntegerDtype"
-    conversion_dict = {v: 'Int64' for v in request.variables.values()}
+    conversion_dict = {v: int for v in request.variables.values()}
     dataframe = dataframe.astype(conversion_dict)
 
     if geography_type == "county":
