@@ -64,12 +64,14 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
 def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
     if pretty_print:
         indent = 4
+        separators=None
     else:
         indent = None
+        separators=(',', ':')
     return json.dumps(data,
                       sort_keys=True,  # make the output deterministic
-                      indent=indent,  # turn on or off pretty printing
-                      separators=(',', ':'),  # remove whitespace
+                      indent=indent,  # turn on or off new lines and indents
+                      separators=separators,  # turn on or off trimming whitespace
                       default=lambda o: o.__dict__)  # serialize objects as dictionaries
 
 
