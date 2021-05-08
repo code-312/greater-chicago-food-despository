@@ -354,8 +354,12 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
     return pd.DataFrame(bin_dict)
 
 
-def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str) -> pd.DataFrame:
-    dataframe = pd.DataFrame(columns=all_rows[0], data=all_rows[1:])
+def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, variable_dict: Dict[str, str]) -> pd.DataFrame:
+
+    columns = [variable_dict.get(header, header)
+                    for header in all_rows[0]]
+    
+    dataframe = pd.DataFrame(columns=columns, data=all_rows[1:])
 
     if geography_type == "county":
         fip_series = dataframe.loc[:, 'state'] + dataframe.loc[:, 'county']
@@ -367,12 +371,14 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str) -
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
 
+    
+
     return dataframe
 
 
 def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
     census_rows = get_census_response(request.table_url, request.variables.keys(), geography_type)
-    dataframe = dataframe_from_census_rows(census_rows, geography_type)
+    dataframe = dataframe_from_census_rows(census_rows, geography_type, request.variables)
 
     if geography_type == "county":
         wrapper = data.from_county_dataframe(dataframe)
