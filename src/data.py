@@ -90,16 +90,26 @@ def from_zip_dataframe(df: pd.DataFrame) -> Wrapper:
 def merge_internal(input: Dict, output: Dict) -> None:
     for metric in input.keys():
 
-        metric_group_name = metric.split("_")[0] + "_data"
+        metric_group = metric.split("_")[0]
 
-        for geo_area_id in input[metric]:
-            if geo_area_id not in output:
-                output[geo_area_id] = {}
+        if metric_group == "race" or metric_group == "poverty":
 
-            if metric_group_name not in output[geo_area_id]:
-                output[geo_area_id][metric_group_name] = {}
+            metric_group_name = metric_group + "_data"
 
-            output[geo_area_id][metric_group_name][metric] = deepcopy(input[metric][geo_area_id])
+            for geo_area_id in input[metric]:
+                if geo_area_id not in output:
+                    output[geo_area_id] = {}
+
+                if metric_group_name not in output[geo_area_id]:
+                    output[geo_area_id][metric_group_name] = {}
+
+                output[geo_area_id][metric_group_name][metric] = deepcopy(input[metric][geo_area_id])
+        else:
+            for geo_area_id in input[metric]:
+                if geo_area_id not in output:
+                    output[geo_area_id] = {}
+
+                output[geo_area_id][metric] = deepcopy(input[metric][geo_area_id])
 
 
 def merge(wrapper: Wrapper) -> Merged:
