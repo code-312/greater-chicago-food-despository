@@ -354,12 +354,36 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
     return pd.DataFrame(bin_dict)
 
 
-def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, variable_dict: Dict[str, str]) -> pd.DataFrame:
+def majority(series: pd.Series) -> str:
+    '''
+    Returns majority race demographic
+    for each geo_area
+    If no majority, returns 'majority_minority'
+    '''
+    # indexes max value, returns NA for NA rows
+    idx = series.idxmax()
+    try:
+        value = series[idx]
+    except KeyError:
+        # if NA row, idx = NA
+        return None
+    if value >= 0.5:
+        return idx
+    else:
+        return 'majority_minority'
 
-    columns = [variable_dict.get(header, header)
-                    for header in all_rows[0]]
-    
+
+def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, request: CensusRequest) -> pd.DataFrame:
+
+    # Translate the census variables into our descriptive names
+    columns = [request.variables.get(column_name, column_name)
+                    for column_name in all_rows[0]]
+
     dataframe = pd.DataFrame(columns=columns, data=all_rows[1:])
+
+    # Without forcing the types, the numbers end up as strings
+    conversion_dict = {v: 'Int64' for v in request.variables.values()}
+    dataframe = dataframe.astype(conversion_dict)
 
     if geography_type == "county":
         fip_series = dataframe.loc[:, 'state'] + dataframe.loc[:, 'county']
@@ -371,14 +395,23 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, v
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
 
-    
+    if request.metric == "race":
+        pct_df = create_percentages(dataframe, 'race_total')
+        # creates series of majority race demographics
+        majority_series = pct_df.apply(majority, axis=1)
+        majority_df = pd.DataFrame(majority_series)
+        breakpoint()
+    elif request.metric == "poverty":
+        pass
+    else:
+        raise ValueError("Unsupported metric type: " + geography_type)
 
     return dataframe
 
 
 def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
     census_rows = get_census_response(request.table_url, request.variables.keys(), geography_type)
-    dataframe = dataframe_from_census_rows(census_rows, geography_type, request.variables)
+    dataframe = dataframe_from_census_rows(census_rows, geography_type, request)
 
     if geography_type == "county":
         wrapper = data.from_county_dataframe(dataframe)
@@ -386,6 +419,8 @@ def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper
         wrapper = data.from_zip_dataframe(dataframe)
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
+
+    wrapper.meta.data_metrics[request.metric] = request.variables
 
     return wrapper
 
