@@ -4,7 +4,6 @@ import json
 import requests
 import numpy as np
 import pandas as pd
-from numpyencoder import NumpyEncoder
 from typing import Dict, List, Tuple
 from src import data
 
@@ -77,62 +76,6 @@ def get_census_response(table_url: str,
         print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text)  # noqa: E501
         data_table = []
     return data_table
-
-
-def df_to_json(data_metrics: Dict,
-               data_bins: Dict,
-               df_dict: Dict,
-               dump_output_path: str = '',
-               merged_output_path: str = '') -> None:
-    '''
-    Saves dataframe to file as json
-    This format loads with load_df()
-    '''
-    class_json_dict = dict()
-    # Add Meta Data Here (Bins, etc)
-    class_json_dict['meta'] = {'data_metrics': data_metrics,
-                               'data_bins': data_bins}
-
-    if dump_output_path != "":
-        fp = dump_output_path
-        zip_dict = class_json_dict.copy()
-        for k in df_dict:
-            zip_dict[k] = df_dict[k].to_dict()
-
-        with open(fp, 'w') as f:
-            json.dump(zip_dict, f, separators=(',', ':'), cls=NumpyEncoder,
-                      sort_keys=True)
-        print(f'Data updated at {fp}')
-
-    if merged_output_path != "":
-        # determine metrics
-        # Not sure we need this many loops, \
-        # but seemed like a good idea at the time
-        for geo in df_dict:
-            geo_dict = dict()
-            for geo_area in df_dict[geo].itertuples():
-                geo_area_dict: Dict = {f'{m}_data': dict()
-                                       for m in data_metrics.keys()}
-                for name in geo_area._fields:
-                    if name == "Index":
-                        continue
-                    for metric in data_metrics.keys():
-                        metric_name = f'{metric}_data'
-                        geo_area_dict[metric_name]
-                        if metric in name:
-                            geo_area_dict[metric_name][name] = getattr(
-                                geo_area, name)
-                            break
-                    else:
-                        geo_area_dict[name] = getattr(geo_area, name)
-                geo_dict[geo_area.Index] = geo_area_dict
-            class_json_dict[f'{geo}_data'] = geo_dict
-
-        fp = merged_output_path
-        with open(fp, 'w') as f:
-            json.dump(class_json_dict, f, separators=(',', ':'),
-                      cls=NumpyEncoder, sort_keys=True)
-        print(f'Data updated at {fp}')
 
 
 def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
