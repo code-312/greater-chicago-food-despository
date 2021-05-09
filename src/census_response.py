@@ -45,7 +45,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     get_and_save_census_data([race, poverty],
                              dump_output_path='final_jsons/df_dump.json',
                              merged_output_path='final_jsons/df_merged_json.json',  # noqa: E501
-                             geo_ls=geo_ls)  
+                             geo_ls=geo_ls)
 
 
 def get_census_response(table_url: str,
@@ -138,10 +138,8 @@ def df_to_json(data_metrics: Dict,
 def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
     '''
     Calculates percentages and removes NaN for dict conversion
-    Returns calculated percent_df and series of dictionaries
+    Returns calculated percent_df
     '''
-    str_idx = total_col_str.find('_')
-    metric = total_col_str[:str_idx]
     # divides df by total column to calculate percentages
     divide_by_total = lambda x: x / df[total_col_str]  # noqa: E731, E501
     # Casts to type float64 for numpy interoperability
@@ -156,8 +154,10 @@ def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
 
 
 class CensusRequest:
-    def __init__(self, metric: str, 
-                 table_url: str, variables: Dict[str, str]) -> None:
+    def __init__(self,
+                 metric: str,
+                 table_url: str,
+                 variables: Dict[str, str]) -> None:
         self.metric = metric
         self.table_url = table_url
         self.variables = variables
@@ -224,16 +224,16 @@ def majority(series: pd.Series) -> str:
         return 'majority_minority'
 
 
-def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_type: str, request: CensusRequest) -> Tuple[pd.DataFrame, Dict[str, Dict[str, List[float]]]]:
+def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_type: str, request: CensusRequest) -> Tuple[pd.DataFrame, Dict[str, Dict[str, List[float]]]]:  # noqa: E501
 
     # Translate the census variables into our descriptive names
     columns = [request.variables.get(column_name, column_name)
-                    for column_name in all_rows[0]]
+               for column_name in all_rows[0]]
 
     dataframe = pd.DataFrame(columns=columns, data=all_rows[1:])
 
     # Without forcing the types, the numbers end up as strings
-    dataframe = dataframe.astype('string') # without this, you get "TypeError: object cannot be converted to an IntegerDtype"
+    dataframe = dataframe.astype('string')  # without this, you get "TypeError: object cannot be converted to an IntegerDtype" during when we convert to integers  # noqa: E501
     conversion_dict = {v: "Int64" for v in request.variables.values()}
     dataframe = dataframe.astype(conversion_dict)
 
@@ -243,7 +243,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         fip_series = dataframe.loc[:, 'state'] + dataframe.loc[:, 'county']
         fip_series.rename('FIPS', inplace=True)
         dataframe = pd.concat([dataframe, fip_series], axis=1)
-        dataframe = dataframe.set_index('FIPS').drop(['state', 'county'], axis=1)
+        dataframe = dataframe.set_index('FIPS').drop(['state', 'county'], axis=1)  # noqa: E501
     elif geography_type == "zip":
         dataframe = dataframe.set_index('zip code tabulation area') \
                  .drop(['NAME', 'state'], axis=1) \
@@ -252,7 +252,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         raise ValueError("Unsupported geography type: " + geography_type)
 
     if request.metric == "race":
-        race_df = dataframe.loc[:, request.variables.values()] # we don't need the non-numeric columns
+        race_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns  # noqa: E501
         pct_df = create_percentages(race_df, 'race_total')
         # creates series of majority race demographics
         majority_series = pct_df.apply(majority, axis=1)
@@ -268,14 +268,14 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
 
         # creates df from the series for merging
         pct_and_majority_df = pd.concat([pct_dict_series,
-                                       majority_series], axis=1)
+                                         majority_series], axis=1)
 
         dataframe = dataframe.merge(pct_and_majority_df,
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
-        
+
     elif request.metric == "poverty":
-        poverty_df = dataframe.loc[:, request.variables.values()] # we don't need the non-numeric columns
+        poverty_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns   # noqa: E501
         pct_df = create_percentages(poverty_df, 'poverty_population_total')
 
         # converts NAN to None, for proper JSON encoding
@@ -287,9 +287,9 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         pct_dict_series.name = 'poverty_percentages'
 
         dataframe = dataframe.merge(pct_dict_series,
-                                      left_index=True, right_index=True,
-                                      suffixes=(False, False))
-        
+                                    left_index=True, right_index=True,
+                                    suffixes=(False, False))
+
         quantile_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
         # round for space and avoid floating point imprecision
         quantile_df = np.round(quantile_df, 6)
@@ -298,8 +298,8 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
         natural_breaks_df = calculate_natural_breaks_bins(pct_df, bin_count=4,
-                                                column_names=["poverty_population_poverty",  # noqa: E501
-                                                                "poverty_population_poverty_child"])  # noqa: E501
+                                                          column_names=["poverty_population_poverty",  # noqa: E501
+                                                                        "poverty_population_poverty_child"])  # noqa: E501
         natural_breaks_df = np.round(natural_breaks_df, 6)
         natural_breaks_dict = natural_breaks_df.to_dict(orient='list')
 
@@ -313,9 +313,13 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     return dataframe, bins
 
 
-def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
-    census_rows = get_census_response(request.table_url, request.variables.keys(), geography_type)
-    dataframe, bins = dataframe_and_bins_from_census_rows(census_rows, geography_type, request)
+def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():  # noqa: E501
+    census_rows = get_census_response(request.table_url,
+                                      request.variables.keys(),
+                                      geography_type)
+    dataframe, bins = dataframe_and_bins_from_census_rows(census_rows,
+                                                          geography_type,
+                                                          request)
 
     if geography_type == "county":
         wrapper = data.from_county_dataframe(dataframe)

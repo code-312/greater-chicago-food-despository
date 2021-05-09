@@ -1,9 +1,7 @@
 import pandas as pd
-import pickle
 import json
 import numpy
 from copy import deepcopy
-import os
 from typing import Dict, List, Any, Union
 
 
@@ -19,13 +17,15 @@ class Wrapper:
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
         self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
 
+
 class Merged:
     def __init__(self):
         self.meta = MetaData()
         self.county_data: Dict[str, Dict[str, Any]] = {}  # e.g. { "17001": { "NAME": "Adams County, Illinois" } } # noqa: E501
         self.zip_data: Dict[str, Dict[str, Any]] = {}  # e.g. { "60002": { "race_total": 24066 } } # noqa: E501
 
-def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict]) -> Dict[str, Dict]:
+
+def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict]) -> Dict[str, Dict]:  # noqa: E501
     combined_dict = {}
     combined_dict.update(dict_1)
 
@@ -46,9 +46,10 @@ def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
     combined_data.county.update(data_2.county)
     combined_data.meta.data_metrics.update(data_1.meta.data_metrics)
     combined_data.meta.data_metrics.update(data_2.meta.data_metrics)
-    combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)
+    combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)  # noqa: E501
 
     return combined_data
+
 
 def json_encoder(object: Any) -> Any:
     if isinstance(object, numpy.int64):
@@ -57,17 +58,17 @@ def json_encoder(object: Any) -> Any:
         return object.__dict__  # serialize objects as dictionaries
 
 
-def to_json(data: Union[Wrapper,Merged], pretty_print: bool = False) -> str:
+def to_json(data: Union[Wrapper, Merged], pretty_print: bool = False) -> str:
     if pretty_print:
         indent = 4
-        separators=None
+        separators = None
     else:
         indent = None
-        separators=(',', ':')
+        separators = (',', ':')
     return json.dumps(data,
                       sort_keys=True,  # make the output deterministic
                       indent=indent,  # turn on or off new lines and indents
-                      separators=separators,  # turn on or off trimming whitespace
+                      separators=separators,  # turn on or off trimming whitespace  # noqa: E501
                       default=json_encoder)
 
 
@@ -99,13 +100,13 @@ def merge_internal(input: Dict, output: Dict) -> None:
                 if metric_group_name not in output[geo_area_id]:
                     output[geo_area_id][metric_group_name] = {}
 
-                output[geo_area_id][metric_group_name][metric] = deepcopy(input[metric][geo_area_id])
+                output[geo_area_id][metric_group_name][metric] = deepcopy(input[metric][geo_area_id])  # noqa: E501
         else:
             for geo_area_id in input[metric]:
                 if geo_area_id not in output:
                     output[geo_area_id] = {}
 
-                output[geo_area_id][metric] = deepcopy(input[metric][geo_area_id])
+                output[geo_area_id][metric] = deepcopy(input[metric][geo_area_id])  # noqa: E501
 
 
 def merge(wrapper: Wrapper) -> Merged:
