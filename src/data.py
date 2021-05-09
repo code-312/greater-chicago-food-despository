@@ -6,17 +6,6 @@ from copy import deepcopy
 import os
 from typing import Dict, List, Any, Union
 
-'''
-Defines data structure and relationships
-Classes:
-    DataObject
-
-Methods:
-    load_data - loads data from disk
-    get_data - returns data from memory
-    export_data - saves data to merged JSON
-'''
-
 
 class MetaData:
     def __init__(self):
