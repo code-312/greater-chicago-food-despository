@@ -417,6 +417,21 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
                                     suffixes=(False, False))
         
     elif request.metric == "poverty":
+        poverty_df = dataframe.loc[:, request.variables.values()] # we don't need the non-numeric columns
+        pct_df = create_percentages(poverty_df, 'poverty_population_total')
+
+        # converts NAN to None, for proper JSON encoding
+        working_df = pct_df.where(pd.notnull(pct_df), None)
+        # creates series of poverty percentages as a dictionary
+        # this allows us to add percentages to the main table,
+        # without adding many more columns
+        pct_dict_series = working_df.apply(pd.Series.to_dict, axis=1)
+        pct_dict_series.name = 'poverty_percentages'
+
+        dataframe = dataframe.merge(pct_dict_series,
+                                      left_index=True, right_index=True,
+                                      suffixes=(False, False))
+
         pass
     else:
         raise ValueError("Unsupported metric type: " + geography_type)
