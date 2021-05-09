@@ -368,7 +368,7 @@ def majority(series: pd.Series) -> str:
         return 'majority_minority'
 
 
-def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, request: CensusRequest) -> pd.DataFrame:
+def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_type: str, request: CensusRequest) -> Tuple[pd.DataFrame, Dict[str, Dict[str, List[float]]]]:
 
     # Translate the census variables into our descriptive names
     columns = [request.variables.get(column_name, column_name)
@@ -380,6 +380,8 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
     dataframe = dataframe.astype('string') # without this, you get "TypeError: object cannot be converted to an IntegerDtype"
     conversion_dict = {v: "Int64" for v in request.variables.values()}
     dataframe = dataframe.astype(conversion_dict)
+
+    bins = {}
 
     if geography_type == "county":
         fip_series = dataframe.loc[:, 'state'] + dataframe.loc[:, 'county']
@@ -431,17 +433,33 @@ def dataframe_from_census_rows(all_rows: List[List[str]], geography_type: str, r
         dataframe = dataframe.merge(pct_dict_series,
                                       left_index=True, right_index=True,
                                       suffixes=(False, False))
+        
+        quantile_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+        # round for space and avoid floating point imprecision
+        quantile_df = np.round(quantile_df, 6)
+        quantile_dict = quantile_df.to_dict(orient='list')
 
-        pass
+        # create quantile bins using natural breaks algorithm.
+        # bin_count could be increased to > 4 if needed.
+        natural_breaks_df = calculate_natural_breaks_bins(pct_df, bin_count=4,
+                                                column_names=["poverty_population_poverty",  # noqa: E501
+                                                                "poverty_population_poverty_child"])  # noqa: E501
+        natural_breaks_df = np.round(natural_breaks_df, 6)
+        natural_breaks_dict = natural_breaks_df.to_dict(orient='list')
+
+        bins = {
+            'quantiles': quantile_dict,
+            'natural_breaks': natural_breaks_dict
+        }
     else:
         raise ValueError("Unsupported metric type: " + geography_type)
 
-    return dataframe
+    return dataframe, bins
 
 
 def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper():
     census_rows = get_census_response(request.table_url, request.variables.keys(), geography_type)
-    dataframe = dataframe_from_census_rows(census_rows, geography_type, request)
+    dataframe, bins = dataframe_and_bins_from_census_rows(census_rows, geography_type, request)
 
     if geography_type == "county":
         wrapper = data.from_county_dataframe(dataframe)
@@ -451,6 +469,7 @@ def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper
         raise ValueError("Unsupported geography type: " + geography_type)
 
     wrapper.meta.data_metrics[request.metric] = request.variables
+    wrapper.meta.data_bins = bins
 
     return wrapper
 
