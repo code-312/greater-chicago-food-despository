@@ -4,7 +4,7 @@ import json
 import requests
 import numpy as np
 import pandas as pd
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional, Collection
 from src import data
 
 
@@ -48,7 +48,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
 
 
 def get_census_response(table_url: str,
-                        get_ls: List[str],
+                        get_ls: Collection[str],
                         geo: str) -> List[List[str]]:
     '''
     Concatenates url string and returns response from census api query
@@ -148,7 +148,7 @@ def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
     return pd.DataFrame(bin_dict)
 
 
-def majority(series: pd.Series) -> str:
+def majority(series: pd.Series) -> Optional[str]:
     '''
     Returns majority race demographic
     for each geo_area
@@ -256,7 +256,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     return dataframe, bins
 
 
-def get_census_data(request: CensusRequest, geography_type: str) -> data.GCFDData():  # noqa: E501
+def get_census_data(request: CensusRequest, geography_type: str) -> data.GCFDData:  # noqa: E501
     census_rows = get_census_response(request.table_url,
                                       request.variables.keys(),
                                       geography_type)

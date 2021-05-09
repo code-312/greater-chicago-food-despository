@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import numpy
 from copy import deepcopy
-from typing import Dict, List, Any, Union
+from typing import Dict, List, Any, Union, Optional
 
 
 class MetaData:
@@ -60,7 +60,7 @@ def json_encoder(object: Any) -> Any:
 
 def to_json(data: Union[GCFDData, Merged], pretty_print: bool = False) -> str:
     if pretty_print:
-        indent = 4
+        indent: Optional[int] = 4
         separators = None
     else:
         indent = None
