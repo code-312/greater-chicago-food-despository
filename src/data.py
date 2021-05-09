@@ -11,7 +11,7 @@ class MetaData:
         self.data_bins: Dict[str, Dict[str, List[float]]] = {}  # e.g. { "quantiles": { "poverty_population_poverty": [1, 2, 3] } } # noqa: E501
 
 
-class Wrapper:
+class GCFDData:
     def __init__(self):
         self.meta = MetaData()
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
@@ -37,9 +37,9 @@ def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict])
     return combined_dict
 
 
-def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
+def combine(data_1: GCFDData, data_2: GCFDData) -> GCFDData:
 
-    combined_data = Wrapper()
+    combined_data = GCFDData()
     combined_data.zip.update(data_1.zip)
     combined_data.zip.update(data_2.zip)
     combined_data.county.update(data_1.county)
@@ -58,7 +58,7 @@ def json_encoder(object: Any) -> Any:
         return object.__dict__  # serialize objects as dictionaries
 
 
-def to_json(data: Union[Wrapper, Merged], pretty_print: bool = False) -> str:
+def to_json(data: Union[GCFDData, Merged], pretty_print: bool = False) -> str:
     if pretty_print:
         indent = 4
         separators = None
@@ -72,14 +72,14 @@ def to_json(data: Union[Wrapper, Merged], pretty_print: bool = False) -> str:
                       default=json_encoder)
 
 
-def from_county_dataframe(df: pd.DataFrame) -> Wrapper:
-    wrapper = Wrapper()
+def from_county_dataframe(df: pd.DataFrame) -> GCFDData:
+    wrapper = GCFDData()
     wrapper.county = df.to_dict()
     return wrapper
 
 
-def from_zip_dataframe(df: pd.DataFrame) -> Wrapper:
-    wrapper = Wrapper()
+def from_zip_dataframe(df: pd.DataFrame) -> GCFDData:
+    wrapper = GCFDData()
     wrapper.zip = df.to_dict()
     return wrapper
 
@@ -109,7 +109,7 @@ def merge_internal(input: Dict, output: Dict) -> None:
                 output[geo_area_id][metric] = deepcopy(input[metric][geo_area_id])  # noqa: E501
 
 
-def merge(wrapper: Wrapper) -> Merged:
+def merge(wrapper: GCFDData) -> Merged:
     merged_data = Merged()
     merged_data.meta.data_bins.update(wrapper.meta.data_bins)
     merged_data.meta.data_metrics.update(wrapper.meta.data_metrics)
