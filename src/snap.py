@@ -1,7 +1,7 @@
 import os
 import sys
 import pandas as pd
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 sys.path.append(os.path.abspath(''))
 from src.census_response import county_fips  # noqa: E402
 
@@ -74,7 +74,7 @@ def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
 
 # srcs is a list of tuples where the first element is the year,
 # second element is the path to the data source
-def merge_snap_data(srcs: list[tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
+def merge_snap_data(srcs: list[Tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
     for src in srcs:
         table = load_excel(src[1])
         rename_columns(table)
