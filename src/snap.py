@@ -63,8 +63,6 @@ def add_fips_column(table: Dict[str, Any]) -> None:
         # drop column of county names
         table[k].drop('county', axis=1, inplace=True)
 
-        print(table[k])
-
 
 def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
     output = dict()
