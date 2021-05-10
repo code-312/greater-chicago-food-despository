@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import json
 sys.path.append(os.path.abspath(''))
 # Raises linting error because not at top of file
 # Not sure how to resolve this with the pathing
@@ -9,6 +10,7 @@ import src.census_response  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
 from src.insecurity import merge_ins_data  # noqa: E402
 import src.wic  # noqa: E402
+from src.snap import merge_snap_data  # noqa: E402
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
@@ -49,6 +51,18 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+
+    print("Reading Snap Data")
+    mph.record_current_memory_usage_if_enabled()
+    start_time = time.time()
+    with open('final_jsons/df_merged_with_insecurity.json') as merged:
+        merged_data = json.load(merged)
+    with_snap = merge_snap_data([('2019', 'data_folder/SNAP_2019.xlsx'), ('2020', 'data_folder/SNAP_2020.xlsx')], merged_data)  # noqa: E501
+    with open('final_jsons/df_merged_with_insecurity_and_snap.json', 'w+') as new_merged:  # noqa: E501
+        json.dump(with_snap, new_merged)
+    if (verbose):
+        duration = time.time() - start_time
+        print("Reading Snap Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
