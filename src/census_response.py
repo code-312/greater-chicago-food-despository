@@ -256,7 +256,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     return dataframe, bins
 
 
-def get_census_data(request: CensusRequest, geography_type: str) -> data.GCFDData:  # noqa: E501
+def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper:  # noqa: E501
     census_rows = get_census_response(request.table_url,
                                       request.variables.keys(),
                                       geography_type)
@@ -283,7 +283,7 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
                              geo_ls: List[str] = ["zip", "county"],
                              pretty_print: bool = False) -> None:
 
-    combined_data = data.GCFDData()
+    combined_data = data.Wrapper()
 
     for request in data_requests:
         for geo in geo_ls:
