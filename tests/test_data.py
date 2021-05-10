@@ -39,7 +39,6 @@ def test_combine():
 
 
 def test_to_json():
-
     some_data = data.GCFDData()
     some_data.zip = {"race_total": {"60002": 1234}}
     some_data.county = {"race_total": {"17001": 5678}}
