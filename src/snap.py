@@ -1,7 +1,7 @@
 import os
 import sys
 import pandas as pd
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, List
 sys.path.append(os.path.abspath(''))
 from src.census_response import county_fips  # noqa: E402
 
@@ -63,6 +63,16 @@ def add_fips_column(table: Dict[str, Any]) -> None:
         table[k].drop('county', axis=1, inplace=True)
 
 
+# Returns a dictionary with the structure:
+# {
+#   <age group>: {
+#       <fips>: {
+#           "race_white": 0
+#           ...
+#           "race_unknown": 0
+#       }
+#   }
+# }
 def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
     output = dict()
     for k in table:
@@ -74,8 +84,9 @@ def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
 
 # srcs is a list of tuples where the first element is the year,
 # second element is the path to the data source
-def merge_snap_data(srcs: list[Tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
+def merge_snap_data(srcs: List[Tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
     for src in srcs:
+        year = src[0]
         table = load_excel(src[1])
         rename_columns(table)
         add_fips_column(table)
@@ -84,7 +95,7 @@ def merge_snap_data(srcs: list[Tuple[str, str]], merge_to: Dict[str, Any]) -> Di
             for age_group in table_dict:
                 if 'snap_data' not in merge_to['county_data'][fips]:
                     merge_to['county_data'][fips]['snap_data'] = dict()
-                if src[0] not in merge_to['county_data'][fips]['snap_data']:
-                    merge_to['county_data'][fips]['snap_data'][src[0]] = dict()
-                merge_to['county_data'][fips]['snap_data'][src[0]][age_group] = table_dict[age_group][fips]  # noqa E501
+                if year not in merge_to['county_data'][fips]['snap_data']:
+                    merge_to['county_data'][fips]['snap_data'][year] = dict()
+                merge_to['county_data'][fips]['snap_data'][year][age_group] = table_dict[age_group][fips]  # noqa E501
     return merge_to
