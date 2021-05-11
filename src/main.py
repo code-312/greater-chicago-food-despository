@@ -35,10 +35,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading WIC Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    wic_participation = src.wic.read_wic_data()
-    src.wic.merge_wic_data_file(wic_participation,
-                                'final_jsons/df_merged_json.json',
-                                'final_jsons/df_merged_with_wic.json')
+    wic_participation: src.data.Wrapper = src.wic.read_wic_data()
     if (verbose):
         duration = time.time() - start_time
         print("Reading WIC Data took: {0:.2f} seconds".format(duration))

@@ -4,6 +4,7 @@ import pdfplumber
 import pandas as pd
 import json
 from typing import List, Dict, Any
+import src.data
 
 
 '''
@@ -35,7 +36,7 @@ class WICParticipation:
         self.total = total
 
 
-def read_wic_data(always_run: bool = False) -> WICParticipation:
+def read_wic_data(always_run: bool = False) -> data.Wrapper:
 
     input_file_path = "data_folder/illinois_wic_data_january_2021.pdf"
     women_output_csv_path = "final_jsons/wic_participation_women.csv"
@@ -59,13 +60,16 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
         participation.children.to_csv(children_output_csv_path)
         participation.infants.to_csv(infants_output_csv_path)
         participation.total.to_csv(total_output_csv_path)
-        return participation
+
+        return wrapper_from_wic_participation(participation)
     else:
-        return WICParticipation(
+        participation = WICParticipation(
             women=read_csv(women_output_csv_path),
             infants=read_csv(infants_output_csv_path),
             children=read_csv(children_output_csv_path),
             total=read_csv(total_output_csv_path))
+
+        return wrapper_from_wic_participation(participation)
 
 
 def read_csv(path: str) -> pd.DataFrame:
@@ -160,13 +164,6 @@ def parse_wic_pdf(
         total=dataframe_from_rows(total_rows))
 
 
-def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:  # noqa: E501
-    with open(merged_src) as merged_src_file:
-        merged_data = merge_wic_data(participation, json.load(merged_src_file))
-    with open(merged_dst, "w") as merged_dst_file:
-        json.dump(merged_data, merged_dst_file)
-
-
 def to_dict_for_merging(df: pd.DataFrame) -> Dict:
     # calling df.to_dict() directly messes up all the types
     data_dict = json.loads(df.to_json(orient='index'))
@@ -175,21 +172,12 @@ def to_dict_for_merging(df: pd.DataFrame) -> Dict:
     return data_dict
 
 
-def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:  # noqa: E501
+def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:
 
-    women_dict = to_dict_for_merging(participation.women)
-    infants_dict = to_dict_for_merging(participation.infants)
-    children_dict = to_dict_for_merging(participation.children)
-    total_dict = to_dict_for_merging(participation.total)
+    combined_data = data.from_county_dataframe(participation.women)
+    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.infants))
+    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.children))
+    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.total))
 
-    for fips, county_data in merged_data['county_data'].items():
-        if fips in women_dict:
-            county_data['wic_participation_women_data'] = women_dict[fips]
-        if fips in infants_dict:
-            county_data['wic_participation_infants_data'] = infants_dict[fips]
-        if fips in children_dict:
-            county_data['wic_participation_children_data'] = children_dict[fips]  # noqa: E501
-        if fips in total_dict:
-            county_data['wic_participation_total_data'] = total_dict[fips]
+    return combined_data
 
-    return merged_data

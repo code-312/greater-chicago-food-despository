@@ -1,9 +1,11 @@
 import os
 import xlrd
 import pandas as pd
+from typing import Tuple
+from src.census_response import county_fips
 
 
-def file_to_json(input_dir, output_dir, blacklist=[]):
+def file_to_json(input_dir, output_dir, blacklist=[]) -> None:
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
@@ -19,7 +21,9 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
             fp = os.path.join(subdir, f)
             # using splitext allows '.' to appear in the filename
             f_name, f_ext = os.path.splitext(f)
-            table_ls = []
+
+            table_ls: Tuple[str, pd.DataFrame]  = []  # unique name, DataFrame
+
             if f_ext[:4] == '.xls':
                 # openpyxl can open .xlsx but not .xls
                 # xlrd can open .xls but not .xlsx
@@ -46,9 +50,6 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
                 continue
 
             for t in table_ls:
-                # table_ls is list of tuples
-                # index 0: unique name
-                # index 1: DataFrame
                 try:
                     table_to_json(t[1], os.path.join(output_dir,
                                                      t[0] + '.json'))
@@ -58,12 +59,11 @@ def file_to_json(input_dir, output_dir, blacklist=[]):
                     print('-'*10)
 
 
-def determine_fips(df):
+def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
     '''
     Returns df with fips codes
     County name in df must be in the first column or named 'County Name'
     '''
-    from src.census_response import county_fips
 
     fips = county_fips()
     # Verifies county column
@@ -90,7 +90,7 @@ def determine_fips(df):
     return df
 
 
-def table_to_json(df, filepath):
+def table_to_json(df: pd.DataFrame, filepath: str):
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
