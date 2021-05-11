@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple, Optional, Collection
 from src import data
 
 
-def download_census_data(geo_ls=["zip", "county"]) -> None:
+def download_census_data(geo_ls=["zip", "county"]) -> data.Wrapper:
     '''
     Top level function to run the queries
     '''
@@ -41,10 +41,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     # poverty_functions = [processPovertyData]
     poverty = CensusRequest("poverty", subject_table, poverty_variables)
 
-    get_and_save_census_data([race, poverty],
-                             dump_output_path='final_jsons/df_dump.json',
-                             merged_output_path='final_jsons/df_merged_json.json',  # noqa: E501
-                             geo_ls=geo_ls)
+    return get_census_data_list([race, poverty], geo_ls) 
 
 
 def get_census_response(table_url: str,

@@ -9,6 +9,7 @@ import src.census_response  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
 from src.insecurity import merge_ins_data  # noqa: E402
 import src.wic  # noqa: E402
+import src.data
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
@@ -23,7 +24,10 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    src.census_response.download_census_data()
+    census_data: src.data.Wrapper = src.census_response.download_census_data()
+    src.census_response.save_census_data(census_data,
+                                         dump_output_path='final_jsons/df_dump.json',
+                                         merged_output_path='final_jsons/df_merged_json.json')
     if (verbose):
         duration = time.time() - start_time
         print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
