@@ -3,7 +3,7 @@ import re
 import pdfplumber
 import pandas as pd
 import json
-from typing import List, Dict, Any
+from typing import List, Dict
 from src import data
 
 
@@ -172,12 +172,14 @@ def to_dict_for_merging(df: pd.DataFrame) -> Dict:
     return data_dict
 
 
-def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:
+def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:  # noqa: E501
 
     combined_data = data.from_county_dataframe(participation.women)
-    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.infants))
-    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.children))
-    combined_data = data.combine(combined_data, data.from_county_dataframe(participation.total))
+    combined_data = data.combine(combined_data,
+                                 data.from_county_dataframe(participation.infants))  # noqa: E501
+    combined_data = data.combine(combined_data,
+                                 data.from_county_dataframe(participation.children))  # noqa: E501
+    combined_data = data.combine(combined_data,
+                                 data.from_county_dataframe(participation.total))  # noqa: E501
 
     return combined_data
-

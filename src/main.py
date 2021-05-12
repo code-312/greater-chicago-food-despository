@@ -35,7 +35,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading WIC Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    wic_participation: src.data.Wrapper = src.wic.read_wic_data()
+    wic_data: src.data.Wrapper = src.wic.read_wic_data()
+    combined_data: src.data.Wrapper = src.data.combine(census_data, wic_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading WIC Data took: {0:.2f} seconds".format(duration))

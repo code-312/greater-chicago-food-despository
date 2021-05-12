@@ -41,7 +41,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> data.Wrapper:
     # poverty_functions = [processPovertyData]
     poverty = CensusRequest("poverty", subject_table, poverty_variables)
 
-    return get_census_data_list([race, poverty], geo_ls) 
+    return get_census_data_list([race, poverty], geo_ls)
 
 
 def get_census_response(table_url: str,
@@ -274,13 +274,14 @@ def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper
     return wrapper
 
 
-def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"]) -> data.Wrapper:
+def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"]) -> data.Wrapper:  # noqa: E501
     combined_data = data.Wrapper()
     for request in data_requests:
         for geo in geo_ls:
             new_data = get_census_data(request, geo)
             combined_data = data.combine(combined_data, new_data)
     return combined_data
+
 
 def save_census_data(wrapper: data.Wrapper,
                      dump_output_path: str = "",
@@ -304,4 +305,4 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
                              pretty_print: bool = False) -> None:
 
     combined_data = get_census_data_list(data_requests, geo_ls)
-    save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)
+    save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)  # noqa: E501
