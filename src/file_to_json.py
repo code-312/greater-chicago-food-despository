@@ -60,7 +60,7 @@ def file_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[st
 def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:
     for t in tables:
         try:
-            table_to_json(t[1], os.path.join(output_dir,
+            table_to_json(normalize_dataframe(t[1]), os.path.join(output_dir,
                                                 t[0] + '.json'))
         except Exception as e:
             print(e)
@@ -105,6 +105,7 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     if 'fips' not in columns:
         df = determine_fips(df)
     df = df.set_index('fips')
+    return df
 
 
 def table_to_json(df: pd.DataFrame, filepath: str) -> None:
@@ -112,8 +113,6 @@ def table_to_json(df: pd.DataFrame, filepath: str) -> None:
     Converts panda df to json format
     '''
     import json
-
-    df = normalize_dataframe(df)
 
     json_str = df.to_json(orient='index')
     # normalize line endings to LF
