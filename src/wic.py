@@ -4,7 +4,7 @@ import pdfplumber
 import pandas as pd
 import json
 from typing import List, Dict, Any
-import src.data
+from src import data
 
 
 '''

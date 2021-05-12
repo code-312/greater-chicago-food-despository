@@ -25,27 +25,6 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
         assert json_str == expected_output.read()
 
 
-def test_merge_wic():
-    participation = wic.WICParticipation(
-            women=wic.read_json("tests/resources/wic_women_merge_input.json"),
-            infants=wic.read_json("tests/resources/wic_infants_merge_input.json"),  # noqa: E501
-            children=wic.read_json("tests/resources/wic_children_merge_input.json"),  # noqa: E501
-            total=wic.read_json("tests/resources/wic_total_merge_input.json"))
-
-    with open("tests/resources/df_merged_without_wic.json") as merge_data_file:
-        merged_data = json.load(merge_data_file)
-
-    merged_data_with_wic = wic.merge_wic_data(participation, merged_data)
-
-    json_str = json.dumps(merged_data_with_wic, indent=4, sort_keys=True)
-
-    with open("tests/output/df_merged_with_wic.json", "w") as actual_output:
-        actual_output.write(json_str)
-
-    with open("tests/resources/df_merged_with_wic_expected.json") as expected_output:  # noqa: E501
-        assert json_str == expected_output.read()
-
-
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
     assert dataframe.loc[17001, "total"] == 365
