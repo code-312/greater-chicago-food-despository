@@ -10,7 +10,12 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    table_ls: List[Tuple[str, pd.DataFrame]]  = []  # unique name, DataFrame
+    table_ls = file_to_dataframes(input_dir, blacklist)
+    dataframes_to_json_files(table_ls, output_dir)
+
+
+def file_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
+    table_ls: List[Tuple[str, pd.DataFrame]] = []  # unique name, DataFrame
 
     f_walk = os.walk(input_dir)
 
@@ -49,7 +54,11 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
                 print('Skipping unsupported file {}'.format(f))
                 continue
 
-    for t in table_ls:
+    return table_ls
+
+
+def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:
+    for t in tables:
         try:
             table_to_json(t[1], os.path.join(output_dir,
                                                 t[0] + '.json'))
