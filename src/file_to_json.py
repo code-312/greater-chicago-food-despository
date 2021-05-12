@@ -10,6 +10,8 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
+    table_ls: List[Tuple[str, pd.DataFrame]]  = []  # unique name, DataFrame
+
     f_walk = os.walk(input_dir)
 
     for subdir, _, files in f_walk:
@@ -21,8 +23,6 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
             fp = os.path.join(subdir, f)
             # using splitext allows '.' to appear in the filename
             f_name, f_ext = os.path.splitext(f)
-
-            table_ls: Tuple[str, pd.DataFrame]  = []  # unique name, DataFrame
 
             if f_ext[:4] == '.xls':
                 # openpyxl can open .xlsx but not .xls
@@ -49,14 +49,14 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
                 print('Skipping unsupported file {}'.format(f))
                 continue
 
-            for t in table_ls:
-                try:
-                    table_to_json(t[1], os.path.join(output_dir,
-                                                     t[0] + '.json'))
-                except Exception as e:
-                    print(e)
-                    print(t)
-                    print('-'*10)
+    for t in table_ls:
+        try:
+            table_to_json(t[1], os.path.join(output_dir,
+                                                t[0] + '.json'))
+        except Exception as e:
+            print(e)
+            print(t)
+            print('-'*10)
 
 
 def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
