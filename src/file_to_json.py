@@ -1,11 +1,11 @@
 import os
 import xlrd
 import pandas as pd
-from typing import Tuple
+from typing import Tuple, List
 from src.census_response import county_fips
 
 
-def file_to_json(input_dir, output_dir, blacklist=[]) -> None:
+def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> None:
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
@@ -90,7 +90,7 @@ def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def table_to_json(df: pd.DataFrame, filepath: str):
+def table_to_json(df: pd.DataFrame, filepath: str) -> None:
     '''
     Converts panda df to json format
     Checks for fips column, calls determine_fips if not present
