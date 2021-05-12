@@ -99,19 +99,22 @@ def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def table_to_json(df: pd.DataFrame, filepath: str) -> None:
-    '''
-    Converts panda df to json format
-    Checks for fips column, calls determine_fips if not present
-    '''
-    import json
-
-    # get county FIPs, if necessary
+def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    '''Tries to add a fips column index if it's missing'''
     columns = [c.lower() for c in df.columns]
     if 'fips' not in columns:
         df = determine_fips(df)
-
     df = df.set_index('fips')
+
+
+def table_to_json(df: pd.DataFrame, filepath: str) -> None:
+    '''
+    Converts panda df to json format
+    '''
+    import json
+
+    df = normalize_dataframe(df)
+
     json_str = df.to_json(orient='index')
     # normalize line endings to LF
     json_str = json_str.replace('\\r\\n', '\\n').replace('\\r', '\\n')
