@@ -16,5 +16,5 @@ def test_insecurity_merge() -> None:
         merged_data = json.load(merged)
     with_snap = merge_snap_data([('2019', 'tests/resources/SNAP_2019_test.xlsx'), ('2020', 'tests/resources/SNAP_2020_test.xlsx')], merged_data)  # noqa: E501
     with open('tests/output/df_merged_with_snap_actual.json', 'w+') as new_merged:  # noqa: E501
-        json.dump(with_snap, new_merged, separators=(',', ':'))
+        json.dump(with_snap, new_merged, indent=4)
     check_output('tests/output/df_merged_with_snap_actual.json', 'tests/resources/df_merged_with_snap_expected.json')  # noqa: E501
