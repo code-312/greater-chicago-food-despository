@@ -8,7 +8,7 @@ import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
 from src.file_to_json import file_to_wrapper  # noqa: E402
 import src.wic  # noqa: E402
-from src import data
+from src import data  # noqa: E402
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
@@ -38,7 +38,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading Food Insecurity Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    insecurity_data: data.Wrapper = file_to_wrapper('data_folder', blacklist=['Key'])
+    insecurity_data: data.Wrapper = file_to_wrapper('data_folder', blacklist=['Key'])  # noqa: E501
     combined_data: data.Wrapper = data.combine(combined_data, insecurity_data)
     if (verbose):
         duration = time.time() - start_time

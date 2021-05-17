@@ -1,12 +1,12 @@
 import os
 import xlrd
 import pandas as pd
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 from src.census_response import county_fips
 from src import data
 
 
-def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> None:
+def file_to_json(input_dir: str, output_dir: str, blacklist: List[str] = []) -> None:  # noqa: E501
     '''
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
@@ -15,15 +15,15 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
     dataframes_to_json_files(table_ls, output_dir)
 
 
-def file_to_wrapper(input_dir: str, blacklist: List[str]=[]) -> data.Wrapper:
+def file_to_wrapper(input_dir: str, blacklist: List[str] = []) -> data.Wrapper:  # noqa: E501
     table_ls = files_to_dataframes(input_dir, blacklist)
     combined_data = data.Wrapper()
     for pair in table_ls:
-        combined_data = data.combine(combined_data, data.from_county_dataframe(pair[1]))
+        combined_data = data.combine(combined_data, data.from_county_dataframe(pair[1]))  # noqa: E501
     return combined_data
 
 
-def files_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
+def files_to_dataframes(input_dir: str, blacklist: List[str] = []) -> List[Tuple[str, pd.DataFrame]]:  # noqa: E501
     table_ls: List[Tuple[str, pd.DataFrame]] = []  # unique name, DataFrame
 
     f_walk = os.walk(input_dir)
@@ -33,12 +33,12 @@ def files_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[s
             fp = os.path.join(subdir, f)
             table_ls = table_ls + file_to_dataframes(fp, blacklist)
 
-    normalized_tables = [(pair[0], normalize_dataframe(pair[1])) for pair in table_ls]
+    normalized_tables = [(pair[0], normalize_dataframe(pair[1])) for pair in table_ls]  # noqa: E501
 
     return normalized_tables
 
 
-def file_to_dataframes(filepath: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
+def file_to_dataframes(filepath: str, blacklist: List[str] = []) -> List[Tuple[str, pd.DataFrame]]:  # noqa: E501
     '''Returns list of (unique name, DataFrame)'''
 
     directory, filename_with_extension = os.path.split(filepath)
@@ -72,11 +72,10 @@ def file_to_dataframes(filepath: str, blacklist: List[str]=[]) -> List[Tuple[str
         return []
 
 
-def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:
+def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:  # noqa: E501
     for t in tables:
         try:
-            table_to_json(t[1], os.path.join(output_dir,
-                                                t[0] + '.json'))
+            table_to_json(t[1], os.path.join(output_dir, t[0] + '.json'))
         except Exception as e:
             print(e)
             print(t)
