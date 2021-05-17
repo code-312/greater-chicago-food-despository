@@ -8,25 +8,20 @@ import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
 import src.wic  # noqa: E402
-import src.data
+from src import data
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
-    Calls censusData function to create CensusData instances
-    and return list of dictionaries
-    Calls dict_merge to merge list of dictionaries by geo_area
-    and save jsons to file
+    Gathers data from different sources, combines them into
+    one data structure and then writes it to file in two formats
     '''
     mph.setup_memory_usage_file_if_enabled()
 
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    census_data: src.data.Wrapper = src.census_response.download_census_data()
-    src.census_response.save_census_data(census_data,
-                                         dump_output_path='final_jsons/df_dump.json',
-                                         merged_output_path='final_jsons/df_merged_json.json')
+    combined_data: data.Wrapper = src.census_response.download_census_data()
     if (verbose):
         duration = time.time() - start_time
         print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
@@ -34,8 +29,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading WIC Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    wic_data: src.data.Wrapper = src.wic.read_wic_data()
-    combined_data: src.data.Wrapper = src.data.combine(census_data, wic_data)
+    wic_data: data.Wrapper = src.wic.read_wic_data()
+    combined_data: data.Wrapper = data.combine(combined_data, wic_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading WIC Data took: {0:.2f} seconds".format(duration))
@@ -47,6 +42,13 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+
+    with open('final_jsons/df_dump.json', "w") as f:
+        f.write(data.to_json(combined_data))
+
+    merged_data: data.Merged = data.merge(combined_data)
+    with open('final_jsons/df_merged_json.json', "w") as f:
+        f.write(data.to_json(merged_data))
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
