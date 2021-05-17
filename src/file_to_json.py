@@ -11,61 +11,65 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
     Reads excel/csv files into json format
     Excludes worksheets in blacklist
     '''
-    table_ls = file_to_dataframes(input_dir, blacklist)
+    table_ls = files_to_dataframes(input_dir, blacklist)
     dataframes_to_json_files(table_ls, output_dir)
 
 
 def file_to_wrapper(input_dir: str, blacklist: List[str]=[]) -> data.Wrapper:
-    table_ls = file_to_dataframes(input_dir, blacklist)
+    table_ls = files_to_dataframes(input_dir, blacklist)
     combined_data = data.Wrapper()
     for pair in table_ls:
         combined_data = data.combine(combined_data, data.from_county_dataframe(pair[1]))
     return combined_data
 
 
-def file_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
+def files_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
     table_ls: List[Tuple[str, pd.DataFrame]] = []  # unique name, DataFrame
 
     f_walk = os.walk(input_dir)
 
     for subdir, _, files in f_walk:
         for f in files:
-            # pandas not only provides file reading functionality,
-            # but outputs in a single format
-            # if performance requires, other packages may be implemented,
-            # that may require additional processing after reading in the file
             fp = os.path.join(subdir, f)
-            # using splitext allows '.' to appear in the filename
-            f_name, f_ext = os.path.splitext(f)
-
-            if f_ext[:4] == '.xls':
-                # openpyxl can open .xlsx but not .xls
-                # xlrd can open .xls but not .xlsx
-                if f_ext == '.xlsx':
-                    engine = 'openpyxl'
-                else:
-                    engine = 'xlrd'
-                try:
-                    table = pd.read_excel(fp, sheet_name=None, engine=engine)
-                except xlrd.biffh.XLRDError as e:
-                    print(e)
-                    raise Exception("Error reading {0}. Close the file if you have it open.".format(fp))  # noqa: E501
-                if type(table) == dict:
-                    for k in table:
-                        if k not in blacklist:
-                            table_ls.append((k+f_name, table[k]))
-                        else:
-                            continue
-            elif f_ext == '.csv':
-                table_ls.append((f_name, pd.read_csv(fp)))
-            else:
-                # need to account for e.g. .gitkeep and PDF files
-                print('Skipping unsupported file {}'.format(f))
-                continue
+            table_ls = table_ls + file_to_dataframes(fp, blacklist)
 
     normalized_tables = [(pair[0], normalize_dataframe(pair[1])) for pair in table_ls]
 
     return normalized_tables
+
+
+def file_to_dataframes(filepath: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
+    '''Returns list of (unique name, DataFrame)'''
+
+    directory, filename_with_extension = os.path.split(filepath)
+    f_name, f_ext = os.path.splitext(filename_with_extension)
+
+    if f_ext[:4] == '.xls':
+        # openpyxl can open .xlsx but not .xls
+        # xlrd can open .xls but not .xlsx
+        if f_ext == '.xlsx':
+            engine = 'openpyxl'
+        else:
+            engine = 'xlrd'
+        try:
+            table = pd.read_excel(filepath, sheet_name=None, engine=engine)
+        except xlrd.biffh.XLRDError as e:
+            print(e)
+            raise Exception("Error reading {0}. Close the file if you have it open.".format(filepath))  # noqa: E501
+        table_ls: List[Tuple[str, pd.DataFrame]] = []
+        if type(table) == dict:
+            for k in table:
+                if k not in blacklist:
+                    table_ls.append((k+f_name, table[k]))
+                else:
+                    continue
+        return table_ls
+    elif f_ext == '.csv':
+        return [(f_name, pd.read_csv(filepath))]
+    else:
+        # need to account for e.g. .gitkeep and PDF files
+        print('Skipping unsupported file {}'.format(filepath))
+        return []
 
 
 def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:
