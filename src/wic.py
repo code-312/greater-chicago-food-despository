@@ -73,7 +73,10 @@ def read_wic_data(always_run: bool = False) -> data.Wrapper:
 
 
 def read_csv(path: str) -> pd.DataFrame:
-    return pd.read_csv(path, index_col="fips")
+    # Using index_col="fips" in the read_csv() call made the fips column int
+    # datatype for some reason, so we set the index on a separate line
+    df = pd.read_csv(path, dtype={"fips": str})
+    return df.set_index("fips")
 
 
 def read_json(path: str) -> pd.DataFrame:

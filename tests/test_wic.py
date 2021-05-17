@@ -26,4 +26,4 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
 
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
-    assert dataframe.loc[17001, "total"] == 365
+    assert dataframe.loc["17001", "total"] == 365
