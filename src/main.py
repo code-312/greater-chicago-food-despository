@@ -7,7 +7,6 @@ sys.path.append(os.path.abspath(''))
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
 from src.file_to_json import file_to_json  # noqa: E402
-from src.insecurity import merge_ins_data  # noqa: E402
 import src.wic  # noqa: E402
 import src.data
 
@@ -45,9 +44,6 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
     file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
-    merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
-                   'final_jsons/df_merged_with_wic.json',
-                   'final_jsons/df_merged_with_wic_and_insecurity.json')
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
