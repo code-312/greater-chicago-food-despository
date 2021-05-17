@@ -103,7 +103,7 @@ class CensusRequest:
         self.variables = variables
 
 
-def county_fips(reverse=False) -> dict:
+def county_fips(reverse=False) -> Dict[str, str]:
     '''
     Requests county fips from census API and returns list of IL county FIPS
     input: reverse (bool) reverses keys and values in output

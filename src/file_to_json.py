@@ -54,13 +54,15 @@ def file_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[st
                 print('Skipping unsupported file {}'.format(f))
                 continue
 
-    return table_ls
+    normalized_tables = [(pair[0], normalize_dataframe(pair[1])) for pair in table_ls]
+
+    return normalized_tables
 
 
 def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:
     for t in tables:
         try:
-            table_to_json(normalize_dataframe(t[1]), os.path.join(output_dir,
+            table_to_json(t[1], os.path.join(output_dir,
                                                 t[0] + '.json'))
         except Exception as e:
             print(e)
@@ -74,7 +76,7 @@ def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
     County name in df must be in the first column or named 'County Name'
     '''
 
-    fips = county_fips()
+    fips: Dict[str, str] = county_fips()
     # Verifies county column
     # Moves properly named column to first column
     first_column_name = df.iloc[:, 0].name
