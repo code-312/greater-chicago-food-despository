@@ -3,6 +3,7 @@ import xlrd
 import pandas as pd
 from typing import Tuple, List
 from src.census_response import county_fips
+from src import data
 
 
 def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> None:
@@ -12,6 +13,14 @@ def file_to_json(input_dir: str, output_dir: str, blacklist: List[str]=[]) -> No
     '''
     table_ls = file_to_dataframes(input_dir, blacklist)
     dataframes_to_json_files(table_ls, output_dir)
+
+
+def file_to_wrapper(input_dir: str, blacklist: List[str]=[]) -> data.Wrapper:
+    table_ls = file_to_dataframes(input_dir, blacklist)
+    combined_data = data.Wrapper()
+    for pair in table_ls:
+        combined_data = data.combine(combined_data, data.from_county_dataframe(pair[1]))
+    return combined_data
 
 
 def file_to_dataframes(input_dir: str, blacklist: List[str]=[]) -> List[Tuple[str, pd.DataFrame]]:
