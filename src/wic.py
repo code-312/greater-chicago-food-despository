@@ -175,14 +175,20 @@ def to_dict_for_merging(df: pd.DataFrame) -> Dict:
     return data_dict
 
 
+def wrapper_from_county_dataframe_row_object(df: pd.DataFrame, object_name: str) -> data.Wrapper:
+    wrapper = data.Wrapper()
+    wrapper.county[object_name] = df.to_dict(orient='index')
+    return wrapper
+
+
 def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:  # noqa: E501
 
-    combined_data = data.from_county_dataframe(participation.women)
+    combined_data = wrapper_from_county_dataframe_row_object(participation.women, "wic_participation_women_data")
     combined_data = data.combine(combined_data,
-                                 data.from_county_dataframe(participation.infants))  # noqa: E501
+                                 wrapper_from_county_dataframe_row_object(participation.infants, "wic_participation_infants_data"))  # noqa: E501
     combined_data = data.combine(combined_data,
-                                 data.from_county_dataframe(participation.children))  # noqa: E501
+                                 wrapper_from_county_dataframe_row_object(participation.children, "wic_participation_children_data"))  # noqa: E501
     combined_data = data.combine(combined_data,
-                                 data.from_county_dataframe(participation.total))  # noqa: E501
+                                 wrapper_from_county_dataframe_row_object(participation.total, "wic_participation_total_data"))  # noqa: E501
 
     return combined_data

@@ -1,5 +1,6 @@
 import pandas as pd
 from src import wic
+from src import data
 
 
 def test_read_wic_data():
@@ -27,3 +28,17 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
     assert dataframe.loc["17001", "total"] == 365
+
+
+def test_wrapper_from_wic_participation():
+
+    some_data: pd.DataFrame = wic.read_csv("tests/resources/wic_participation.csv")
+
+    participation = wic.WICParticipation(women=some_data,
+                                         infants=some_data,
+                                         children=some_data,
+                                         total=some_data)
+
+    wrapper: data.Wrapper = wic.wrapper_from_wic_participation(participation)
+
+    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3
