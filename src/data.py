@@ -16,6 +16,12 @@ class Wrapper:
         self.meta = MetaData()
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
         self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
+    
+    def add(self, other) -> None:
+        self.zip.update(other.zip)
+        self.county.update(other.county)
+        self.meta.data_metrics.update(other.meta.data_metrics)
+        self.meta.data_bins = combine_inner_dictionaries(self.meta.data_bins, other.meta.data_bins)  # noqa: E501
 
 
 class Merged:
