@@ -6,7 +6,15 @@ sys.path.append(os.path.abspath(''))
 from src.census_response import county_fips  # noqa: E402
 
 
-def load_excel(src: str) -> Any:
+def load_xlsx(src: str) -> Dict[str, pd.DataFrame]:
+    '''Loads Excel worksheets into DataFrames
+
+    Arguments:
+    src -- path to an xlsx file
+
+    Returns:
+    A dictionary mapping worksheet names to DataFrames
+    '''
     table = pd.read_excel(src, sheet_name=None, engine='openpyxl')
     for k in table:
         # drop empty rows (i.e. all values are NaN)
@@ -25,7 +33,12 @@ def load_excel(src: str) -> Any:
     return table
 
 
-def rename_columns(table: Dict[str, Any]) -> None:
+def rename_columns(table: Dict[str, pd.DataFrame]) -> None:
+    '''In-place renames the columns in each DataFrame to snake_case
+
+    Arguments:
+    table -- A dictionary mapping str keys to dataframes
+    '''
     for k in table:
         columns = []
         columns.append('county')
@@ -39,11 +52,18 @@ def rename_columns(table: Dict[str, Any]) -> None:
         table[k].columns = columns
 
 
-def add_fips_column(table: Dict[str, Any]) -> None:
+def add_fips_column(table: Dict[str, pd.DataFrame]) -> None:
+    '''Adds a column in-place to each DataFrame where each row value is
+    the FIPS code for the county named in the 'county' column
+
+    Arguments:
+    table -- A dictionary mapping str keys to DataFrames
+    '''
     fips = county_fips()
     # We're going to make a separate dictionary where the keys are just
     # the county name in all caps. Note that we're trimming out spaces
-    # as well to account for e.g. DE WITT vs. DEWITT
+    # as well to account for e.g. DE WITT vs. DEWITT, which is written
+    # both ways depending on the data source
     abbr_fips = dict()
     for k in fips:
         abbr_key = k.upper().replace(' COUNTY, ILLINOIS', '').replace(' ', '')
@@ -63,17 +83,24 @@ def add_fips_column(table: Dict[str, Any]) -> None:
         table[k].drop('county', axis=1, inplace=True)
 
 
-# Returns a dictionary with the structure:
-# {
-#   <age group>: {
-#       <fips>: {
-#           "race_white": 0
-#           ...
-#           "race_unknown": 0
-#       }
-#   }
-# }
-def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
+def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any]]]:  # noqa E501
+    '''Combines several dataframes into a single dictionary structure.
+
+    Arguments:
+    table -- A dictionary mapping str keys to DataFrames
+
+    Returns:
+    A dictionary with the structure:
+    {
+        <age group>: {
+            <fips>: {
+                "race_white": 0
+                ...
+                "race_unknown": 0
+            }
+        }
+    }
+    '''
     output = dict()
     for k in table:
         age_group = 'age_' + k.lower()[4:]
@@ -82,12 +109,21 @@ def to_dict(table: Dict[str, Any]) -> Dict[str, Dict[str, Dict[str, Any]]]:
     return output
 
 
-# srcs is a list of tuples where the first element is the year,
-# second element is the path to the data source
 def merge_snap_data(srcs: List[Tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
+    '''Merges snap data into an existing dictionary structure.
+
+    Arguments:
+    srcs -- A list of tuples where the first element is the year,
+            second element is the path to the data source
+    merge_to -- A dictionary structure countaining a key named 'county_data.'
+                Will be modified in-place.
+
+    Returns:
+    The modified dictionary (i.e. merge_to)
+    '''
     for src in srcs:
         year = src[0]
-        table = load_excel(src[1])
+        table = load_xlsx(src[1])
         rename_columns(table)
         add_fips_column(table)
         table_dict = to_dict(table)
