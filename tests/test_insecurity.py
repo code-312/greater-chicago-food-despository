@@ -15,4 +15,8 @@ def test_insecurity_merge():
 
     wrapper: data.Wrapper = get_food_insecurity_data('tests/resources/insecurity')
 
-    assert wrapper.county['2018 Child Food Insecurity  %']['17085'] == 0.128
+    assert wrapper.county['2018']['17085'] == 0.09
+    assert wrapper.county['2020_projected']['17085'] == 0.133
+    assert wrapper.county['2018_child']['17085'] == 0.128
+    assert wrapper.county['2020_child_projected']['17085'] == 0.212
+    assert 'County Name' not in wrapper.county

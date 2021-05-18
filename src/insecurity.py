@@ -10,7 +10,7 @@ def get_food_insecurity_data(input_dir: str = 'data_folder') -> data.Wrapper:
     combined_data = data.Wrapper()
     for pair in tables:
         df: pd.DataFrame = pair[1]
-        wrapper: data.Wrapper = data.from_county_dataframe(df)
+        wrapper: data.Wrapper = data.from_county_dataframe(reformat_dataframe(df))
         combined_data = data.combine(combined_data, wrapper)
     return combined_data
 
