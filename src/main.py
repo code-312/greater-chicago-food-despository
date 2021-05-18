@@ -9,6 +9,7 @@ import src.census_response  # noqa: E402
 from src.file_to_json import file_to_wrapper  # noqa: E402
 import src.wic  # noqa: E402
 from src import data  # noqa: E402
+from src.insecurity import get_food_insecurity_data
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
@@ -38,7 +39,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading Food Insecurity Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    insecurity_data: data.Wrapper = file_to_wrapper('data_folder', blacklist=['Key'])  # noqa: E501
+    insecurity_data: data.Wrapper = get_food_insecurity_data()
     combined_data = data.combine(combined_data, insecurity_data)
     if (verbose):
         duration = time.time() - start_time
