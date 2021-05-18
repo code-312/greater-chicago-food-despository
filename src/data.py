@@ -43,20 +43,6 @@ def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict])
     return combined_dict
 
 
-def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
-
-    combined_data = Wrapper()
-    combined_data.zip.update(data_1.zip)
-    combined_data.zip.update(data_2.zip)
-    combined_data.county.update(data_1.county)
-    combined_data.county.update(data_2.county)
-    combined_data.meta.data_metrics.update(data_1.meta.data_metrics)
-    combined_data.meta.data_metrics.update(data_2.meta.data_metrics)
-    combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)  # noqa: E501
-
-    return combined_data
-
-
 def json_encoder(object: Any) -> Any:
     if isinstance(object, numpy.int64):
         return int(object)

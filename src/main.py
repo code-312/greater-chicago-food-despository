@@ -31,7 +31,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
     wic_data: data.Wrapper = src.wic.read_wic_data()
-    combined_data = data.combine(combined_data, wic_data)
+    combined_data.add(wic_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading WIC Data took: {0:.2f} seconds".format(duration))
@@ -40,7 +40,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
     insecurity_data: data.Wrapper = get_food_insecurity_data()
-    combined_data = data.combine(combined_data, insecurity_data)
+    combined_data.add(insecurity_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501

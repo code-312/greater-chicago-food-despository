@@ -19,7 +19,7 @@ def file_to_wrapper(input_dir: str, blacklist: List[str] = []) -> data.Wrapper: 
     table_ls = files_to_dataframes(input_dir, blacklist)
     combined_data = data.Wrapper()
     for pair in table_ls:
-        combined_data = data.combine(combined_data, data.from_county_dataframe(pair[1]))  # noqa: E501
+        combined_data.add(data.from_county_dataframe(pair[1]))
     return combined_data
 
 

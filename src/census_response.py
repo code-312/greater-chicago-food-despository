@@ -278,8 +278,7 @@ def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] =
     combined_data = data.Wrapper()
     for request in data_requests:
         for geo in geo_ls:
-            new_data = get_census_data(request, geo)
-            combined_data = data.combine(combined_data, new_data)
+            combined_data.add(get_census_data(request, geo))
     return combined_data
 
 
