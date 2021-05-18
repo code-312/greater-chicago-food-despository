@@ -2,7 +2,6 @@ import os
 import re
 import pdfplumber
 import pandas as pd
-import json
 from typing import List, Dict
 from src import data
 
@@ -168,15 +167,15 @@ def parse_wic_pdf(
 
 
 def to_dict_for_wrapper(df: pd.DataFrame) -> Dict:
-    new_df = df.drop('NAME', axis=1) # we already include the county name elsewhere in the merged data # noqa: E501
+    new_df = df.drop('NAME', axis=1)  # we already include the county name elsewhere in the merged data # noqa: E501
     return new_df.to_dict(orient='index')
 
 
 def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:  # noqa: E501
 
     combined_data = data.Wrapper()
-    combined_data.county["wic_participation_women_data"] = to_dict_for_wrapper(participation.women)
-    combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)
-    combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)
-    combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)
+    combined_data.county["wic_participation_women_data"] = to_dict_for_wrapper(participation.women)  # noqa: E501
+    combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)  # noqa: E501
+    combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)  # noqa: E501
+    combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)  # noqa: E501
     return combined_data

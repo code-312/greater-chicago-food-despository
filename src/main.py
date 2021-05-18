@@ -6,10 +6,9 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
-from src.file_to_json import file_to_wrapper  # noqa: E402
 import src.wic  # noqa: E402
 from src import data  # noqa: E402
-from src.insecurity import get_food_insecurity_data
+from src.insecurity import get_food_insecurity_data  # noqa: E402
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:

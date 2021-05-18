@@ -32,7 +32,7 @@ def test_read_csv():
 
 def test_wrapper_from_wic_participation():
 
-    some_data: pd.DataFrame = wic.read_csv("tests/resources/wic_participation.csv")
+    some_data: pd.DataFrame = wic.read_csv("tests/resources/wic_participation.csv")  # noqa: E501
 
     participation = wic.WICParticipation(women=some_data,
                                          infants=some_data,
@@ -41,5 +41,5 @@ def test_wrapper_from_wic_participation():
 
     wrapper: data.Wrapper = wic.wrapper_from_wic_participation(participation)
 
-    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3
-    assert 'NAME' not in wrapper.county["wic_participation_women_data"]["17001"]
+    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3  # noqa: E501
+    assert 'NAME' not in wrapper.county["wic_participation_women_data"]["17001"]  # noqa: E501

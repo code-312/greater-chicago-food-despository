@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath(''))
 from src.insecurity import get_food_insecurity_data  # noqa: E402
-from src import data
+from src import data  # noqa: E402
 
 
 def check_output(actual_path, expected_path):
@@ -13,7 +13,7 @@ def check_output(actual_path, expected_path):
 
 def test_insecurity_merge():
 
-    wrapper: data.Wrapper = get_food_insecurity_data('tests/resources/insecurity')
+    wrapper: data.Wrapper = get_food_insecurity_data('tests/resources/insecurity')  # noqa: E501
 
     assert wrapper.county['insecurity_2018']['17085'] == 0.09
     assert wrapper.county['insecurity_2020_projected']['17085'] == 0.133

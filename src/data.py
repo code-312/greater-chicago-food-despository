@@ -16,7 +16,7 @@ class Wrapper:
         self.meta = MetaData()
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
         self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
-    
+
     def add(self, other) -> None:
         self.zip.update(other.zip)
         self.county.update(other.county)
