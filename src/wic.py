@@ -167,28 +167,16 @@ def parse_wic_pdf(
         total=dataframe_from_rows(total_rows))
 
 
-def to_dict_for_merging(df: pd.DataFrame) -> Dict:
-    # calling df.to_dict() directly messes up all the types
-    data_dict = json.loads(df.to_json(orient='index'))
-    for county_blob in data_dict.values():
-        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data # noqa: E501
-    return data_dict
-
-
-def wrapper_from_county_dataframe_row_object(df: pd.DataFrame, object_name: str) -> data.Wrapper:
-    wrapper = data.Wrapper()
-    wrapper.county[object_name] = df.to_dict(orient='index')
-    return wrapper
+def to_dict_for_wrapper(df: pd.DataFrame) -> Dict:
+    new_df = df.drop('NAME', axis=1) # we already include the county name elsewhere in the merged data # noqa: E501
+    return new_df.to_dict(orient='index')
 
 
 def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:  # noqa: E501
 
-    combined_data = wrapper_from_county_dataframe_row_object(participation.women, "wic_participation_women_data")
-    combined_data = data.combine(combined_data,
-                                 wrapper_from_county_dataframe_row_object(participation.infants, "wic_participation_infants_data"))  # noqa: E501
-    combined_data = data.combine(combined_data,
-                                 wrapper_from_county_dataframe_row_object(participation.children, "wic_participation_children_data"))  # noqa: E501
-    combined_data = data.combine(combined_data,
-                                 wrapper_from_county_dataframe_row_object(participation.total, "wic_participation_total_data"))  # noqa: E501
-
+    combined_data = data.Wrapper()
+    combined_data.county["wic_participation_women_data"] = to_dict_for_wrapper(participation.women)
+    combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)
+    combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)
+    combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)
     return combined_data

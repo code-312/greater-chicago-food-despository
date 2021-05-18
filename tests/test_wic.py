@@ -42,3 +42,4 @@ def test_wrapper_from_wic_participation():
     wrapper: data.Wrapper = wic.wrapper_from_wic_participation(participation)
 
     assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3
+    assert 'NAME' not in wrapper.county["wic_participation_women_data"]["17001"]
