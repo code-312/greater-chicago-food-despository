@@ -89,7 +89,9 @@ def merge_internal(input: Dict, output: Dict) -> None:
 
         metric_group = metric.split("_")[0]
 
-        if metric_group == "race" or metric_group == "poverty":
+        if metric_group == "race" or \
+           metric_group == "poverty" or \
+           metric_group == "insecurity":
 
             metric_group_name = metric_group + "_data"
 

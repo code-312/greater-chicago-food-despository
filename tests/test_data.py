@@ -63,7 +63,22 @@ def test_merge():
     some_data = data.Wrapper()
     some_data.meta.data_metrics = {"race": {"B03002_001E": "race_total"}}
     some_data.meta.data_bins = {"quantiles": {"race_total": [0.1, 0.2, 0.3, 0.4, 0.5]}}  # noqa: E501
-    some_data.county = {"race_native": {"17001": 1234}, "race_total": {"17001": 5678}, "NAME": {"17001": "Adams"}}  # noqa: E501
+    some_data.county = {
+        "race_native": {
+            "17001": 1234
+            },
+        "race_total": {
+            "17001": 5678
+            },
+        "NAME": {
+            "17001": "Adams"
+            },
+        "insecurity_2018": {
+            "17001": {
+                "total": 91011
+                }
+            }
+        }
     some_data.zip = {"race_native": {"60002": 1357}, "race_total": {"60002": 2468}}  # noqa: E501
 
     merged_data = data.merge(some_data)
@@ -71,6 +86,7 @@ def test_merge():
     assert merged_data.meta.data_bins == some_data.meta.data_bins
     assert merged_data.county_data["17001"]["race_data"]["race_native"] == 1234
     assert merged_data.county_data["17001"]["race_data"]["race_total"] == 5678
+    assert merged_data.county_data["17001"]["insecurity_data"]["insecurity_2018"] == {"total": 91011} # noqa: E501
     assert merged_data.county_data["17001"]["NAME"] == "Adams"
     assert merged_data.zip_data["60002"]["race_data"]["race_native"] == 1357
     assert merged_data.zip_data["60002"]["race_data"]["race_total"] == 2468

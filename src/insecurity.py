@@ -17,10 +17,10 @@ def get_food_insecurity_data(input_dir: str = 'data_folder') -> data.Wrapper:
 
 def reformat_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
-    # Remove County Name column because it already exists in merged_src
-    new_df = df.drop(labels='County Name', axis=1, )
+    # Remove County Name column because it already exists elsewhere in the data
+    new_df = df.drop(labels='County Name', axis=1)
 
-    # Rename columns to stay consistent with merged_src formatting
-    new_df.columns = ['2018', '2020_projected',
-                      '2018_child', '2020_child_projected']
+    # Rename columns to stay consistent with our column names elsewhere
+    new_df.columns = ['insecurity_2018', 'insecurity_2020_projected',
+                      'insecurity_2018_child', 'insecurity_2020_child_projected']
     return new_df
