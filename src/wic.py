@@ -2,8 +2,8 @@ import os
 import re
 import pdfplumber
 import pandas as pd
-import json
-from typing import List, Dict, Any
+from typing import List, Dict
+from src import data
 
 
 '''
@@ -35,7 +35,7 @@ class WICParticipation:
         self.total = total
 
 
-def read_wic_data(always_run: bool = False) -> WICParticipation:
+def read_wic_data(always_run: bool = False) -> data.Wrapper:
 
     input_file_path = "data_folder/illinois_wic_data_january_2021.pdf"
     women_output_csv_path = "final_jsons/wic_participation_women.csv"
@@ -59,17 +59,23 @@ def read_wic_data(always_run: bool = False) -> WICParticipation:
         participation.children.to_csv(children_output_csv_path)
         participation.infants.to_csv(infants_output_csv_path)
         participation.total.to_csv(total_output_csv_path)
-        return participation
+
+        return wrapper_from_wic_participation(participation)
     else:
-        return WICParticipation(
+        participation = WICParticipation(
             women=read_csv(women_output_csv_path),
             infants=read_csv(infants_output_csv_path),
             children=read_csv(children_output_csv_path),
             total=read_csv(total_output_csv_path))
 
+        return wrapper_from_wic_participation(participation)
+
 
 def read_csv(path: str) -> pd.DataFrame:
-    return pd.read_csv(path, index_col="fips")
+    # Using index_col="fips" in the read_csv() call made the fips column int
+    # datatype for some reason, so we set the index on a separate line
+    df = pd.read_csv(path, dtype={"fips": str})
+    return df.set_index("fips")
 
 
 def read_json(path: str) -> pd.DataFrame:
@@ -160,36 +166,16 @@ def parse_wic_pdf(
         total=dataframe_from_rows(total_rows))
 
 
-def merge_wic_data_file(participation: WICParticipation, merged_src: str, merged_dst: str) -> None:  # noqa: E501
-    with open(merged_src) as merged_src_file:
-        merged_data = merge_wic_data(participation, json.load(merged_src_file))
-    with open(merged_dst, "w") as merged_dst_file:
-        json.dump(merged_data, merged_dst_file)
+def to_dict_for_wrapper(df: pd.DataFrame) -> Dict:
+    new_df = df.drop('NAME', axis=1)  # we already include the county name elsewhere in the merged data # noqa: E501
+    return new_df.to_dict(orient='index')
 
 
-def to_dict_for_merging(df: pd.DataFrame) -> Dict:
-    # calling df.to_dict() directly messes up all the types
-    data_dict = json.loads(df.to_json(orient='index'))
-    for county_blob in data_dict.values():
-        del county_blob["NAME"]  # we already include the county name elsewhere in the merged data # noqa: E501
-    return data_dict
+def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrapper:  # noqa: E501
 
-
-def merge_wic_data(participation: WICParticipation, merged_data: Dict[str, Any]) -> Dict[str, Any]:  # noqa: E501
-
-    women_dict = to_dict_for_merging(participation.women)
-    infants_dict = to_dict_for_merging(participation.infants)
-    children_dict = to_dict_for_merging(participation.children)
-    total_dict = to_dict_for_merging(participation.total)
-
-    for fips, county_data in merged_data['county_data'].items():
-        if fips in women_dict:
-            county_data['wic_participation_women_data'] = women_dict[fips]
-        if fips in infants_dict:
-            county_data['wic_participation_infants_data'] = infants_dict[fips]
-        if fips in children_dict:
-            county_data['wic_participation_children_data'] = children_dict[fips]  # noqa: E501
-        if fips in total_dict:
-            county_data['wic_participation_total_data'] = total_dict[fips]
-
-    return merged_data
+    combined_data = data.Wrapper()
+    combined_data.county["wic_participation_women_data"] = to_dict_for_wrapper(participation.women)  # noqa: E501
+    combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)  # noqa: E501
+    combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)  # noqa: E501
+    combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)  # noqa: E501
+    return combined_data

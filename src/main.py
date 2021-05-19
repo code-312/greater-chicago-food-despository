@@ -7,25 +7,23 @@ sys.path.append(os.path.abspath(''))
 # Not sure how to resolve this with the pathing
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
-from src.file_to_json import file_to_json  # noqa: E402
-from src.insecurity import merge_ins_data  # noqa: E402
 import src.wic  # noqa: E402
 from src.snap import merge_snap_data  # noqa: E402
+from src import data  # noqa: E402
+from src.insecurity import get_food_insecurity_data  # noqa: E402
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     '''
-    Calls censusData function to create CensusData instances
-    and return list of dictionaries
-    Calls dict_merge to merge list of dictionaries by geo_area
-    and save jsons to file
+    Gathers data from different sources, combines them into
+    one data structure and then writes it to file in two formats
     '''
     mph.setup_memory_usage_file_if_enabled()
 
     print("Reading Census Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    src.census_response.download_census_data()
+    combined_data: data.Wrapper = src.census_response.download_census_data()
     if (verbose):
         duration = time.time() - start_time
         print("Reading Census Data took: {0:.2f} seconds".format(duration))  # noqa: E501
@@ -33,10 +31,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading WIC Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    wic_participation = src.wic.read_wic_data()
-    src.wic.merge_wic_data_file(wic_participation,
-                                'final_jsons/df_merged_json.json',
-                                'final_jsons/df_merged_with_wic.json')
+    wic_data: data.Wrapper = src.wic.read_wic_data()
+    combined_data.add(wic_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading WIC Data took: {0:.2f} seconds".format(duration))
@@ -44,10 +40,8 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     print("Reading Food Insecurity Data")
     mph.record_current_memory_usage_if_enabled()
     start_time = time.time()
-    file_to_json('data_folder/insecurity', 'final_jsons', blacklist=['Key'])
-    merge_ins_data('final_jsons/Countyfood_insecurity_rates_12.15.2020.json',
-                   'final_jsons/df_merged_with_wic.json',
-                   'final_jsons/df_merged_with_wic_and_insecurity.json')
+    insecurity_data: data.Wrapper = get_food_insecurity_data()
+    combined_data.add(insecurity_data)
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
@@ -63,6 +57,12 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     if (verbose):
         duration = time.time() - start_time
         print("Reading Snap Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+    with open('final_jsons/df_dump.json', "w") as f:
+        f.write(data.to_json(combined_data))
+
+    merged_data: data.Merged = data.merge(combined_data)
+    with open('final_jsons/df_merged_json.json', "w") as f:
+        f.write(data.to_json(merged_data))
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
