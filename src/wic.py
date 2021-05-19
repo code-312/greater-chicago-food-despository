@@ -178,4 +178,10 @@ def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrap
     combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)  # noqa: E501
     combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)  # noqa: E501
     combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)  # noqa: E501
+
+    combined_data.meta.data_bins["wic_participation_women_data"] = {}
+    combined_data.meta.data_bins["wic_participation_infants_data"] = {}
+    combined_data.meta.data_bins["wic_participation_children_data"] = {}
+    combined_data.meta.data_bins["wic_participation_total_data"] = {}
+
     return combined_data
