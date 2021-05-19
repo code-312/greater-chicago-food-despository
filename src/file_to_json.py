@@ -38,6 +38,31 @@ def files_to_dataframes(input_dir: str, blacklist: List[str] = []) -> List[Tuple
     return normalized_tables
 
 
+def excel_file_to_dataframes(file_path: str,
+                             file_name: str,
+                             file_extension: str,
+                             blacklist: List[str]) -> List[Tuple[str, pd.DataFrame]]:  # noqa: E501
+    # openpyxl can open .xlsx but not .xls
+    # xlrd can open .xls but not .xlsx
+    if file_extension == '.xlsx':
+        engine = 'openpyxl'
+    else:
+        engine = 'xlrd'
+    try:
+        table = pd.read_excel(file_path, sheet_name=None, engine=engine)
+    except xlrd.biffh.XLRDError as e:
+        print(e)
+        raise Exception("Error reading {0}. Close the file if you have it open.".format(file_path))  # noqa: E501
+    table_ls: List[Tuple[str, pd.DataFrame]] = []
+    if type(table) == dict:
+        for k in table:
+            if k not in blacklist:
+                table_ls.append((k + file_name, table[k]))
+            else:
+                continue
+    return table_ls
+
+
 def file_to_dataframes(filepath: str, blacklist: List[str] = []) -> List[Tuple[str, pd.DataFrame]]:  # noqa: E501
     '''Returns list of (unique name, DataFrame)'''
 
@@ -45,25 +70,7 @@ def file_to_dataframes(filepath: str, blacklist: List[str] = []) -> List[Tuple[s
     f_name, f_ext = os.path.splitext(filename_with_extension)
 
     if f_ext[:4] == '.xls':
-        # openpyxl can open .xlsx but not .xls
-        # xlrd can open .xls but not .xlsx
-        if f_ext == '.xlsx':
-            engine = 'openpyxl'
-        else:
-            engine = 'xlrd'
-        try:
-            table = pd.read_excel(filepath, sheet_name=None, engine=engine)
-        except xlrd.biffh.XLRDError as e:
-            print(e)
-            raise Exception("Error reading {0}. Close the file if you have it open.".format(filepath))  # noqa: E501
-        table_ls: List[Tuple[str, pd.DataFrame]] = []
-        if type(table) == dict:
-            for k in table:
-                if k not in blacklist:
-                    table_ls.append((k+f_name, table[k]))
-                else:
-                    continue
-        return table_ls
+        return excel_file_to_dataframes(filepath, f_name, f_ext, blacklist)
     elif f_ext == '.csv':
         return [(f_name, pd.read_csv(filepath))]
     else:
