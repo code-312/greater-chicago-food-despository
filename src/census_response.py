@@ -8,7 +8,7 @@ from typing import Dict, List, Tuple, Optional, Collection
 from src import data
 
 
-def download_census_data(geo_ls=["zip", "county"]) -> None:
+def download_census_data(geo_ls=["zip", "county"]) -> data.Wrapper:
     '''
     Top level function to run the queries
     '''
@@ -41,10 +41,7 @@ def download_census_data(geo_ls=["zip", "county"]) -> None:
     # poverty_functions = [processPovertyData]
     poverty = CensusRequest("poverty", subject_table, poverty_variables)
 
-    get_and_save_census_data([race, poverty],
-                             dump_output_path='final_jsons/df_dump.json',
-                             merged_output_path='final_jsons/df_merged_json.json',  # noqa: E501
-                             geo_ls=geo_ls)
+    return get_census_data_list([race, poverty], geo_ls)
 
 
 def get_census_response(table_url: str,
@@ -106,7 +103,7 @@ class CensusRequest:
         self.variables = variables
 
 
-def county_fips(reverse=False) -> dict:
+def county_fips(reverse=False) -> Dict[str, str]:
     '''
     Requests county fips from census API and returns list of IL county FIPS
     input: reverse (bool) reverses keys and values in output
@@ -277,24 +274,34 @@ def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper
     return wrapper
 
 
+def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"]) -> data.Wrapper:  # noqa: E501
+    combined_data = data.Wrapper()
+    for request in data_requests:
+        for geo in geo_ls:
+            combined_data.add(get_census_data(request, geo))
+    return combined_data
+
+
+def save_census_data(wrapper: data.Wrapper,
+                     dump_output_path: str = "",
+                     merged_output_path: str = "",
+                     pretty_print: bool = False) -> None:
+
+    if dump_output_path != "":
+        with open(dump_output_path, "w") as f:
+            f.write(data.to_json(wrapper, pretty_print=pretty_print))
+
+    if merged_output_path != "":
+        merged_data = data.merge(wrapper)
+        with open(merged_output_path, "w") as f:
+            f.write(data.to_json(merged_data, pretty_print=pretty_print))
+
+
 def get_and_save_census_data(data_requests: List[CensusRequest],
                              dump_output_path: str = "",
                              merged_output_path: str = "",
                              geo_ls: List[str] = ["zip", "county"],
                              pretty_print: bool = False) -> None:
 
-    combined_data = data.Wrapper()
-
-    for request in data_requests:
-        for geo in geo_ls:
-            new_data = get_census_data(request, geo)
-            combined_data = data.combine(combined_data, new_data)
-
-    if dump_output_path != "":
-        with open(dump_output_path, "w") as f:
-            f.write(data.to_json(combined_data, pretty_print=pretty_print))
-
-    if merged_output_path != "":
-        merged_data = data.merge(combined_data)
-        with open(merged_output_path, "w") as f:
-            f.write(data.to_json(merged_data, pretty_print=pretty_print))
+    combined_data = get_census_data_list(data_requests, geo_ls)
+    save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)  # noqa: E501

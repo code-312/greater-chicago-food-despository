@@ -8,7 +8,7 @@ import pandas as pd  # noqa: E402
 from src import data  # noqa: E402
 
 
-def test_combine():
+def test_add():
     race_data = data.Wrapper()
     race_data.zip = {"race_total": {"60002": 24066}}
     race_data.county = {"race_total": {"17001": 66427}}
@@ -25,17 +25,17 @@ def test_combine():
         "quantiles": {"poverty_population_total": [0.1, 0.3, 0.5, 0.7, 0.9]},
         "natural_breaks": {"poverty_population_total": [0.6, 0.7, 0.8, 0.9, 0.11]}}  # noqa: E501
 
-    combined_data = data.combine(race_data, poverty_data)
-    assert combined_data.zip["race_total"]["60002"] == 24066
-    assert combined_data.zip["poverty_population_total"]["60002"] == 24014
-    assert combined_data.county["race_total"]["17001"] == 66427
-    assert combined_data.county["poverty_population_total"]["17001"] == 64844
-    assert combined_data.meta.data_metrics["race"]["B03002_001E"] == "race_total"  # noqa: E501
-    assert combined_data.meta.data_metrics["poverty"]["S1701_C01_001E"] == "poverty_population_total"  # noqa: E501
-    assert combined_data.meta.data_bins["quantiles"]["race_total"] == [0.1, 0.2, 0.3, 0.4, 0.5]  # noqa: E501
-    assert combined_data.meta.data_bins["natural_breaks"]["race_total"] == [0.0, 0.2, 0.4, 0.6, 0.8]  # noqa: E501
-    assert combined_data.meta.data_bins["quantiles"]["poverty_population_total"] == [0.1, 0.3, 0.5, 0.7, 0.9]  # noqa: E501
-    assert combined_data.meta.data_bins["natural_breaks"]["poverty_population_total"] == [0.6, 0.7, 0.8, 0.9, 0.11]  # noqa: E501
+    race_data.add(poverty_data)
+    assert race_data.zip["race_total"]["60002"] == 24066
+    assert race_data.zip["poverty_population_total"]["60002"] == 24014
+    assert race_data.county["race_total"]["17001"] == 66427
+    assert race_data.county["poverty_population_total"]["17001"] == 64844
+    assert race_data.meta.data_metrics["race"]["B03002_001E"] == "race_total"  # noqa: E501
+    assert race_data.meta.data_metrics["poverty"]["S1701_C01_001E"] == "poverty_population_total"  # noqa: E501
+    assert race_data.meta.data_bins["quantiles"]["race_total"] == [0.1, 0.2, 0.3, 0.4, 0.5]  # noqa: E501
+    assert race_data.meta.data_bins["natural_breaks"]["race_total"] == [0.0, 0.2, 0.4, 0.6, 0.8]  # noqa: E501
+    assert race_data.meta.data_bins["quantiles"]["poverty_population_total"] == [0.1, 0.3, 0.5, 0.7, 0.9]  # noqa: E501
+    assert race_data.meta.data_bins["natural_breaks"]["poverty_population_total"] == [0.6, 0.7, 0.8, 0.9, 0.11]  # noqa: E501
 
 
 def test_to_json():
@@ -63,7 +63,22 @@ def test_merge():
     some_data = data.Wrapper()
     some_data.meta.data_metrics = {"race": {"B03002_001E": "race_total"}}
     some_data.meta.data_bins = {"quantiles": {"race_total": [0.1, 0.2, 0.3, 0.4, 0.5]}}  # noqa: E501
-    some_data.county = {"race_native": {"17001": 1234}, "race_total": {"17001": 5678}, "NAME": {"17001": "Adams"}}  # noqa: E501
+    some_data.county = {
+        "race_native": {
+            "17001": 1234
+            },
+        "race_total": {
+            "17001": 5678
+            },
+        "NAME": {
+            "17001": "Adams"
+            },
+        "insecurity_2018": {
+            "17001": {
+                "total": 91011
+                }
+            }
+        }
     some_data.zip = {"race_native": {"60002": 1357}, "race_total": {"60002": 2468}}  # noqa: E501
 
     merged_data = data.merge(some_data)
@@ -71,6 +86,7 @@ def test_merge():
     assert merged_data.meta.data_bins == some_data.meta.data_bins
     assert merged_data.county_data["17001"]["race_data"]["race_native"] == 1234
     assert merged_data.county_data["17001"]["race_data"]["race_total"] == 5678
+    assert merged_data.county_data["17001"]["insecurity_data"]["insecurity_2018"] == {"total": 91011}  # noqa: E501
     assert merged_data.county_data["17001"]["NAME"] == "Adams"
     assert merged_data.zip_data["60002"]["race_data"]["race_native"] == 1357
     assert merged_data.zip_data["60002"]["race_data"]["race_total"] == 2468

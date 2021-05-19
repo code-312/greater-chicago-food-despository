@@ -1,6 +1,6 @@
-import json
 import pandas as pd
 from src import wic
+from src import data
 
 
 def test_read_wic_data():
@@ -25,27 +25,21 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
         assert json_str == expected_output.read()
 
 
-def test_merge_wic():
-    participation = wic.WICParticipation(
-            women=wic.read_json("tests/resources/wic_women_merge_input.json"),
-            infants=wic.read_json("tests/resources/wic_infants_merge_input.json"),  # noqa: E501
-            children=wic.read_json("tests/resources/wic_children_merge_input.json"),  # noqa: E501
-            total=wic.read_json("tests/resources/wic_total_merge_input.json"))
-
-    with open("tests/resources/df_merged_without_wic.json") as merge_data_file:
-        merged_data = json.load(merge_data_file)
-
-    merged_data_with_wic = wic.merge_wic_data(participation, merged_data)
-
-    json_str = json.dumps(merged_data_with_wic, indent=4, sort_keys=True)
-
-    with open("tests/output/df_merged_with_wic.json", "w") as actual_output:
-        actual_output.write(json_str)
-
-    with open("tests/resources/df_merged_with_wic_expected.json") as expected_output:  # noqa: E501
-        assert json_str == expected_output.read()
-
-
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
-    assert dataframe.loc[17001, "total"] == 365
+    assert dataframe.loc["17001", "total"] == 365
+
+
+def test_wrapper_from_wic_participation():
+
+    some_data: pd.DataFrame = wic.read_csv("tests/resources/wic_participation.csv")  # noqa: E501
+
+    participation = wic.WICParticipation(women=some_data,
+                                         infants=some_data,
+                                         children=some_data,
+                                         total=some_data)
+
+    wrapper: data.Wrapper = wic.wrapper_from_wic_participation(participation)
+
+    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3  # noqa: E501
+    assert 'NAME' not in wrapper.county["wic_participation_women_data"]["17001"]  # noqa: E501

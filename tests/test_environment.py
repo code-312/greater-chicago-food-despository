@@ -18,7 +18,6 @@ def test_requirements():
                 print(e)
                 print("Conflict in " + r)
                 assert False
-            # breakpoint()
 
 
 def test_environment():

@@ -17,6 +17,12 @@ class Wrapper:
         self.county: Dict[str, Dict[str, Any]] = {}  # e.g. { "NAME": { "17001": "Adams County, Illinois" } } # noqa: E501
         self.zip: Dict[str, Dict[str, Any]] = {}  # e.g. { "race_total": { "60002": 24066 } } # noqa: E501
 
+    def add(self, other) -> None:
+        self.zip.update(other.zip)
+        self.county.update(other.county)
+        self.meta.data_metrics.update(other.meta.data_metrics)
+        self.meta.data_bins = combine_inner_dictionaries(self.meta.data_bins, other.meta.data_bins)  # noqa: E501
+
 
 class Merged:
     def __init__(self):
@@ -35,20 +41,6 @@ def combine_inner_dictionaries(dict_1: Dict[str, Dict], dict_2: Dict[str, Dict])
         else:
             combined_dict[key] = dict_2[key]
     return combined_dict
-
-
-def combine(data_1: Wrapper, data_2: Wrapper) -> Wrapper:
-
-    combined_data = Wrapper()
-    combined_data.zip.update(data_1.zip)
-    combined_data.zip.update(data_2.zip)
-    combined_data.county.update(data_1.county)
-    combined_data.county.update(data_2.county)
-    combined_data.meta.data_metrics.update(data_1.meta.data_metrics)
-    combined_data.meta.data_metrics.update(data_2.meta.data_metrics)
-    combined_data.meta.data_bins = combine_inner_dictionaries(data_1.meta.data_bins, data_2.meta.data_bins)  # noqa: E501
-
-    return combined_data
 
 
 def json_encoder(object: Any) -> Any:
@@ -89,7 +81,9 @@ def merge_internal(input: Dict, output: Dict) -> None:
 
         metric_group = metric.split("_")[0]
 
-        if metric_group == "race" or metric_group == "poverty":
+        if metric_group == "race" or \
+           metric_group == "poverty" or \
+           metric_group == "insecurity":
 
             metric_group_name = metric_group + "_data"
 

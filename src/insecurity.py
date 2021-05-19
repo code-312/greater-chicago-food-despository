@@ -1,67 +1,26 @@
-import json
 import pandas as pd
-from typing import Any
+from src import data
+from src.file_to_json import files_to_dataframes  # noqa: E402
 
 
-# the data returned from load_merged
-# should be shaped like this:
-#
-# {
-#     meta:{ ... }
-#     zip_data: {...}
-#     county_data: {
-#         <fips>: {
-#             race_data:{...}
-#             poverty_data:{...}
-#             NAME:{...}
-#         }
-#     }
-# }
-def load_merged(src_path: str) -> Any:
-    with open(src_path) as src_file:
-        return json.load(src_file)
+def get_food_insecurity_data(input_dir: str = 'data_folder') -> data.Wrapper:
+    tables = files_to_dataframes(input_dir, blacklist=['Key'])
+
+    combined_data = data.Wrapper()
+    for pair in tables:
+        df = reformat_dataframe(pair[1])
+        combined_data.add(data.from_county_dataframe(df))
+    return combined_data
 
 
-# the data written by save_merged
-# should be shaped like this:
-#
-# {
-#     meta:{ ... }
-#     zip_data: {...}
-#     county_data: {
-#         <fips>: {
-#             race_data:{...}
-#             poverty_data:{...}
-#             insecurity_data:{...}
-#             NAME:{...}
-#         }
-#     }
-# }
-def save_merged(data: Any, dst_path: str) -> None:
-    with open(dst_path, 'w') as dst_file:
-        # Separators option here minimizes whitespace
-        json.dump(data, dst_file, separators=(',', ':'))
+def reformat_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
+    # Remove County Name column because it already exists elsewhere in the data
+    new_df = df.drop(labels='County Name', axis=1)
 
-def merge_ins_data(insecurity_src: str,
-                   merged_src: str, merged_dst: str) -> None:
-    ins_df = pd.read_json(insecurity_src, orient='index')
-
-    # Remove County Name column because it already exists in merged_src
-    ins_df.drop(labels='County Name', axis=1, inplace=True)
-
-    # Rename columns to stay consistent with merged_src formatting
-    ins_df.columns = ['2018', '2020_projected',
-                      '2018_child', '2020_child_projected']
-
-    # This is a little roundabout way of doing things,
-    # but it preserves the FIPS code as a string,
-    # and avoids some floating-point rounding issues
-    # that cropped up doing a straight df.to_dict()
-    ins_dict = json.loads(ins_df.to_json(orient='index'))
-    merged_data = load_merged(merged_src)
-
-    for fips, county_data in merged_data['county_data'].items():
-        county_data['insecurity_data'] = ins_dict[fips]
-
-    save_merged(merged_data, merged_dst)
+    # Rename columns to stay consistent with our column names elsewhere
+    new_df.columns = ['insecurity_2018',
+                      'insecurity_2020_projected',
+                      'insecurity_2018_child',
+                      'insecurity_2020_child_projected']
+    return new_df
