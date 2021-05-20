@@ -4,6 +4,7 @@ import pandas as pd
 from typing import Any, Dict, Tuple, List
 sys.path.append(os.path.abspath(''))
 from src.census_response import county_fips  # noqa: E402
+from src import data  # noqa: E402
 
 
 def load_xlsx(src: str) -> Dict[str, pd.DataFrame]:
@@ -109,8 +110,8 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
     return output
 
 
-def merge_snap_data(srcs: List[Tuple[str, str]], merge_to: Dict[str, Any]) -> Dict[str, Any]:  # noqa E501
-    '''Merges snap data into an existing dictionary structure.
+def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
+    '''Merges snap data into a data.Wrapper structure.
 
     Arguments:
     srcs -- A list of tuples where the first element is the year,
@@ -119,19 +120,22 @@ def merge_snap_data(srcs: List[Tuple[str, str]], merge_to: Dict[str, Any]) -> Di
                 Will be modified in-place.
 
     Returns:
-    The modified dictionary (i.e. merge_to)
+    The new data.Wrapper structure
     '''
+    merge_to: data.Wrapper = data.Wrapper()
     for src in srcs:
         year = src[0]
         table = load_xlsx(src[1])
         rename_columns(table)
         add_fips_column(table)
         table_dict = to_dict(table)
-        for fips in merge_to['county_data']:
-            for age_group in table_dict:
-                if 'snap_data' not in merge_to['county_data'][fips]:
-                    merge_to['county_data'][fips]['snap_data'] = dict()
-                if year not in merge_to['county_data'][fips]['snap_data']:
-                    merge_to['county_data'][fips]['snap_data'][year] = dict()
-                merge_to['county_data'][fips]['snap_data'][year][age_group] = table_dict[age_group][fips]  # noqa E501
+        if 'snap_data' not in merge_to.county:
+            merge_to.county['snap_data'] = dict()
+        for age_group in table_dict:
+            for fips in table_dict[age_group]:
+                if fips not in merge_to.county['snap_data']:
+                    merge_to.county['snap_data'][fips] = dict()
+                if year not in merge_to.county['snap_data'][fips]:
+                    merge_to.county['snap_data'][fips][year] = dict()
+                merge_to.county['snap_data'][fips][year][age_group] = table_dict[age_group][fips]  # noqa E501
     return merge_to
