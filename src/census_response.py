@@ -1,5 +1,4 @@
 from src.config import CENSUS_KEY
-import jenkspy
 import json
 import requests
 import numpy as np
@@ -130,23 +129,6 @@ def county_fips(reverse=False) -> Dict[str, str]:
     return il_json
 
 
-def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
-                                  column_names: List[str]) -> Dict[str, List[float]]:  # noqa: 501
-    """
-    :param df: Pandas dataframe.
-    :param bin_count: Number of bins used to classify data.
-    :param column_names: dataframe column names used to calculate breaks
-    :return: Dictionary of column name and list of bin cutoff limits.
-    """
-    bin_dict = {}
-    for cn in column_names:
-        column_data = df[cn].dropna().to_list()
-        natural_breaks = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
-        # round for space and avoid floating point imprecision
-        bin_dict[cn] = list(np.round(natural_breaks, 6))
-    return bin_dict
-
-
 def majority(series: pd.Series) -> Optional[str]:
     '''
     Returns majority race demographic
@@ -239,10 +221,10 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
 
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
-        natural_breaks_dict = calculate_natural_breaks_bins(pct_df,
-                                                            bin_count=4,
-                                                            column_names=["poverty_population_poverty",  # noqa: E501
-                                                                          "poverty_population_poverty_child"])  # noqa: E501
+        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df,
+                                                                 bin_count=4,
+                                                                 column_names=["poverty_population_poverty",  # noqa: E501
+                                                                               "poverty_population_poverty_child"])  # noqa: E501
 
         bins = {
             'quantiles': quantile_dict,

@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import numpy
+import jenkspy
 from copy import deepcopy
 from typing import Dict, List, Any, Union, Optional
 
@@ -112,3 +113,20 @@ def merge(wrapper: Wrapper) -> Merged:
     merge_internal(wrapper.zip, merged_data.zip_data)
 
     return merged_data
+
+
+def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
+                                  column_names: List[str]) -> Dict[str, List[float]]:  # noqa: 501
+    """
+    :param df: Pandas dataframe.
+    :param bin_count: Number of bins used to classify data.
+    :param column_names: dataframe column names used to calculate breaks
+    :return: Dictionary of column name and list of bin cutoff limits.
+    """
+    bin_dict = {}
+    for cn in column_names:
+        column_data = df[cn].dropna().to_list()
+        natural_breaks = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
+        # round for space and avoid floating point imprecision
+        bin_dict[cn] = list(numpy.round(natural_breaks, 6))
+    return bin_dict
