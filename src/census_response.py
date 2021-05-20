@@ -222,7 +222,6 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
         natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df,
-                                                                 bin_count=4,
                                                                  column_names=["poverty_population_poverty",  # noqa: E501
                                                                                "poverty_population_poverty_child"])  # noqa: E501
 

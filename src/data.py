@@ -115,8 +115,9 @@ def merge(wrapper: Wrapper) -> Merged:
     return merged_data
 
 
-def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
-                                  column_names: List[str]) -> Dict[str, List[float]]:  # noqa: 501
+def calculate_natural_breaks_bins(df: pd.DataFrame,
+                                  column_names: List[str],
+                                  bin_count: int = 4) -> Dict[str, List[float]]:  # noqa: 501
     """
     :param df: Pandas dataframe.
     :param bin_count: Number of bins used to classify data.
