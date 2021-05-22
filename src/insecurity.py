@@ -3,7 +3,7 @@ from src import data
 from src.file_to_json import files_to_dataframes  # noqa: E402
 
 
-def get_food_insecurity_data(input_dir: str = 'data_folder') -> data.Wrapper:
+def get_food_insecurity_data(input_dir: str = 'data_folder/insecurity') -> data.Wrapper:  # noqa E501
     tables = files_to_dataframes(input_dir, blacklist=['Key'])
 
     combined_data = data.Wrapper()
