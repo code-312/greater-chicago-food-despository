@@ -1,4 +1,3 @@
-import pandas as pd
 from src.census_response import CensusRequest, get_and_save_census_data
 
 

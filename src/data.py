@@ -132,6 +132,7 @@ def calculate_natural_breaks_bins(df: pd.DataFrame,
         bin_dict[cn] = list(numpy.round(natural_breaks, 6))
     return bin_dict
 
+
 def calculate_quantiles_bins(df: pd.DataFrame, column_names: List[str]) -> Dict[str, List[float]]:
 
     columns_to_drop = [column for column in df.columns if column not in column_names]

@@ -92,7 +92,6 @@ def test_merge():
     assert merged_data.zip_data["60002"]["race_data"]["race_total"] == 2468
 
 
-
 def test_calculate_natural_breaks_bins_correctly_categorizes_valid_data():
     test_zip_pct_df = {
         "poverty_population_poverty": {
