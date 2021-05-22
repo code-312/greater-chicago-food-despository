@@ -131,3 +131,9 @@ def calculate_natural_breaks_bins(df: pd.DataFrame,
         # round for space and avoid floating point imprecision
         bin_dict[cn] = list(numpy.round(natural_breaks, 6))
     return bin_dict
+
+def calculate_quantiles_bins(df: pd.DataFrame) -> Dict[str, List[float]]:
+    quantile_df = df.apply(numpy.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+    # round for space and avoid floating point imprecision
+    quantile_df = numpy.round(quantile_df, 6)
+    return quantile_df.to_dict(orient='list')

@@ -214,10 +214,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
 
-        quantile_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
-        # round for space and avoid floating point imprecision
-        quantile_df = np.round(quantile_df, 6)
-        quantile_dict = quantile_df.to_dict(orient='list')
+        quantile_dict = data.calculate_quantiles_bins(pct_df)
 
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
