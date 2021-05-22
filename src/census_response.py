@@ -214,13 +214,14 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
 
-        quantile_dict = data.calculate_quantiles_bins(pct_df)
+        numeric_columns = ["poverty_population_poverty",
+                           "poverty_population_poverty_child"]
+
+        quantile_dict = data.calculate_quantiles_bins(pct_df, numeric_columns)
 
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
-        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df,
-                                                                 column_names=["poverty_population_poverty",  # noqa: E501
-                                                                               "poverty_population_poverty_child"])  # noqa: E501
+        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df, numeric_columns)  # noqa: E501
 
         bins = {
             'quantiles': quantile_dict,

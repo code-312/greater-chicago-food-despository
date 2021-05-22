@@ -44,3 +44,4 @@ def test_wrapper_from_wic_participation():
     assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 4  # noqa: E501
     assert "NAME" not in wrapper.county["wic_participation_women_data"]["17001"]  # noqa: E501
     assert wrapper.meta.data_bins["natural_breaks"]["wic_participation_women_data"]["total"] == [52.0, 156.0, 364.0, 741.0, 780.0]  # TODO: add enough rows to have a real value to test against here # noqa: E501
+    assert wrapper.meta.data_bins["quantiles"]["wic_participation_women_data"]["total"] == [52.0, 156.0, 364.0, 741.0, 780.0]  # TODO: add enough rows to have a real value to test against here # noqa: E501

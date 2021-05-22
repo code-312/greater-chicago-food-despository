@@ -195,10 +195,10 @@ def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrap
         "wic_participation_total_data": data.calculate_natural_breaks_bins(participation.total, numeric_column_names),
     }
     combined_data.meta.data_bins["quantiles"] = {
-        "wic_participation_women_data": {},
-        "wic_participation_infants_data": {},
-        "wic_participation_children_data": {},
-        "wic_participation_total_data": {},
+        "wic_participation_women_data": data.calculate_quantiles_bins(participation.women, numeric_column_names),
+        "wic_participation_infants_data": data.calculate_quantiles_bins(participation.infants, numeric_column_names),
+        "wic_participation_children_data": data.calculate_quantiles_bins(participation.children, numeric_column_names),
+        "wic_participation_total_data": data.calculate_quantiles_bins(participation.total, numeric_column_names),
     }
 
     return combined_data
