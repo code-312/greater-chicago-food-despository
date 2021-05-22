@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(''))
 import memory_profiling.memory_profile_helpers as mph  # noqa: E402
 import src.census_response  # noqa: E402
 import src.wic  # noqa: E402
+from src.snap import merge_snap_data  # noqa: E402
 from src import data  # noqa: E402
 from src.insecurity import get_food_insecurity_data  # noqa: E402
 
@@ -43,6 +44,15 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
     if (verbose):
         duration = time.time() - start_time
         print("Reading Food Insecurity Data took: {0:.2f} seconds".format(duration))  # noqa: E501
+
+    print("Reading Snap Data")
+    mph.record_current_memory_usage_if_enabled()
+    start_time = time.time()
+    snap_data = merge_snap_data([('2019', 'data_folder/snap/SNAP_2019.xlsx'), ('2020', 'data_folder/snap/SNAP_2020.xlsx')])  # noqa: E501
+    combined_data.add(snap_data)
+    if (verbose):
+        duration = time.time() - start_time
+        print("Reading Snap Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
     with open('final_jsons/df_dump.json', "w") as f:
         f.write(data.to_json(combined_data))
