@@ -189,16 +189,16 @@ def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrap
                             "hispanic_or_latino"]
 
     combined_data.meta.data_bins["natural_breaks"] = {
-        "wic_participation_women_data": data.calculate_natural_breaks_bins(participation.women, numeric_column_names),
-        "wic_participation_infants_data": data.calculate_natural_breaks_bins(participation.infants, numeric_column_names),
-        "wic_participation_children_data": data.calculate_natural_breaks_bins(participation.children, numeric_column_names),
-        "wic_participation_total_data": data.calculate_natural_breaks_bins(participation.total, numeric_column_names),
+        "wic_participation_women_data": data.calculate_natural_breaks_bins(participation.women, numeric_column_names),  # noqa: E501
+        "wic_participation_infants_data": data.calculate_natural_breaks_bins(participation.infants, numeric_column_names),  # noqa: E501
+        "wic_participation_children_data": data.calculate_natural_breaks_bins(participation.children, numeric_column_names),  # noqa: E501
+        "wic_participation_total_data": data.calculate_natural_breaks_bins(participation.total, numeric_column_names),  # noqa: E501
     }
     combined_data.meta.data_bins["quantiles"] = {
-        "wic_participation_women_data": data.calculate_quantiles_bins(participation.women, numeric_column_names),
-        "wic_participation_infants_data": data.calculate_quantiles_bins(participation.infants, numeric_column_names),
-        "wic_participation_children_data": data.calculate_quantiles_bins(participation.children, numeric_column_names),
-        "wic_participation_total_data": data.calculate_quantiles_bins(participation.total, numeric_column_names),
+        "wic_participation_women_data": data.calculate_quantiles_bins(participation.women, numeric_column_names),  # noqa: E501
+        "wic_participation_infants_data": data.calculate_quantiles_bins(participation.infants, numeric_column_names),  # noqa: E501
+        "wic_participation_children_data": data.calculate_quantiles_bins(participation.children, numeric_column_names),  # noqa: E501
+        "wic_participation_total_data": data.calculate_quantiles_bins(participation.total, numeric_column_names),  # noqa: E501
     }
 
     return combined_data

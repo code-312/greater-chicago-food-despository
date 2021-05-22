@@ -133,9 +133,10 @@ def calculate_natural_breaks_bins(df: pd.DataFrame,
     return bin_dict
 
 
-def calculate_quantiles_bins(df: pd.DataFrame, columns_to_bin: List[str]) -> Dict[str, List[float]]:
+def calculate_quantiles_bins(df: pd.DataFrame, columns_to_bin: List[str]) -> Dict[str, List[float]]:  # noqa: E501
 
-    columns_to_drop = [column for column in df.columns if column not in columns_to_bin]
+    columns_to_drop = [column for column in df.columns
+                       if column not in columns_to_bin]
 
     quantile_df = df.drop(columns_to_drop, axis=1)
 
