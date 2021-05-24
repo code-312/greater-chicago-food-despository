@@ -1,5 +1,4 @@
 from src.config import CENSUS_KEY
-import jenkspy
 import json
 import requests
 import numpy as np
@@ -130,21 +129,6 @@ def county_fips(reverse=False) -> Dict[str, str]:
     return il_json
 
 
-def calculate_natural_breaks_bins(df: pd.DataFrame, bin_count: int,
-                                  column_names: List[str]) -> pd.DataFrame:  # noqa: 501
-    """
-    :param df: Pandas dataframe.
-    :param bin_count: Number of bins used to classify data.
-    :param column_names: dataframe column names used to calculate breaks
-    :return: Dictionary of column name and list of bin cutoff limits.
-    """
-    bin_dict = {}
-    for cn in column_names:
-        column_data = df[cn].dropna().to_list()
-        bin_dict[cn] = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
-    return pd.DataFrame(bin_dict)
-
-
 def majority(series: pd.Series) -> Optional[str]:
     '''
     Returns majority race demographic
@@ -230,18 +214,14 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
 
-        quantile_df = pct_df.apply(np.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
-        # round for space and avoid floating point imprecision
-        quantile_df = np.round(quantile_df, 6)
-        quantile_dict = quantile_df.to_dict(orient='list')
+        numeric_columns = ["poverty_population_poverty",
+                           "poverty_population_poverty_child"]
+
+        quantile_dict = data.calculate_quantiles_bins(pct_df, numeric_columns)
 
         # create quantile bins using natural breaks algorithm.
         # bin_count could be increased to > 4 if needed.
-        natural_breaks_df = calculate_natural_breaks_bins(pct_df, bin_count=4,
-                                                          column_names=["poverty_population_poverty",  # noqa: E501
-                                                                        "poverty_population_poverty_child"])  # noqa: E501
-        natural_breaks_df = np.round(natural_breaks_df, 6)
-        natural_breaks_dict = natural_breaks_df.to_dict(orient='list')
+        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df, numeric_columns)  # noqa: E501
 
         bins = {
             'quantiles': quantile_dict,

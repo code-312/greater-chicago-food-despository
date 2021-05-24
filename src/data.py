@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import numpy
+import jenkspy
 from copy import deepcopy
 from typing import Dict, List, Any, Union, Optional
 
@@ -112,3 +113,34 @@ def merge(wrapper: Wrapper) -> Merged:
     merge_internal(wrapper.zip, merged_data.zip_data)
 
     return merged_data
+
+
+def calculate_natural_breaks_bins(df: pd.DataFrame,
+                                  columns_to_bin: List[str],
+                                  bin_count: int = 4) -> Dict[str, List[float]]:  # noqa: 501
+    """
+    :param df: Pandas dataframe.
+    :param bin_count: Number of bins used to classify data.
+    :param columns_to_bin: dataframe column names used to calculate breaks
+    :return: Dictionary of column name and list of bin cutoff limits.
+    """
+    bin_dict = {}
+    for cn in columns_to_bin:
+        column_data = df[cn].dropna().to_list()
+        natural_breaks = jenkspy.jenks_breaks(column_data, nb_class=bin_count)
+        # round for space and avoid floating point imprecision
+        bin_dict[cn] = list(numpy.round(natural_breaks, 6))
+    return bin_dict
+
+
+def calculate_quantiles_bins(df: pd.DataFrame, columns_to_bin: List[str]) -> Dict[str, List[float]]:  # noqa: E501
+
+    columns_to_drop = [column for column in df.columns
+                       if column not in columns_to_bin]
+
+    quantile_df = df.drop(columns_to_drop, axis=1)
+
+    quantile_df = quantile_df.apply(numpy.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+    # round for space and avoid floating point imprecision
+    quantile_df = numpy.round(quantile_df, 6)
+    return quantile_df.to_dict(orient='list')

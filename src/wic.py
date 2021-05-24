@@ -178,4 +178,27 @@ def wrapper_from_wic_participation(participation: WICParticipation) -> data.Wrap
     combined_data.county["wic_participation_infants_data"] = to_dict_for_wrapper(participation.infants)  # noqa: E501
     combined_data.county["wic_participation_children_data"] = to_dict_for_wrapper(participation.children)  # noqa: E501
     combined_data.county["wic_participation_total_data"] = to_dict_for_wrapper(participation.total)  # noqa: E501
+
+    numeric_column_names = ["race_amer_indian_or_alaskan_native",
+                            "race_asian",
+                            "race_black",
+                            "race_native_hawaii_or_pacific_islander",
+                            "race_white",
+                            "race_multiracial",
+                            "total",
+                            "hispanic_or_latino"]
+
+    combined_data.meta.data_bins["natural_breaks"] = {
+        "wic_participation_women_data": data.calculate_natural_breaks_bins(participation.women, numeric_column_names),  # noqa: E501
+        "wic_participation_infants_data": data.calculate_natural_breaks_bins(participation.infants, numeric_column_names),  # noqa: E501
+        "wic_participation_children_data": data.calculate_natural_breaks_bins(participation.children, numeric_column_names),  # noqa: E501
+        "wic_participation_total_data": data.calculate_natural_breaks_bins(participation.total, numeric_column_names),  # noqa: E501
+    }
+    combined_data.meta.data_bins["quantiles"] = {
+        "wic_participation_women_data": data.calculate_quantiles_bins(participation.women, numeric_column_names),  # noqa: E501
+        "wic_participation_infants_data": data.calculate_quantiles_bins(participation.infants, numeric_column_names),  # noqa: E501
+        "wic_participation_children_data": data.calculate_quantiles_bins(participation.children, numeric_column_names),  # noqa: E501
+        "wic_participation_total_data": data.calculate_quantiles_bins(participation.total, numeric_column_names),  # noqa: E501
+    }
+
     return combined_data

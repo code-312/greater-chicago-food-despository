@@ -27,7 +27,7 @@ def do_json_test(df: pd.DataFrame, actual_output_path: str, expected_output_path
 
 def test_read_csv():
     dataframe = wic.read_csv("tests/resources/wic_participation.csv")
-    assert dataframe.loc["17001", "total"] == 365
+    assert dataframe.loc["17001", "total"] == 780
 
 
 def test_wrapper_from_wic_participation():
@@ -41,5 +41,7 @@ def test_wrapper_from_wic_participation():
 
     wrapper: data.Wrapper = wic.wrapper_from_wic_participation(participation)
 
-    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 3  # noqa: E501
-    assert 'NAME' not in wrapper.county["wic_participation_women_data"]["17001"]  # noqa: E501
+    assert wrapper.county["wic_participation_women_data"]["17001"]["race_amer_indian_or_alaskan_native"] == 4  # noqa: E501
+    assert "NAME" not in wrapper.county["wic_participation_women_data"]["17001"]  # noqa: E501
+    assert wrapper.meta.data_bins["natural_breaks"]["wic_participation_women_data"]["total"] == [52.0, 156.0, 364.0, 741.0, 780.0]  # TODO: add enough rows to have a real value to test against here # noqa: E501
+    assert wrapper.meta.data_bins["quantiles"]["wic_participation_women_data"]["total"] == [52.0, 156.0, 364.0, 741.0, 780.0]  # TODO: add enough rows to have a real value to test against here # noqa: E501
