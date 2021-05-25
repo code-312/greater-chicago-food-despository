@@ -16,6 +16,7 @@ def get_food_insecurity_data(input_dir: str = 'data_folder/insecurity') -> data.
         df = reformat_dataframe(pair[1])
         combined_data.add(data.from_county_dataframe(df))
         combined_data.meta.data_bins['natural_breaks'] = data.calculate_natural_breaks_bins(df, column_names)
+        combined_data.meta.data_bins['quantiles'] = data.calculate_quantiles_bins(df, column_names)
     return combined_data
 
 

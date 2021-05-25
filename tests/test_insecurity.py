@@ -21,3 +21,4 @@ def test_insecurity_merge():
     assert wrapper.county['insecurity_2020_child_projected']['17085'] == 0.212
     assert 'County Name' not in wrapper.county
     assert wrapper.meta.data_bins['natural_breaks']['insecurity_2018'] == [0.048, 0.071, 0.09, 0.116, 0.119]
+    assert wrapper.meta.data_bins['quantiles']['insecurity_2018'] == [0.048, 0.071, 0.09, 0.116, 0.119]
