@@ -1,9 +1,13 @@
 import src.main
 import os
 
+
 def delete_file(path: str) -> None:
+    # We need this condition because remove() raises
+    # an exception if the file doesn't exist
     if os.path.exists(path):
-        os.remove(path)  # remove() raises an exception if the file doesn't exist
+        os.remove(path)
+
 
 def test_run():
     delete_file('final_jsons/countyData.json')
