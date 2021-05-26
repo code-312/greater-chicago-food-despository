@@ -16,7 +16,7 @@ def test_race_dump():
                     'B03002_005E': 'race_native'}
     race = CensusRequest('race', detailed_table, race_metrics)
 
-    actual_output_path = "final_jsons/census_race_dump_actual_output.json"
+    actual_output_path = "tests/output/census_race_dump_actual_output.json"
     get_and_save_census_data([race], dump_output_path=actual_output_path, geo_ls=geo_ls)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_race_dump_expected_output.json")  # noqa: E501
@@ -31,7 +31,7 @@ def test_race_merged():
                     'B03002_005E': 'race_native'}
     race = CensusRequest('race', detailed_table, race_metrics)
 
-    actual_output_path = "final_jsons/census_race_merged_actual_output.json"
+    actual_output_path = "tests/output/census_race_merged_actual_output.json"
     get_and_save_census_data([race], merged_output_path=actual_output_path, geo_ls=geo_ls)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_race_merged_expected_output.json")  # noqa: E501
@@ -47,7 +47,7 @@ def test_poverty_dump():
                        'S1701_C02_002E': 'poverty_population_poverty_child'}
     poverty = CensusRequest('poverty', subject_table, poverty_metrics)
 
-    actual_output_path = "final_jsons/census_poverty_dump_actual_output.json"
+    actual_output_path = "tests/output/census_poverty_dump_actual_output.json"
     get_and_save_census_data([poverty], dump_output_path=actual_output_path, geo_ls=geo_ls)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_dump_expected_output.json")  # noqa: E501
@@ -63,7 +63,7 @@ def test_poverty_merged():
                        'S1701_C02_002E': 'poverty_population_poverty_child'}  # noqa: E501
     poverty = CensusRequest('poverty', subject_table, poverty_metrics)
 
-    actual_output_path = "final_jsons/census_poverty_merged_actual_output.json"
+    actual_output_path = "tests/output/census_poverty_merged_actual_output.json"
     get_and_save_census_data([poverty], merged_output_path=actual_output_path, geo_ls=geo_ls)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")  # noqa: E501
