@@ -166,4 +166,5 @@ def test_make_quantiles_q():
     assert data.make_quantiles_q(3) == [0, 0.33, 0.67, 1]
     assert data.make_quantiles_q(4) == [0, 0.25, 0.5, 0.75, 1]
     assert data.make_quantiles_q(5) == [0, 0.2, 0.4, 0.6, 0.8, 1]
-    assert data.make_quantiles_q(10) == [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+    assert data.make_quantiles_q(10) == [0, 0.1, 0.2, 0.3, 0.4, 0.5,
+                                         0.6, 0.7, 0.8, 0.9, 1]
