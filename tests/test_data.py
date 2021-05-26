@@ -159,3 +159,7 @@ def test_calculate_natural_breaks_removes_not_a_number_values_when_calculating_b
     }
 
     assert actual == expected
+
+
+def test_make_quantiles_q():
+    assert data.make_quantiles_q(4) == [0, 0.25, 0.5, 0.75, 1]
