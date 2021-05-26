@@ -136,7 +136,7 @@ def calculate_natural_breaks_bins(df: pd.DataFrame,
 def make_quantiles_q(bin_count: int) -> List[float]:
     q: List[float] = []
     for index in range(0, bin_count + 1):
-        q.append(index / bin_count)
+        q.append(round(index / bin_count, 2))
     return q
 
 
