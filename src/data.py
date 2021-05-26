@@ -3,7 +3,7 @@ import json
 import numpy
 import jenkspy
 from copy import deepcopy
-from typing import Dict, List, Any, Union, Optional
+from typing import Dict, List, Any, Optional
 
 
 class MetaData:
@@ -51,7 +51,7 @@ def json_encoder(object: Any) -> Any:
         return object.__dict__  # serialize objects as dictionaries
 
 
-def to_json(data: Union[Wrapper, Merged], pretty_print: bool = False) -> str:
+def to_json(data: Any, pretty_print: bool = False) -> str:
     if pretty_print:
         indent: Optional[int] = 4
         separators = None
