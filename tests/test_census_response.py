@@ -63,7 +63,7 @@ def test_poverty_merged():
                        'S1701_C02_002E': 'poverty_population_poverty_child'}  # noqa: E501
     poverty = CensusRequest('poverty', subject_table, poverty_metrics)
 
-    actual_output_path = "tests/output/census_poverty_merged_actual_output.json"
+    actual_output_path = "tests/output/census_poverty_merged_actual_output.json"  # noqa: E501
     get_and_save_census_data([poverty], merged_output_path=actual_output_path, geo_ls=geo_ls)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")  # noqa: E501
