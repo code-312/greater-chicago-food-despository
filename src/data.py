@@ -117,7 +117,7 @@ def merge(wrapper: Wrapper) -> Merged:
 
 def calculate_natural_breaks_bins(df: pd.DataFrame,
                                   columns_to_bin: List[str],
-                                  bin_count: int = 4) -> Dict[str, List[float]]:  # noqa: 501
+                                  bin_count: int = 5) -> Dict[str, List[float]]:  # noqa: 501
     """
     :param df: Pandas dataframe.
     :param bin_count: Number of bins used to classify data.
@@ -133,14 +133,21 @@ def calculate_natural_breaks_bins(df: pd.DataFrame,
     return bin_dict
 
 
-def calculate_quantiles_bins(df: pd.DataFrame, columns_to_bin: List[str]) -> Dict[str, List[float]]:  # noqa: E501
+def make_quantiles_q(bin_count: int) -> List[float]:
+    return [round(index / bin_count, 2)
+            for index in range(0, bin_count + 1)]
+
+
+def calculate_quantiles_bins(df: pd.DataFrame,
+                             columns_to_bin: List[str],
+                             bin_count: int = 5) -> Dict[str, List[float]]:  # noqa: E501
 
     columns_to_drop = [column for column in df.columns
                        if column not in columns_to_bin]
 
     quantile_df = df.drop(columns_to_drop, axis=1)
 
-    quantile_df = quantile_df.apply(numpy.quantile, q=(0, 0.25, 0.5, 0.75, 1))  # noqa: E501
+    quantile_df = quantile_df.apply(numpy.quantile, q=make_quantiles_q(bin_count))  # noqa: E501
     # round for space and avoid floating point imprecision
     quantile_df = numpy.round(quantile_df, 6)
     return quantile_df.to_dict(orient='list')
