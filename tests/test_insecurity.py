@@ -1,7 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.abspath(''))
-from src.insecurity import merge_ins_data  # noqa: E402
+from src.insecurity import get_food_insecurity_data  # noqa: E402
+from src import data  # noqa: E402
 
 
 def check_output(actual_path, expected_path):
@@ -11,8 +12,11 @@ def check_output(actual_path, expected_path):
 
 
 def test_insecurity_merge():
-    merge_ins_data('tests/resources/test_food_insecurity_merge_input.json',
-                   'tests/resources/df_merged_without_insecurity.json',
-                   'tests/output/df_merged_with_insecurity_actual.json')
-    check_output('tests/output/df_merged_with_insecurity_actual.json',
-                 'tests/resources/df_merged_with_insecurity_expected.json')
+
+    wrapper: data.Wrapper = get_food_insecurity_data('tests/resources/insecurity')  # noqa: E501
+
+    assert wrapper.county['insecurity_2018']['17085'] == 0.09
+    assert wrapper.county['insecurity_2020_projected']['17085'] == 0.133
+    assert wrapper.county['insecurity_2018_child']['17085'] == 0.128
+    assert wrapper.county['insecurity_2020_child_projected']['17085'] == 0.212
+    assert 'County Name' not in wrapper.county

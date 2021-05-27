@@ -1,0 +1,89 @@
+{
+    "county": {
+        "snap_data": {
+            "17001": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 6.0,
+                        "race_black": 175.0,
+                        "race_hispaniclatino": 24.0,
+                        "race_native": 3.0,
+                        "race_pacific": 4.0,
+                        "race_unknown": 516.0,
+                        "race_white": 572.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 16,
+                        "race_black": 741,
+                        "race_hispaniclatino": 60,
+                        "race_native": 20,
+                        "race_pacific": 6,
+                        "race_unknown": 295,
+                        "race_white": 4417
+                    },
+                    "age_5-17": {
+                        "race_asian": 5.0,
+                        "race_black": 273.0,
+                        "race_hispaniclatino": 64.0,
+                        "race_native": 10.0,
+                        "race_pacific": 7.0,
+                        "race_unknown": 1091.0,
+                        "race_white": 1235.0
+                    },
+                    "age_66+": {
+                        "race_asian": 4.0,
+                        "race_black": 46.0,
+                        "race_hispaniclatino": 6.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 569.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 5.0,
+                        "race_black": 164.0,
+                        "race_hispaniclatino": 27.0,
+                        "race_native": 2.0,
+                        "race_pacific": 4.0,
+                        "race_unknown": 563.0,
+                        "race_white": 591.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 17.0,
+                        "race_black": 812.0,
+                        "race_hispaniclatino": 97.0,
+                        "race_native": 25.0,
+                        "race_pacific": 10.0,
+                        "race_unknown": 381.0,
+                        "race_white": 5100.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 14.0,
+                        "race_black": 295.0,
+                        "race_hispaniclatino": 81.0,
+                        "race_native": 9.0,
+                        "race_pacific": 6.0,
+                        "race_unknown": 1207.0,
+                        "race_white": 1378.0
+                    },
+                    "age_66+": {
+                        "race_asian": 5.0,
+                        "race_black": 65.0,
+                        "race_hispaniclatino": 7.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 14.0,
+                        "race_white": 643.0
+                    }
+                }
+            }
+        }
+    },
+    "meta": {
+        "data_bins": {},
+        "data_metrics": {}
+    },
+    "zip": {}
+}

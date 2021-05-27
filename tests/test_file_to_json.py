@@ -17,7 +17,7 @@ def clean_output(filepath):
 
 
 def test_file_to_json():
-    file_to_json('tests/resources', 'tests/output',
+    file_to_json('tests/resources/insecurity', 'tests/output',
                  blacklist=['Key'])
     check_output('tests/output/Countytest_food_insecurity_xls.json',
                  'tests/resources/test_food_insecurity_expected.json')
