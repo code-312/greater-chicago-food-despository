@@ -13,7 +13,7 @@ def query_fcc_api(lat: float, long: float) -> Any:
     return json.loads(result.text)
 
 
-# given the input 
+# given the input
 #  41.94859796974284, -87.65531124426796
 # will return the tuple
 #  ('17031', 'Cook')
