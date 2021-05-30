@@ -47,16 +47,15 @@ def rename_columns(table: Dict[str, pd.DataFrame]) -> None:
     table -- A dictionary mapping str keys to dataframes
     '''
     for k in table:
-        columns = []
-        columns.append('county')
-        columns.append('race_white')
-        columns.append('race_black')
-        columns.append('race_native')
-        columns.append('race_asian')
-        columns.append('race_pacific')
-        columns.append('race_hispaniclatino')
-        columns.append('race_unknown')
-        table[k].columns = columns
+        table[k].columns = [
+            'county',
+            'race_white',
+            'race_black',
+            'race_native',
+            'race_asian',
+            'race_pacific',
+            'race_hispaniclatino',
+            'race_unknown']
 
 
 def add_fips_column(table: Dict[str, pd.DataFrame]) -> None:
