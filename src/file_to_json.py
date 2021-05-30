@@ -6,15 +6,6 @@ from src.census_response import county_fips
 from src import data
 
 
-def file_to_json(input_dir: str, output_dir: str, blacklist: List[str] = []) -> None:  # noqa: E501
-    '''
-    Reads excel/csv files into json format
-    Excludes worksheets in blacklist
-    '''
-    table_ls = files_to_dataframes(input_dir, blacklist)
-    dataframes_to_json_files(table_ls, output_dir)
-
-
 def file_to_wrapper(input_dir: str, blacklist: List[str] = []) -> data.Wrapper:  # noqa: E501
     table_ls = files_to_dataframes(input_dir, blacklist)
     combined_data = data.Wrapper()
@@ -79,16 +70,6 @@ def file_to_dataframes(filepath: str, blacklist: List[str] = []) -> List[Tuple[s
         return []
 
 
-def dataframes_to_json_files(tables: List[Tuple[str, pd.DataFrame]], output_dir: str) -> None:  # noqa: E501
-    for t in tables:
-        try:
-            table_to_json(t[1], os.path.join(output_dir, t[0] + '.json'))
-        except Exception as e:
-            print(e)
-            print(t)
-            print('-'*10)
-
-
 def determine_fips(df: pd.DataFrame) -> pd.DataFrame:
     '''
     Returns df with fips codes
@@ -127,21 +108,6 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         df = determine_fips(df)
     df = df.set_index('fips')
     return df
-
-
-def table_to_json(df: pd.DataFrame, filepath: str) -> None:
-    '''
-    Converts panda df to json format
-    '''
-    import json
-
-    json_str = df.to_json(orient='index')
-    # normalize line endings to LF
-    json_str = json_str.replace('\\r\\n', '\\n').replace('\\r', '\\n')
-    final_json = json.loads(json_str)
-    with open(filepath, 'w') as json_file:
-        # separators option here minimizes whitespace
-        json.dump(final_json, json_file, separators=(',', ':'))
 
 
 if __name__ == '__main__':
