@@ -31,7 +31,13 @@ def load_xlsx(src: str) -> Dict[str, pd.DataFrame]:
 
         # drop column of old indices
         table[k].drop(table[k].columns[0], axis=1, inplace=True)
-    return table
+
+    table_with_formatted_keys = {}
+    for k in table:
+        age_group = 'age_' + k.lower()[4:]
+        table_with_formatted_keys[age_group] = table[k]
+
+    return table_with_formatted_keys
 
 
 def rename_columns(table: Dict[str, pd.DataFrame]) -> None:
@@ -104,9 +110,7 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
     '''
     output = dict()
     for k in table:
-        age_group = 'age_' + k.lower()[4:]
-        as_dict = table[k].to_dict(orient='index')
-        output[age_group] = as_dict
+        output[k] = table[k].to_dict(orient='index')
     return output
 
 
