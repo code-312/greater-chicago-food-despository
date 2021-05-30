@@ -116,19 +116,25 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
     Arguments:
     srcs -- A list of tuples where the first element is the year,
             second element is the path to the data source
-    merge_to -- A dictionary structure countaining a key named 'county_data.'
-                Will be modified in-place.
-
     Returns:
-    The new data.Wrapper structure
+    A data.Wrapper with the data sorted under county_data.snap_data.<year>
     '''
     merge_to: data.Wrapper = data.Wrapper()
+    merge_to.meta.data_bins = {
+        'natural_breaks': {
+            'snap_data': {},
+        },
+        'quantiles': {
+            'snap_data': {}
+        },
+    }
     for src in srcs:
         year = src[0]
         table = load_xlsx(src[1])
         rename_columns(table)
         add_fips_column(table)
         table_dict = to_dict(table)
+
         if 'snap_data' not in merge_to.county:
             merge_to.county['snap_data'] = dict()
         for age_group in table_dict:
@@ -138,4 +144,12 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
                 if year not in merge_to.county['snap_data'][fips]:
                     merge_to.county['snap_data'][fips][year] = dict()
                 merge_to.county['snap_data'][fips][year][age_group] = table_dict[age_group][fips]  # noqa E501
+
+        merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = dict()
+
+        for age_group in table:
+            df = table[age_group]
+            numeric_columns = [column for column in df.columns if column != 'fips']
+            merge_to.meta.data_bins['natural_breaks']['snap_data'][year][age_group] = data.calculate_natural_breaks_bins(df, numeric_columns)
+
     return merge_to
