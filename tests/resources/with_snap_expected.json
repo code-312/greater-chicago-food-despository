@@ -78,6 +78,396 @@
                         "race_white": 643.0
                     }
                 }
+            },
+            "17003": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 1.0,
+                        "race_black": 53.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 54.0,
+                        "race_white": 45.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 475,
+                        "race_hispaniclatino": 7,
+                        "race_native": 3,
+                        "race_pacific": 1,
+                        "race_unknown": 55,
+                        "race_white": 473
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 117.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 198.0,
+                        "race_white": 127.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 78.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 3.0,
+                        "race_white": 84.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 52.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 52.0,
+                        "race_white": 55.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 547.0,
+                        "race_hispaniclatino": 13.0,
+                        "race_native": 4.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 71.0,
+                        "race_white": 559.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 130.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 204.0,
+                        "race_white": 143.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 81.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 4.0,
+                        "race_white": 95.0
+                    }
+                }
+            },
+            "17005": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 11.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 56.0,
+                        "race_white": 90.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 74,
+                        "race_hispaniclatino": 12,
+                        "race_native": 2,
+                        "race_pacific": 0,
+                        "race_unknown": 49,
+                        "race_white": 936
+                    },
+                    "age_5-17": {
+                        "race_asian": 2.0,
+                        "race_black": 36.0,
+                        "race_hispaniclatino": 4.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 178.0,
+                        "race_white": 320.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 7.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1.0,
+                        "race_white": 130.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 6.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 69.0,
+                        "race_white": 86.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 74.0,
+                        "race_hispaniclatino": 10.0,
+                        "race_native": 5.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 56.0,
+                        "race_white": 1063.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 3.0,
+                        "race_black": 35.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 188.0,
+                        "race_white": 348.0
+                    },
+                    "age_66+": {
+                        "race_asian": 1.0,
+                        "race_black": 9.0,
+                        "race_hispaniclatino": 4.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 2.0,
+                        "race_white": 151.0
+                    }
+                }
+            },
+            "17007": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 2.0,
+                        "race_black": 49.0,
+                        "race_hispaniclatino": 188.0,
+                        "race_native": 3.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 441.0,
+                        "race_white": 371.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 21,
+                        "race_black": 205,
+                        "race_hispaniclatino": 403,
+                        "race_native": 9,
+                        "race_pacific": 6,
+                        "race_unknown": 424,
+                        "race_white": 2046
+                    },
+                    "age_5-17": {
+                        "race_asian": 6.0,
+                        "race_black": 81.0,
+                        "race_hispaniclatino": 418.0,
+                        "race_native": 5.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1225.0,
+                        "race_white": 796.0
+                    },
+                    "age_66+": {
+                        "race_asian": 8.0,
+                        "race_black": 3.0,
+                        "race_hispaniclatino": 127.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 48.0,
+                        "race_white": 366.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 5.0,
+                        "race_black": 50.0,
+                        "race_hispaniclatino": 183.0,
+                        "race_native": 2.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 493.0,
+                        "race_white": 351.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 25.0,
+                        "race_black": 232.0,
+                        "race_hispaniclatino": 624.0,
+                        "race_native": 17.0,
+                        "race_pacific": 10.0,
+                        "race_unknown": 506.0,
+                        "race_white": 2373.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 18.0,
+                        "race_black": 87.0,
+                        "race_hispaniclatino": 457.0,
+                        "race_native": 7.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1308.0,
+                        "race_white": 883.0
+                    },
+                    "age_66+": {
+                        "race_asian": 10.0,
+                        "race_black": 5.0,
+                        "race_hispaniclatino": 142.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 54.0,
+                        "race_white": 416.0
+                    }
+                }
+            },
+            "17009": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 41.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 5,
+                        "race_hispaniclatino": 2,
+                        "race_native": 0,
+                        "race_pacific": 0,
+                        "race_unknown": 15,
+                        "race_white": 291
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 29.0,
+                        "race_white": 109.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 0.0,
+                        "race_white": 27.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 34.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 6.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 290.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 27.0,
+                        "race_white": 95.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1.0,
+                        "race_white": 34.0
+                    }
+                }
+            },
+            "17011": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 2.0,
+                        "race_black": 12.0,
+                        "race_hispaniclatino": 68.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 213.0,
+                        "race_white": 297.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 12,
+                        "race_black": 90,
+                        "race_hispaniclatino": 142,
+                        "race_native": 12,
+                        "race_pacific": 1,
+                        "race_unknown": 150,
+                        "race_white": 2025
+                    },
+                    "age_5-17": {
+                        "race_asian": 8.0,
+                        "race_black": 31.0,
+                        "race_hispaniclatino": 126.0,
+                        "race_native": 3.0,
+                        "race_pacific": 3.0,
+                        "race_unknown": 546.0,
+                        "race_white": 593.0
+                    },
+                    "age_66+": {
+                        "race_asian": 8.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 28.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 11.0,
+                        "race_white": 300.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 1.0,
+                        "race_black": 9.0,
+                        "race_hispaniclatino": 68.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 227.0,
+                        "race_white": 292.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 14.0,
+                        "race_black": 95.0,
+                        "race_hispaniclatino": 193.0,
+                        "race_native": 13.0,
+                        "race_pacific": 4.0,
+                        "race_unknown": 192.0,
+                        "race_white": 2145.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 9.0,
+                        "race_black": 28.0,
+                        "race_hispaniclatino": 131.0,
+                        "race_native": 5.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 559.0,
+                        "race_white": 618.0
+                    },
+                    "age_66+": {
+                        "race_asian": 9.0,
+                        "race_black": 3.0,
+                        "race_hispaniclatino": 38.0,
+                        "race_native": 3.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 18.0,
+                        "race_white": 346.0
+                    }
+                }
             }
         }
     },
