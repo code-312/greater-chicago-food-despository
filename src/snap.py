@@ -150,10 +150,12 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
                 merge_to.county['snap_data'][fips][year][age_group] = table_dict[age_group][fips]  # noqa E501
 
         merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = dict()
+        merge_to.meta.data_bins['quantiles']['snap_data'][year] = dict()
 
         for age_group in table:
             df = table[age_group]
             numeric_columns = [column for column in df.columns if column != 'fips']
             merge_to.meta.data_bins['natural_breaks']['snap_data'][year][age_group] = data.calculate_natural_breaks_bins(df, numeric_columns)
+            merge_to.meta.data_bins['quantiles']['snap_data'][year][age_group] = data.calculate_quantiles_bins(df, numeric_columns)
 
     return merge_to
