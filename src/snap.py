@@ -1,7 +1,7 @@
 import os
 import sys
 import pandas as pd
-from typing import Any, Dict, Tuple, List
+from typing import Any, Dict, Tuple, List, Callable
 sys.path.append(os.path.abspath(''))
 from src.census_response import county_fips  # noqa: E402
 from src import data  # noqa: E402
@@ -113,6 +113,20 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
         output[k] = table[k].to_dict(orient='index')
     return output
 
+def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable) -> Dict:
+    '''Internal utility to help make bins
+
+    Arguments:
+    table --  age group to dataframe
+    bin_func -- function to make bins'''
+
+    bin_dict = {}
+    for age_group in table:
+        df = table[age_group]
+        numeric_columns = [column for column in df.columns if column != 'fips']
+        bin_dict[age_group] = bin_func(df, numeric_columns)
+    return bin_dict
+
 
 def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
     '''Merges snap data into a data.Wrapper structure.
@@ -124,9 +138,12 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
     A data.Wrapper with the data sorted under county_data.snap_data.<year>
     '''
     merge_to: data.Wrapper = data.Wrapper()
+    merge_to.county = {
+        'snap_data': {}
+    }
     merge_to.meta.data_bins = {
         'natural_breaks': {
-            'snap_data': {},
+            'snap_data': {}
         },
         'quantiles': {
             'snap_data': {}
@@ -139,8 +156,6 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
         add_fips_column(table)
         table_dict = to_dict(table)
 
-        if 'snap_data' not in merge_to.county:
-            merge_to.county['snap_data'] = dict()
         for age_group in table_dict:
             for fips in table_dict[age_group]:
                 if fips not in merge_to.county['snap_data']:
@@ -149,13 +164,7 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
                     merge_to.county['snap_data'][fips][year] = dict()
                 merge_to.county['snap_data'][fips][year][age_group] = table_dict[age_group][fips]  # noqa E501
 
-        merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = dict()
-        merge_to.meta.data_bins['quantiles']['snap_data'][year] = dict()
-
-        for age_group in table:
-            df = table[age_group]
-            numeric_columns = [column for column in df.columns if column != 'fips']
-            merge_to.meta.data_bins['natural_breaks']['snap_data'][year][age_group] = data.calculate_natural_breaks_bins(df, numeric_columns)
-            merge_to.meta.data_bins['quantiles']['snap_data'][year][age_group] = data.calculate_quantiles_bins(df, numeric_columns)
+        merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = make_bins(table, data.calculate_natural_breaks_bins)
+        merge_to.meta.data_bins['quantiles']['snap_data'][year] = make_bins(table, data.calculate_quantiles_bins)
 
     return merge_to
