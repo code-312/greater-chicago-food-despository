@@ -113,13 +113,14 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
         output[k] = table[k].to_dict(orient='index')
     return output
 
+
 def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable) -> Dict:
     '''Internal utility to help make bins
 
     Arguments:
     table --  age group to dataframe
-    bin_func -- function to make bins'''
-
+    bin_func -- function to make bins
+    '''
     bin_dict = {}
     for age_group in table:
         df = table[age_group]
@@ -164,7 +165,7 @@ def merge_snap_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
                     merge_to.county['snap_data'][fips][year] = dict()
                 merge_to.county['snap_data'][fips][year][age_group] = table_dict[age_group][fips]  # noqa E501
 
-        merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = make_bins(table, data.calculate_natural_breaks_bins)
-        merge_to.meta.data_bins['quantiles']['snap_data'][year] = make_bins(table, data.calculate_quantiles_bins)
+        merge_to.meta.data_bins['natural_breaks']['snap_data'][year] = make_bins(table, data.calculate_natural_breaks_bins)  # noqa E501
+        merge_to.meta.data_bins['quantiles']['snap_data'][year] = make_bins(table, data.calculate_quantiles_bins)  # noqa E501
 
     return merge_to
