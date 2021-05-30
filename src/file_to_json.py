@@ -108,7 +108,3 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         df = determine_fips(df)
     df = df.set_index('fips')
     return df
-
-
-if __name__ == '__main__':
-    file_to_json('data_folder', 'final_jsons', blacklist=['Key'])
