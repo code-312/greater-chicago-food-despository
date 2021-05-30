@@ -117,8 +117,8 @@ def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable) -> Dict:
     '''Internal utility to help make bins
 
     Arguments:
-    table --  age group to dataframe
-    bin_func -- function to make bins
+    table --  Dictionary mapping age group to DataFrame
+    bin_func -- Function to make bins
     '''
     bin_dict = {}
     for age_group in table:
