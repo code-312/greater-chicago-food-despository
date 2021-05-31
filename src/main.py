@@ -54,12 +54,13 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
         duration = time.time() - start_time
         print("Reading Snap Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
-    with open('final_jsons/df_dump.json', "w") as f:
-        f.write(data.to_json(combined_data))
-
     merged_data: data.Merged = data.merge(combined_data)
-    with open('final_jsons/df_merged_json.json', "w") as f:
-        f.write(data.to_json(merged_data))
+    with open('final_jsons/countyData.json', "w") as f:
+        f.write(data.to_json(merged_data.county_data, True))
+    with open('final_jsons/metaData.json', "w") as f:
+        f.write(data.to_json(merged_data.meta, True))
+    with open('final_jsons/zipData.json', "w") as f:
+        f.write(data.to_json(merged_data.zip_data, True))
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
