@@ -295,7 +295,7 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
                              merged_output_path: str = "",
                              geo_ls: List[str] = ["zip", "county"],
                              pretty_print: bool = False,
-                             mock_responses: Optional[Dict[str, str]] = None) -> None:
+                             mock_responses: Optional[Dict[str, str]] = None) -> None:  # noqa: E501
 
     combined_data = get_census_data_list(data_requests, geo_ls, mock_responses=mock_responses)  # noqa: E501
     save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)  # noqa: E501
