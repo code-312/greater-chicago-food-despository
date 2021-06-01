@@ -105,3 +105,7 @@ functions:
 
 - Outputs to file and returns list of dictionaries
 - Currently does not add missing data keys to geocodes
+
+<hr>
+
+View front-end repository [here](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui).

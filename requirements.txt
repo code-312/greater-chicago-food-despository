@@ -7,9 +7,6 @@ pandas>=1.1.3,<1.2
 jenkspy==0.2.0
 # used for pandas + json compatibility
 numpyencoder>=0.3.0
-#used to authenticate
-firebase-admin>=4.5.1
-cachetools==4.2.1
 # used to validate json format
 geojson==2.5.0
 # configuration
@@ -24,3 +21,5 @@ xlrd==2.0.1
 pdfplumber==0.5.27
 # linting
 flake8==3.9.0
+# type checks
+mypy==0.812
