@@ -45,7 +45,8 @@ def download_census_data(geo_ls=["zip", "county"]) -> data.Wrapper:
 
 def get_census_response(table_url: str,
                         get_ls: Collection[str],
-                        geo: str) -> List[List[str]]:
+                        geo: str,
+                        mock_response: str = None) -> List[List[str]]:
     '''
     Concatenates url string and returns response from census api query
     input:
@@ -65,12 +66,20 @@ def get_census_response(table_url: str,
 
     get = 'NAME,' + ",".join(get_ls)
     url = f'{table_url}get={get}&for={geo_parameter}&key={CENSUS_KEY}'
-    response = requests.get(url)
-    try:
-        data_table = response.json()
-    except json.JSONDecodeError:
-        print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text)  # noqa: E501
-        data_table = []
+    if mock_response:
+        with open(mock_response, 'r') as mock_response_file:
+            try:
+                data_table = json.load(mock_response_file)
+            except json.JSONDecodeError as e:
+                print("Error reading json from mock data: {} (line {} col {})".format(e.msg, e.lineno, e.colno))  # noqa: E501
+                data_table = []
+    else:
+        response = requests.get(url)
+        try:
+            data_table = response.json()
+        except json.JSONDecodeError:
+            print("Error reading json from census response. Make sure you have a valid census key. Census Response: " + response.text)  # noqa: E501
+            data_table = []
     return data_table
 
 
@@ -233,10 +242,11 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     return dataframe, bins
 
 
-def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper:  # noqa: E501
+def get_census_data(request: CensusRequest, geography_type: str, mock_response: Optional[str] = None) -> data.Wrapper:  # noqa: E501
     census_rows = get_census_response(request.table_url,
                                       request.variables.keys(),
-                                      geography_type)
+                                      geography_type,
+                                      mock_response=mock_response)
     dataframe, bins = dataframe_and_bins_from_census_rows(census_rows,
                                                           geography_type,
                                                           request)
@@ -254,11 +264,14 @@ def get_census_data(request: CensusRequest, geography_type: str) -> data.Wrapper
     return wrapper
 
 
-def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"]) -> data.Wrapper:  # noqa: E501
+def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"], mock_responses: Optional[Dict[str, str]] = None) -> data.Wrapper:  # noqa: E501
     combined_data = data.Wrapper()
     for request in data_requests:
         for geo in geo_ls:
-            combined_data.add(get_census_data(request, geo))
+            if mock_responses:
+                combined_data.add(get_census_data(request, geo, mock_response=mock_responses[geo]))  # noqa: E501
+            else:
+                combined_data.add(get_census_data(request, geo))
     return combined_data
 
 
@@ -281,7 +294,8 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
                              dump_output_path: str = "",
                              merged_output_path: str = "",
                              geo_ls: List[str] = ["zip", "county"],
-                             pretty_print: bool = False) -> None:
+                             pretty_print: bool = False,
+                             mock_responses: Optional[Dict[str, str]] = None) -> None:  # noqa: E501
 
-    combined_data = get_census_data_list(data_requests, geo_ls)
+    combined_data = get_census_data_list(data_requests, geo_ls, mock_responses=mock_responses)  # noqa: E501
     save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)  # noqa: E501

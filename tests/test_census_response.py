@@ -17,7 +17,8 @@ def test_race_dump():
     race = CensusRequest('race', detailed_table, race_metrics)
 
     actual_output_path = "tests/output/census_race_dump_actual_output.json"
-    get_and_save_census_data([race], dump_output_path=actual_output_path, geo_ls=geo_ls, pretty_print=True)  # noqa: E501
+    mock_responses = {"zip": "tests/resources/test_race_input_zip.json", "county": "tests/resources/test_race_input_county.json"}  # noqa: E501
+    get_and_save_census_data([race], dump_output_path=actual_output_path, geo_ls=geo_ls, mock_responses=mock_responses, pretty_print=True)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_race_dump_expected_output.json")  # noqa: E501
 
@@ -32,7 +33,8 @@ def test_race_merged():
     race = CensusRequest('race', detailed_table, race_metrics)
 
     actual_output_path = "tests/output/census_race_merged_actual_output.json"
-    get_and_save_census_data([race], merged_output_path=actual_output_path, geo_ls=geo_ls, pretty_print=True)  # noqa: E501
+    mock_responses = {"zip": "tests/resources/test_race_input_zip.json", "county": "tests/resources/test_race_input_county.json"}  # noqa: E501
+    get_and_save_census_data([race], merged_output_path=actual_output_path, geo_ls=geo_ls, mock_responses=mock_responses, pretty_print=True)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_race_merged_expected_output.json")  # noqa: E501
 
@@ -48,7 +50,8 @@ def test_poverty_dump():
     poverty = CensusRequest('poverty', subject_table, poverty_metrics)
 
     actual_output_path = "tests/output/census_poverty_dump_actual_output.json"
-    get_and_save_census_data([poverty], dump_output_path=actual_output_path, geo_ls=geo_ls, pretty_print=True)  # noqa: E501
+    mock_responses = {"zip": "tests/resources/test_poverty_input_zip.json", "county": "tests/resources/test_poverty_input_county.json"}  # noqa: E501
+    get_and_save_census_data([poverty], dump_output_path=actual_output_path, geo_ls=geo_ls, mock_responses=mock_responses, pretty_print=True)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_dump_expected_output.json")  # noqa: E501
 
@@ -64,6 +67,7 @@ def test_poverty_merged():
     poverty = CensusRequest('poverty', subject_table, poverty_metrics)
 
     actual_output_path = "tests/output/census_poverty_merged_actual_output.json"  # noqa: E501
-    get_and_save_census_data([poverty], merged_output_path=actual_output_path, geo_ls=geo_ls, pretty_print=True)  # noqa: E501
+    mock_responses = {"zip": "tests/resources/test_poverty_input_zip.json", "county": "tests/resources/test_poverty_input_county.json"}  # noqa: E501
+    get_and_save_census_data([poverty], merged_output_path=actual_output_path, geo_ls=geo_ls, mock_responses=mock_responses, pretty_print=True)  # noqa: E501
 
     assert_file_contents_equal(actual_output_path, "tests/resources/census_poverty_merged_expected_output.json")  # noqa: E501
