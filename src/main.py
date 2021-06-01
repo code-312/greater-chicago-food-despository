@@ -56,11 +56,11 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
 
     merged_data: data.Merged = data.merge(combined_data)
     with open('final_jsons/countyData.json', "w") as f:
-        f.write(data.to_json(merged_data.county_data, True))
+        f.write(data.to_json(merged_data.county_data))
     with open('final_jsons/metaData.json', "w") as f:
-        f.write(data.to_json(merged_data.meta, True))
+        f.write(data.to_json(merged_data.meta))
     with open('final_jsons/zipData.json', "w") as f:
-        f.write(data.to_json(merged_data.zip_data, True))
+        f.write(data.to_json(merged_data.zip_data))
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
