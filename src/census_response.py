@@ -242,7 +242,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     return dataframe, bins
 
 
-def get_census_data(request: CensusRequest, geography_type: str, mock_response: str = None) -> data.Wrapper:  # noqa: E501
+def get_census_data(request: CensusRequest, geography_type: str, mock_response: Optional[str] = None) -> data.Wrapper:  # noqa: E501
     census_rows = get_census_response(request.table_url,
                                       request.variables.keys(),
                                       geography_type,
@@ -264,7 +264,7 @@ def get_census_data(request: CensusRequest, geography_type: str, mock_response: 
     return wrapper
 
 
-def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"], mock_responses: Dict[str, str] = None) -> data.Wrapper:  # noqa: E501
+def get_census_data_list(data_requests: List[CensusRequest], geo_ls: List[str] = ["zip", "county"], mock_responses: Optional[Dict[str, str]] = None) -> data.Wrapper:  # noqa: E501
     combined_data = data.Wrapper()
     for request in data_requests:
         for geo in geo_ls:
@@ -295,7 +295,7 @@ def get_and_save_census_data(data_requests: List[CensusRequest],
                              merged_output_path: str = "",
                              geo_ls: List[str] = ["zip", "county"],
                              pretty_print: bool = False,
-                             mock_responses: Dict[str, str] = None) -> None:
+                             mock_responses: Optional[Dict[str, str]] = None) -> None:
 
     combined_data = get_census_data_list(data_requests, geo_ls, mock_responses=mock_responses)  # noqa: E501
     save_census_data(combined_data, dump_output_path, merged_output_path, pretty_print)  # noqa: E501
