@@ -1,3 +1,5 @@
+[![run-tests](https://github.com/Code-For-Chicago/greater-chicago-food-despository/actions/workflows/run_tests.yaml/badge.svg)](https://github.com/Code-For-Chicago/greater-chicago-food-despository/actions/workflows/run_tests.yaml)
+
 <h2>ACS5 Scripts</h2>
 
 *Scripts produce JSONs from ACS5 Census Data*
