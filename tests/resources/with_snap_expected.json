@@ -78,11 +78,1346 @@
                         "race_white": 643.0
                     }
                 }
+            },
+            "17003": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 1.0,
+                        "race_black": 53.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 54.0,
+                        "race_white": 45.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 475,
+                        "race_hispaniclatino": 7,
+                        "race_native": 3,
+                        "race_pacific": 1,
+                        "race_unknown": 55,
+                        "race_white": 473
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 117.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 198.0,
+                        "race_white": 127.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 78.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 3.0,
+                        "race_white": 84.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 52.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 52.0,
+                        "race_white": 55.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 547.0,
+                        "race_hispaniclatino": 13.0,
+                        "race_native": 4.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 71.0,
+                        "race_white": 559.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 130.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 204.0,
+                        "race_white": 143.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 81.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 4.0,
+                        "race_white": 95.0
+                    }
+                }
+            },
+            "17005": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 11.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 56.0,
+                        "race_white": 90.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 74,
+                        "race_hispaniclatino": 12,
+                        "race_native": 2,
+                        "race_pacific": 0,
+                        "race_unknown": 49,
+                        "race_white": 936
+                    },
+                    "age_5-17": {
+                        "race_asian": 2.0,
+                        "race_black": 36.0,
+                        "race_hispaniclatino": 4.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 178.0,
+                        "race_white": 320.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 7.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1.0,
+                        "race_white": 130.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 6.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 69.0,
+                        "race_white": 86.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 74.0,
+                        "race_hispaniclatino": 10.0,
+                        "race_native": 5.0,
+                        "race_pacific": 1.0,
+                        "race_unknown": 56.0,
+                        "race_white": 1063.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 3.0,
+                        "race_black": 35.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 188.0,
+                        "race_white": 348.0
+                    },
+                    "age_66+": {
+                        "race_asian": 1.0,
+                        "race_black": 9.0,
+                        "race_hispaniclatino": 4.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 2.0,
+                        "race_white": 151.0
+                    }
+                }
+            },
+            "17007": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 2.0,
+                        "race_black": 49.0,
+                        "race_hispaniclatino": 188.0,
+                        "race_native": 3.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 441.0,
+                        "race_white": 371.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 21,
+                        "race_black": 205,
+                        "race_hispaniclatino": 403,
+                        "race_native": 9,
+                        "race_pacific": 6,
+                        "race_unknown": 424,
+                        "race_white": 2046
+                    },
+                    "age_5-17": {
+                        "race_asian": 6.0,
+                        "race_black": 81.0,
+                        "race_hispaniclatino": 418.0,
+                        "race_native": 5.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1225.0,
+                        "race_white": 796.0
+                    },
+                    "age_66+": {
+                        "race_asian": 8.0,
+                        "race_black": 3.0,
+                        "race_hispaniclatino": 127.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 48.0,
+                        "race_white": 366.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 5.0,
+                        "race_black": 50.0,
+                        "race_hispaniclatino": 183.0,
+                        "race_native": 2.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 493.0,
+                        "race_white": 351.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 25.0,
+                        "race_black": 232.0,
+                        "race_hispaniclatino": 624.0,
+                        "race_native": 17.0,
+                        "race_pacific": 10.0,
+                        "race_unknown": 506.0,
+                        "race_white": 2373.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 18.0,
+                        "race_black": 87.0,
+                        "race_hispaniclatino": 457.0,
+                        "race_native": 7.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1308.0,
+                        "race_white": 883.0
+                    },
+                    "age_66+": {
+                        "race_asian": 10.0,
+                        "race_black": 5.0,
+                        "race_hispaniclatino": 142.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 54.0,
+                        "race_white": 416.0
+                    }
+                }
+            },
+            "17009": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 41.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1,
+                        "race_black": 5,
+                        "race_hispaniclatino": 2,
+                        "race_native": 0,
+                        "race_pacific": 0,
+                        "race_unknown": 15,
+                        "race_white": 291
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 2.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 29.0,
+                        "race_white": 109.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 0.0,
+                        "race_white": 27.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 1.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 34.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 1.0,
+                        "race_black": 6.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 12.0,
+                        "race_white": 290.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 0.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 3.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 27.0,
+                        "race_white": 95.0
+                    },
+                    "age_66+": {
+                        "race_asian": 0.0,
+                        "race_black": 0.0,
+                        "race_hispaniclatino": 0.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 1.0,
+                        "race_white": 34.0
+                    }
+                }
+            },
+            "17011": {
+                "2019": {
+                    "age_0-4": {
+                        "race_asian": 2.0,
+                        "race_black": 12.0,
+                        "race_hispaniclatino": 68.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 213.0,
+                        "race_white": 297.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 12,
+                        "race_black": 90,
+                        "race_hispaniclatino": 142,
+                        "race_native": 12,
+                        "race_pacific": 1,
+                        "race_unknown": 150,
+                        "race_white": 2025
+                    },
+                    "age_5-17": {
+                        "race_asian": 8.0,
+                        "race_black": 31.0,
+                        "race_hispaniclatino": 126.0,
+                        "race_native": 3.0,
+                        "race_pacific": 3.0,
+                        "race_unknown": 546.0,
+                        "race_white": 593.0
+                    },
+                    "age_66+": {
+                        "race_asian": 8.0,
+                        "race_black": 2.0,
+                        "race_hispaniclatino": 28.0,
+                        "race_native": 1.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 11.0,
+                        "race_white": 300.0
+                    }
+                },
+                "2020": {
+                    "age_0-4": {
+                        "race_asian": 1.0,
+                        "race_black": 9.0,
+                        "race_hispaniclatino": 68.0,
+                        "race_native": 0.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 227.0,
+                        "race_white": 292.0
+                    },
+                    "age_18-65": {
+                        "race_asian": 14.0,
+                        "race_black": 95.0,
+                        "race_hispaniclatino": 193.0,
+                        "race_native": 13.0,
+                        "race_pacific": 4.0,
+                        "race_unknown": 192.0,
+                        "race_white": 2145.0
+                    },
+                    "age_5-17": {
+                        "race_asian": 9.0,
+                        "race_black": 28.0,
+                        "race_hispaniclatino": 131.0,
+                        "race_native": 5.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 559.0,
+                        "race_white": 618.0
+                    },
+                    "age_66+": {
+                        "race_asian": 9.0,
+                        "race_black": 3.0,
+                        "race_hispaniclatino": 38.0,
+                        "race_native": 3.0,
+                        "race_pacific": 0.0,
+                        "race_unknown": 18.0,
+                        "race_white": 346.0
+                    }
+                }
             }
         }
     },
     "meta": {
-        "data_bins": {},
+        "data_bins": {
+            "natural_breaks": {
+                "snap_data": {
+                    "2019": {
+                        "age_0-4": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                2.0,
+                                2.0,
+                                6.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                11.0,
+                                12.0,
+                                49.0,
+                                53.0,
+                                175.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                2.0,
+                                2.0,
+                                24.0,
+                                68.0,
+                                188.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                3.0,
+                                3.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                4.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                54.0,
+                                56.0,
+                                213.0,
+                                441.0,
+                                516.0
+                            ],
+                            "race_white": [
+                                41.0,
+                                45.0,
+                                90.0,
+                                297.0,
+                                371.0,
+                                572.0
+                            ]
+                        },
+                        "age_18-65": {
+                            "race_asian": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                12.0,
+                                16.0,
+                                21.0
+                            ],
+                            "race_black": [
+                                5.0,
+                                74.0,
+                                90.0,
+                                205.0,
+                                475.0,
+                                741.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                7.0,
+                                12.0,
+                                60.0,
+                                142.0,
+                                403.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                2.0,
+                                3.0,
+                                9.0,
+                                12.0,
+                                20.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0,
+                                6.0,
+                                6.0
+                            ],
+                            "race_unknown": [
+                                15.0,
+                                49.0,
+                                55.0,
+                                150.0,
+                                295.0,
+                                424.0
+                            ],
+                            "race_white": [
+                                291.0,
+                                473.0,
+                                936.0,
+                                2025.0,
+                                2046.0,
+                                4417.0
+                            ]
+                        },
+                        "age_5-17": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                2.0,
+                                5.0,
+                                6.0,
+                                8.0
+                            ],
+                            "race_black": [
+                                2.0,
+                                31.0,
+                                36.0,
+                                81.0,
+                                117.0,
+                                273.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                3.0,
+                                4.0,
+                                64.0,
+                                126.0,
+                                418.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                3.0,
+                                5.0,
+                                10.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                3.0,
+                                7.0
+                            ],
+                            "race_unknown": [
+                                29.0,
+                                178.0,
+                                198.0,
+                                546.0,
+                                1091.0,
+                                1225.0
+                            ],
+                            "race_white": [
+                                109.0,
+                                127.0,
+                                320.0,
+                                593.0,
+                                796.0,
+                                1235.0
+                            ]
+                        },
+                        "age_66+": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                4.0,
+                                8.0,
+                                8.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                2.0,
+                                3.0,
+                                7.0,
+                                46.0,
+                                78.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                0.0,
+                                2.0,
+                                6.0,
+                                28.0,
+                                127.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "race_unknown": [
+                                0.0,
+                                1.0,
+                                3.0,
+                                11.0,
+                                12.0,
+                                48.0
+                            ],
+                            "race_white": [
+                                27.0,
+                                84.0,
+                                130.0,
+                                300.0,
+                                366.0,
+                                569.0
+                            ]
+                        }
+                    },
+                    "2020": {
+                        "age_0-4": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                5.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                6.0,
+                                9.0,
+                                50.0,
+                                52.0,
+                                164.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                1.0,
+                                1.0,
+                                27.0,
+                                68.0,
+                                183.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                2.0,
+                                2.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                4.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                52.0,
+                                69.0,
+                                227.0,
+                                493.0,
+                                563.0
+                            ],
+                            "race_white": [
+                                34.0,
+                                55.0,
+                                86.0,
+                                292.0,
+                                351.0,
+                                591.0
+                            ]
+                        },
+                        "age_18-65": {
+                            "race_asian": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                14.0,
+                                17.0,
+                                25.0
+                            ],
+                            "race_black": [
+                                6.0,
+                                74.0,
+                                95.0,
+                                232.0,
+                                547.0,
+                                812.0
+                            ],
+                            "race_hispaniclatino": [
+                                3.0,
+                                10.0,
+                                13.0,
+                                97.0,
+                                193.0,
+                                624.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                4.0,
+                                5.0,
+                                13.0,
+                                17.0,
+                                25.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                1.0,
+                                1.0,
+                                4.0,
+                                10.0,
+                                10.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                56.0,
+                                71.0,
+                                192.0,
+                                381.0,
+                                506.0
+                            ],
+                            "race_white": [
+                                290.0,
+                                559.0,
+                                1063.0,
+                                2145.0,
+                                2373.0,
+                                5100.0
+                            ]
+                        },
+                        "age_5-17": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                3.0,
+                                9.0,
+                                14.0,
+                                18.0
+                            ],
+                            "race_black": [
+                                2.0,
+                                28.0,
+                                35.0,
+                                87.0,
+                                130.0,
+                                295.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                3.0,
+                                3.0,
+                                81.0,
+                                131.0,
+                                457.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                7.0,
+                                9.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                6.0
+                            ],
+                            "race_unknown": [
+                                27.0,
+                                188.0,
+                                204.0,
+                                559.0,
+                                1207.0,
+                                1308.0
+                            ],
+                            "race_white": [
+                                95.0,
+                                143.0,
+                                348.0,
+                                618.0,
+                                883.0,
+                                1378.0
+                            ]
+                        },
+                        "age_66+": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                9.0,
+                                10.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                3.0,
+                                5.0,
+                                9.0,
+                                65.0,
+                                81.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                1.0,
+                                4.0,
+                                7.0,
+                                38.0,
+                                142.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0,
+                                3.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "race_unknown": [
+                                1.0,
+                                2.0,
+                                4.0,
+                                14.0,
+                                18.0,
+                                54.0
+                            ],
+                            "race_white": [
+                                34.0,
+                                95.0,
+                                151.0,
+                                346.0,
+                                416.0,
+                                643.0
+                            ]
+                        }
+                    }
+                }
+            },
+            "quantiles": {
+                "snap_data": {
+                    "2019": {
+                        "age_0-4": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                2.0,
+                                2.0,
+                                6.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                11.0,
+                                12.0,
+                                49.0,
+                                53.0,
+                                175.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                2.0,
+                                2.0,
+                                24.0,
+                                68.0,
+                                188.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                3.0,
+                                3.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                4.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                54.0,
+                                56.0,
+                                213.0,
+                                441.0,
+                                516.0
+                            ],
+                            "race_white": [
+                                41.0,
+                                45.0,
+                                90.0,
+                                297.0,
+                                371.0,
+                                572.0
+                            ]
+                        },
+                        "age_18-65": {
+                            "race_asian": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                12.0,
+                                16.0,
+                                21.0
+                            ],
+                            "race_black": [
+                                5.0,
+                                74.0,
+                                90.0,
+                                205.0,
+                                475.0,
+                                741.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                7.0,
+                                12.0,
+                                60.0,
+                                142.0,
+                                403.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                2.0,
+                                3.0,
+                                9.0,
+                                12.0,
+                                20.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0,
+                                6.0,
+                                6.0
+                            ],
+                            "race_unknown": [
+                                15.0,
+                                49.0,
+                                55.0,
+                                150.0,
+                                295.0,
+                                424.0
+                            ],
+                            "race_white": [
+                                291.0,
+                                473.0,
+                                936.0,
+                                2025.0,
+                                2046.0,
+                                4417.0
+                            ]
+                        },
+                        "age_5-17": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                2.0,
+                                5.0,
+                                6.0,
+                                8.0
+                            ],
+                            "race_black": [
+                                2.0,
+                                31.0,
+                                36.0,
+                                81.0,
+                                117.0,
+                                273.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                3.0,
+                                4.0,
+                                64.0,
+                                126.0,
+                                418.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                3.0,
+                                5.0,
+                                10.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                3.0,
+                                7.0
+                            ],
+                            "race_unknown": [
+                                29.0,
+                                178.0,
+                                198.0,
+                                546.0,
+                                1091.0,
+                                1225.0
+                            ],
+                            "race_white": [
+                                109.0,
+                                127.0,
+                                320.0,
+                                593.0,
+                                796.0,
+                                1235.0
+                            ]
+                        },
+                        "age_66+": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                4.0,
+                                8.0,
+                                8.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                2.0,
+                                3.0,
+                                7.0,
+                                46.0,
+                                78.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                0.0,
+                                2.0,
+                                6.0,
+                                28.0,
+                                127.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "race_unknown": [
+                                0.0,
+                                1.0,
+                                3.0,
+                                11.0,
+                                12.0,
+                                48.0
+                            ],
+                            "race_white": [
+                                27.0,
+                                84.0,
+                                130.0,
+                                300.0,
+                                366.0,
+                                569.0
+                            ]
+                        }
+                    },
+                    "2020": {
+                        "age_0-4": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                5.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                6.0,
+                                9.0,
+                                50.0,
+                                52.0,
+                                164.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                1.0,
+                                1.0,
+                                27.0,
+                                68.0,
+                                183.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                2.0,
+                                2.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                4.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                52.0,
+                                69.0,
+                                227.0,
+                                493.0,
+                                563.0
+                            ],
+                            "race_white": [
+                                34.0,
+                                55.0,
+                                86.0,
+                                292.0,
+                                351.0,
+                                591.0
+                            ]
+                        },
+                        "age_18-65": {
+                            "race_asian": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                14.0,
+                                17.0,
+                                25.0
+                            ],
+                            "race_black": [
+                                6.0,
+                                74.0,
+                                95.0,
+                                232.0,
+                                547.0,
+                                812.0
+                            ],
+                            "race_hispaniclatino": [
+                                3.0,
+                                10.0,
+                                13.0,
+                                97.0,
+                                193.0,
+                                624.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                4.0,
+                                5.0,
+                                13.0,
+                                17.0,
+                                25.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                1.0,
+                                1.0,
+                                4.0,
+                                10.0,
+                                10.0
+                            ],
+                            "race_unknown": [
+                                12.0,
+                                56.0,
+                                71.0,
+                                192.0,
+                                381.0,
+                                506.0
+                            ],
+                            "race_white": [
+                                290.0,
+                                559.0,
+                                1063.0,
+                                2145.0,
+                                2373.0,
+                                5100.0
+                            ]
+                        },
+                        "age_5-17": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                3.0,
+                                9.0,
+                                14.0,
+                                18.0
+                            ],
+                            "race_black": [
+                                2.0,
+                                28.0,
+                                35.0,
+                                87.0,
+                                130.0,
+                                295.0
+                            ],
+                            "race_hispaniclatino": [
+                                2.0,
+                                3.0,
+                                3.0,
+                                81.0,
+                                131.0,
+                                457.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                7.0,
+                                9.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                6.0
+                            ],
+                            "race_unknown": [
+                                27.0,
+                                188.0,
+                                204.0,
+                                559.0,
+                                1207.0,
+                                1308.0
+                            ],
+                            "race_white": [
+                                95.0,
+                                143.0,
+                                348.0,
+                                618.0,
+                                883.0,
+                                1378.0
+                            ]
+                        },
+                        "age_66+": {
+                            "race_asian": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                5.0,
+                                9.0,
+                                10.0
+                            ],
+                            "race_black": [
+                                0.0,
+                                3.0,
+                                5.0,
+                                9.0,
+                                65.0,
+                                81.0
+                            ],
+                            "race_hispaniclatino": [
+                                0.0,
+                                1.0,
+                                4.0,
+                                7.0,
+                                38.0,
+                                142.0
+                            ],
+                            "race_native": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0,
+                                3.0
+                            ],
+                            "race_pacific": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "race_unknown": [
+                                1.0,
+                                2.0,
+                                4.0,
+                                14.0,
+                                18.0,
+                                54.0
+                            ],
+                            "race_white": [
+                                34.0,
+                                95.0,
+                                151.0,
+                                346.0,
+                                416.0,
+                                643.0
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "data_metrics": {}
     },
     "zip": {}
