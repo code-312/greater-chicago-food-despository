@@ -180,7 +180,7 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     elif geography_type == "zip":
         dataframe = dataframe.set_index('zip code tabulation area') \
                  .drop(['NAME', 'state'], axis=1) \
-                 .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
+                 .filter(regex='^(6[0-2])[0-9]+', axis=0)
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
 
@@ -189,10 +189,10 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
 
         bins = {
             'quantiles': {
-                'race_data': data.calculate_quantiles_bins(dataframe, numeric_columns)
+                'race_data': data.calculate_quantiles_bins(dataframe, numeric_columns)  # noqa: E501
             },
             'natural_breaks': {
-                'race_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)
+                'race_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)  # noqa: E501
             }
         }
 
@@ -230,10 +230,10 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
 
         bins = {
             'quantiles': {
-                'poverty_data': data.calculate_quantiles_bins(dataframe, numeric_columns)
+                'poverty_data': data.calculate_quantiles_bins(dataframe, numeric_columns)  # noqa: E501
             },
             'natural_breaks': {
-                'poverty_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)
+                'poverty_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)  # noqa: E501
             }
         }
 
