@@ -208,7 +208,18 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     suffixes=(False, False))
 
     elif request.metric == "poverty":
-        poverty_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns   # noqa: E501
+        numeric_columns = request.variables.values()
+
+        bins = {
+            'quantiles': {
+                'poverty_data': data.calculate_quantiles_bins(dataframe, numeric_columns)
+            },
+            'natural_breaks': {
+                'poverty_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)
+            }
+        }
+
+        poverty_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(poverty_df, 'poverty_population_total')
 
         # converts NAN to None, for proper JSON encoding
@@ -223,19 +234,14 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
 
-        numeric_columns = ["poverty_population_poverty",
+        pct_numeric_columns = ["poverty_population_poverty",
                            "poverty_population_poverty_child"]
 
-        quantile_dict = data.calculate_quantiles_bins(pct_df, numeric_columns)
+        bins['quantiles']['poverty_data']['poverty_percentages'] = \
+            data.calculate_quantiles_bins(pct_df, pct_numeric_columns)
 
-        # create quantile bins using natural breaks algorithm.
-        # bin_count could be increased to > 4 if needed.
-        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df, numeric_columns)  # noqa: E501
-
-        bins = {
-            'quantiles': quantile_dict,
-            'natural_breaks': natural_breaks_dict
-        }
+        bins['natural_breaks']['poverty_data']['poverty_percentages'] = \
+            data.calculate_natural_breaks_bins(pct_df, pct_numeric_columns)
     else:
         raise ValueError("Unsupported metric type: " + geography_type)
 
