@@ -199,13 +199,11 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         race_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(race_df, 'race_total')
 
-        pct_numeric_columns = [column for column in numeric_columns if column != 'race_total']
-
         bins['quantiles']['race_data']['race_percentages'] = \
-            data.calculate_quantiles_bins(pct_df, pct_numeric_columns)
+            data.calculate_quantiles_bins(pct_df, pct_df.columns)
 
         bins['natural_breaks']['race_data']['race_percentages'] = \
-            data.calculate_natural_breaks_bins(pct_df, pct_numeric_columns)
+            data.calculate_natural_breaks_bins(pct_df, pct_df.columns)
 
         # creates series of majority race demographics
         majority_series = pct_df.apply(majority, axis=1)
@@ -242,6 +240,12 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         poverty_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(poverty_df, 'poverty_population_total')
 
+        bins['quantiles']['poverty_data']['poverty_percentages'] = \
+            data.calculate_quantiles_bins(pct_df, pct_df.columns)
+
+        bins['natural_breaks']['poverty_data']['poverty_percentages'] = \
+            data.calculate_natural_breaks_bins(pct_df, pct_df.columns)
+
         # converts NAN to None, for proper JSON encoding
         working_df = pct_df.where(pd.notnull(pct_df), None)
         # creates series of poverty percentages as a dictionary
@@ -253,15 +257,6 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         dataframe = dataframe.merge(pct_dict_series,
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
-
-        pct_numeric_columns = ["poverty_population_poverty",
-                           "poverty_population_poverty_child"]
-
-        bins['quantiles']['poverty_data']['poverty_percentages'] = \
-            data.calculate_quantiles_bins(pct_df, pct_numeric_columns)
-
-        bins['natural_breaks']['poverty_data']['poverty_percentages'] = \
-            data.calculate_natural_breaks_bins(pct_df, pct_numeric_columns)
     else:
         raise ValueError("Unsupported metric type: " + geography_type)
 
