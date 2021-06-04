@@ -185,8 +185,28 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         raise ValueError("Unsupported geography type: " + geography_type)
 
     if request.metric == "race":
-        race_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns  # noqa: E501
+        numeric_columns = request.variables.values()
+
+        bins = {
+            'quantiles': {
+                'race_data': data.calculate_quantiles_bins(dataframe, numeric_columns)
+            },
+            'natural_breaks': {
+                'race_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)
+            }
+        }
+
+        race_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(race_df, 'race_total')
+
+        pct_numeric_columns = [column for column in numeric_columns if column != 'race_total']
+
+        bins['quantiles']['race_data']['race_percentages'] = \
+            data.calculate_quantiles_bins(pct_df, pct_numeric_columns)
+
+        bins['natural_breaks']['race_data']['race_percentages'] = \
+            data.calculate_natural_breaks_bins(pct_df, pct_numeric_columns)
+
         # creates series of majority race demographics
         majority_series = pct_df.apply(majority, axis=1)
         majority_series.name = 'race_majority'
