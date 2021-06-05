@@ -180,13 +180,31 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
     elif geography_type == "zip":
         dataframe = dataframe.set_index('zip code tabulation area') \
                  .drop(['NAME', 'state'], axis=1) \
-                 .filter(regex='^(6[0-2])[0-9]+', axis=0)  # noqa: E501
+                 .filter(regex='^(6[0-2])[0-9]+', axis=0)
     else:
         raise ValueError("Unsupported geography type: " + geography_type)
 
     if request.metric == "race":
-        race_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns  # noqa: E501
+        numeric_columns = request.variables.values()
+
+        bins = {
+            'quantiles': {
+                'race_data': data.calculate_quantiles_bins(dataframe, numeric_columns)  # noqa: E501
+            },
+            'natural_breaks': {
+                'race_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)  # noqa: E501
+            }
+        }
+
+        race_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(race_df, 'race_total')
+
+        bins['quantiles']['race_data']['race_percentages'] = \
+            data.calculate_quantiles_bins(pct_df, pct_df.columns)
+
+        bins['natural_breaks']['race_data']['race_percentages'] = \
+            data.calculate_natural_breaks_bins(pct_df, pct_df.columns)
+
         # creates series of majority race demographics
         majority_series = pct_df.apply(majority, axis=1)
         majority_series.name = 'race_majority'
@@ -208,8 +226,25 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
                                     suffixes=(False, False))
 
     elif request.metric == "poverty":
-        poverty_df = dataframe.loc[:, request.variables.values()]  # we only need the numeric columns   # noqa: E501
+        numeric_columns = request.variables.values()
+
+        bins = {
+            'quantiles': {
+                'poverty_data': data.calculate_quantiles_bins(dataframe, numeric_columns)  # noqa: E501
+            },
+            'natural_breaks': {
+                'poverty_data': data.calculate_natural_breaks_bins(dataframe, numeric_columns)  # noqa: E501
+            }
+        }
+
+        poverty_df = dataframe.loc[:, numeric_columns]
         pct_df = create_percentages(poverty_df, 'poverty_population_total')
+
+        bins['quantiles']['poverty_data']['poverty_percentages'] = \
+            data.calculate_quantiles_bins(pct_df, pct_df.columns)
+
+        bins['natural_breaks']['poverty_data']['poverty_percentages'] = \
+            data.calculate_natural_breaks_bins(pct_df, pct_df.columns)
 
         # converts NAN to None, for proper JSON encoding
         working_df = pct_df.where(pd.notnull(pct_df), None)
@@ -222,20 +257,6 @@ def dataframe_and_bins_from_census_rows(all_rows: List[List[str]], geography_typ
         dataframe = dataframe.merge(pct_dict_series,
                                     left_index=True, right_index=True,
                                     suffixes=(False, False))
-
-        numeric_columns = ["poverty_population_poverty",
-                           "poverty_population_poverty_child"]
-
-        quantile_dict = data.calculate_quantiles_bins(pct_df, numeric_columns)
-
-        # create quantile bins using natural breaks algorithm.
-        # bin_count could be increased to > 4 if needed.
-        natural_breaks_dict = data.calculate_natural_breaks_bins(pct_df, numeric_columns)  # noqa: E501
-
-        bins = {
-            'quantiles': quantile_dict,
-            'natural_breaks': natural_breaks_dict
-        }
     else:
         raise ValueError("Unsupported metric type: " + geography_type)
 
