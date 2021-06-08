@@ -1,7 +1,6 @@
 from src.config import CENSUS_KEY
 import json
 import requests
-import numpy as np
 import pandas as pd
 from typing import Dict, List, Tuple, Optional, Collection
 from src import data
@@ -96,7 +95,7 @@ def create_percentages(df: pd.DataFrame, total_col_str: str) -> pd.DataFrame:
                                  .astype('float64')
 
     # Rounds to save space
-    percent_df = np.round(percent_df, 6)
+    percent_df = percent_df.round(6)
 
     return percent_df
 
