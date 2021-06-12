@@ -2,7 +2,7 @@
 
 <h1>Code for Chicago Mapping Project Backend</h1>
 
-Data generation for an interactive map of data in Illinois. Running this project outputs JSON files that can be used by [frontend](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui).
+Data generation for an interactive map of data in Illinois. Running this project outputs JSON files that can be used by [the frontend](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui).
 
 <h2>Getting Started</h2>
 
