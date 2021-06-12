@@ -19,9 +19,9 @@ CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
 6. Run start script to verify your setup is correct
    - Mac/Linux: 
        - Make script executable `chmod 755 start.sh`
-       - run `start.sh` via terminal or double click
+       - Run `start.sh` via terminal or double click
    - Windows: run `start.bat` via command line or double click
-   - If the tests do not pass, check your `.env` file and your installed python package versions
+7. If the tests do not pass, check your `.env` file and your installed python package versions
 
 <h2>Running the Project</h2>
 
