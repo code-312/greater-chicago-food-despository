@@ -145,9 +145,11 @@ def calculate_quantiles_bins(df: pd.DataFrame,
     columns_to_drop = [column for column in df.columns
                        if column not in columns_to_bin]
 
-    quantile_df = df.drop(columns_to_drop, axis=1)
+    quantile_df = df.drop(columns_to_drop, axis=1).astype('float64')
 
     quantile_df = quantile_df.apply(numpy.quantile, q=make_quantiles_q(bin_count))  # noqa: E501
     # round for space and avoid floating point imprecision
-    quantile_df = numpy.round(quantile_df, 6)
-    return quantile_df.to_dict(orient='list')
+    quantile_df = quantile_df.round(6)
+    quantile_dict = quantile_df.to_dict(orient='list')
+
+    return quantile_dict
