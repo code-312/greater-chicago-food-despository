@@ -1,6 +1,7 @@
 ### Python ###
-__pycache__/
+*/__pycache__/
 api_keys.py
+.mypy_cache/
 
 ## pyenv ##
 .python-version
