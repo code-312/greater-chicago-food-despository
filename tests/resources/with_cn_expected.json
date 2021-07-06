@@ -1,0 +1,168 @@
+{
+    "county": {
+        "child_nutrition_data": {
+            "17001": {
+                "2019": {
+                    "afterschool_meals_count": 23197.0,
+                    "breakfast_count": 475110.0,
+                    "lunch_count": 1131503.0,
+                    "sfsp_count": 18035.0
+                }
+            },
+            "17003": {
+                "2019": {
+                    "afterschool_meals_count": 6652.0,
+                    "breakfast_count": 64705.0,
+                    "lunch_count": 98754.0,
+                    "sfsp_count": 2348.0
+                }
+            },
+            "17005": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 63038.0,
+                    "lunch_count": 178467.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17007": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 212246.0,
+                    "lunch_count": 790743.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17009": {
+                "2019": {
+                    "afterschool_meals_count": 8131.0,
+                    "breakfast_count": 20810.0,
+                    "lunch_count": 92832.0,
+                    "sfsp_count": 6916.0
+                }
+            },
+            "17011": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 311389.0,
+                    "lunch_count": 513295.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17013": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 34827.0,
+                    "lunch_count": 80112.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17015": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 52783.0,
+                    "lunch_count": 225947.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17017": {
+                "2019": {
+                    "afterschool_meals_count": 0.0,
+                    "breakfast_count": 152079.0,
+                    "lunch_count": 269014.0,
+                    "sfsp_count": 0.0
+                }
+            },
+            "17019": {
+                "2019": {
+                    "afterschool_meals_count": 63783.0,
+                    "breakfast_count": 1275064.0,
+                    "lunch_count": 2364951.0,
+                    "sfsp_count": 78751.0
+                }
+            }
+        }
+    },
+    "meta": {
+        "data_bins": {
+            "natural_breaks": {
+                "child_nutrition_data": {
+                    "2019": {
+                        "afterschool_meals_count": [
+                            0.0,
+                            0.0,
+                            6652.0,
+                            8131.0,
+                            23197.0,
+                            63783.0
+                        ],
+                        "breakfast_count": [
+                            20810.0,
+                            64705.0,
+                            212246.0,
+                            311389.0,
+                            475110.0,
+                            1275064.0
+                        ],
+                        "lunch_count": [
+                            80112.0,
+                            269014.0,
+                            513295.0,
+                            790743.0,
+                            1131503.0,
+                            2364951.0
+                        ],
+                        "sfsp_count": [
+                            0.0,
+                            0.0,
+                            2348.0,
+                            6916.0,
+                            18035.0,
+                            78751.0
+                        ]
+                    }
+                }
+            },
+            "quantiles": {
+                "child_nutrition_data": {
+                    "2019": {
+                        "afterschool_meals_count": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            2660.8,
+                            11144.2,
+                            63783.0
+                        ],
+                        "breakfast_count": [
+                            20810.0,
+                            49191.8,
+                            64038.2,
+                            176145.8,
+                            344133.2,
+                            1275064.0
+                        ],
+                        "lunch_count": [
+                            80112.0,
+                            97569.6,
+                            206955.0,
+                            366726.4,
+                            858895.0,
+                            2364951.0
+                        ],
+                        "sfsp_count": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            939.2,
+                            9139.8,
+                            78751.0
+                        ]
+                    }
+                }
+            }
+        },
+        "data_metrics": {}
+    },
+    "zip": {}
+}
