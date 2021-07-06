@@ -21,7 +21,8 @@ def load_xlsx(src: str) -> Dict[str, pd.DataFrame]:
         # drop empty rows (i.e. all values are NaN)
         table[k].dropna(axis=0, how='all', inplace=True)
 
-        print(table[k])
+        # fill NaN as zero
+        table[k].fillna(0, inplace=True)
 
         # ensure we're indexing from 0
         table[k].reset_index(inplace=True)
@@ -29,9 +30,8 @@ def load_xlsx(src: str) -> Dict[str, pd.DataFrame]:
         # drop column of old indices
         table[k].drop(table[k].columns[0], axis=1, inplace=True)
 
-        print(table[k])
+    return table
 
-    return table 
 
 def rename_columns(table: Dict[str, pd.DataFrame]) -> None:
     '''In-place renames the columns in each DataFrame to snake_case
@@ -46,6 +46,7 @@ def rename_columns(table: Dict[str, pd.DataFrame]) -> None:
             'lunch_count',
             'sfsp_count',
             'afterschool_meals_count']
+
 
 def add_fips_column(table: Dict[str, pd.DataFrame]) -> None:
     '''Adds a column in-place to each DataFrame where each row value is
@@ -77,8 +78,6 @@ def add_fips_column(table: Dict[str, pd.DataFrame]) -> None:
         # drop column of county names
         table[k].drop('county', axis=1, inplace=True)
 
-        print(table[k])
-
 
 def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any]]]:  # noqa E501
     '''Combines several dataframes into a single dictionary structure.
@@ -88,7 +87,7 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
 
     Returns:
     A dictionary with the structure:
-    {
+    <sheet name>: {
         <fips>: {
             "breakfast_count": 0,
             "lunch_count": 0,
@@ -107,7 +106,7 @@ def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable) -> Dict:
     '''Internal utility to help make bins
 
     Arguments:
-    table --  Dictionary mapping age group to DataFrame
+    table --  Dictionary mapping worksheet name to DataFrame
     bin_func -- Function to make bins
     '''
     bin_dict = {}
@@ -125,7 +124,8 @@ def merge_child_nutrition_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
     srcs -- A list of tuples where the first element is the year,
             second element is the path to the data source
     Returns:
-    A data.Wrapper with the data sorted under county_data.child_nutrition.<year>
+    A data.Wrapper with the data sorted under
+    county_data.child_nutrition.<year>
     '''
     merge_to: data.Wrapper = data.Wrapper()
     merge_to.county = {
@@ -151,13 +151,10 @@ def merge_child_nutrition_data(srcs: List[Tuple[str, str]]) -> data.Wrapper:
                 if fips not in merge_to.county['child_nutrition_data']:
                     merge_to.county['child_nutrition_data'][fips] = dict()
                 if year not in merge_to.county['child_nutrition_data'][fips]:
-                    merge_to.county['child_nutrition_data'][fips][year] = dict()
+                    merge_to.county['child_nutrition_data'][fips][year] = dict()  # noqa E501
                 merge_to.county['child_nutrition_data'][fips][year] = table_dict[sheet][fips]  # noqa E501
 
-        merge_to.meta.data_bins['natural_breaks']['child_nutrition_data'][year] = make_bins(table, data.calculate_natural_breaks_bins)  # noqa E501
-        merge_to.meta.data_bins['quantiles']['child_nutrition_data'][year] = make_bins(table, data.calculate_quantiles_bins)  # noqa E501
+            merge_to.meta.data_bins['natural_breaks']['child_nutrition_data'][year] = make_bins(table, data.calculate_natural_breaks_bins)[sheet]  # noqa E501
+            merge_to.meta.data_bins['quantiles']['child_nutrition_data'][year] = make_bins(table, data.calculate_quantiles_bins)[sheet]  # noqa E501
 
     return merge_to
-
-if __name__ == '__main__':
-    merge_child_nutrition_data([('2019', 'data_folder/child_nutrition/child_meals_2019.xlsx')])  # noqa: E501
