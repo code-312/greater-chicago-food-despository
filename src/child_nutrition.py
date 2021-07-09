@@ -102,7 +102,7 @@ def to_dict(table: Dict[str, pd.DataFrame]) -> Dict[str, Dict[str, Dict[str, Any
     return output
 
 
-def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable) -> Dict:
+def make_bins(table: Dict[str, pd.DataFrame], bin_func: Callable[[pd.DataFrame, List[str], int], Dict[str, List[float]]]): #  noqa E501
     '''Internal utility to help make bins
 
     Arguments:
