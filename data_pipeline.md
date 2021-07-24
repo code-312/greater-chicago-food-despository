@@ -41,6 +41,179 @@ Running src/main.py outputs three JSON files that can be used with the [front en
 
 ### countyData.json
 
+countyData.json is a dictionary where the keys are [county FIPS codes](https://www.nrcs.usda.gov/wps/portal/nrcs/detail/national/home/?cid=nrcs143_013697). All Illinois FIPS codes start with "17".
+
+The values in the dictionary follow this schema:
+
+```javascript
+{
+	"NAME": "Adams County, Illinois",
+	"child_nutrition_data": {
+		"2019": {
+			"afterschool_meals_count": 23197.0,
+			"breakfast_count": 475110.0,
+			"lunch_count": 1131503.0,
+			"sfsp_count": 18035.0
+		}
+	},
+	"insecurity_data": {
+		"insecurity_2018": 0.102,
+		"insecurity_2018_child": 0.142,
+		"insecurity_2020_child_projected": 0.206,
+		"insecurity_2020_projected": 0.135
+	},
+	"poverty_data": {
+		"poverty_percentages": {
+			"poverty_population_poverty": 0.12143,
+			"poverty_population_poverty_child": 0.036781
+		},
+		"poverty_population_poverty": 7874,
+		"poverty_population_poverty_child": 2385,
+		"poverty_population_total": 64844
+	},
+	"race_data": {
+		"race_asian": 540,
+		"race_black": 2676,
+		"race_hispaniclatino_total": 1021,
+		"race_majority": "race_white",
+		"race_native": 178,
+		"race_other": 72,
+		"race_pacific": 42,
+		"race_percentages": {
+			"race_asian": 0.008129,
+			"race_black": 0.040285,
+			"race_hispaniclatino_total": 0.01537,
+			"race_native": 0.00268,
+			"race_other": 0.001084,
+			"race_pacific": 0.000632,
+			"race_twoplus_total": 0.013383,
+			"race_white": 0.918437
+		},
+		"race_total": 66427,
+		"race_twoplus_total": 889,
+		"race_white": 61009
+	},
+	"snap_data": {
+		"2019": {
+			"age_0-4": {
+				"race_asian": 6.0,
+				"race_black": 175.0,
+				"race_hispaniclatino": 24.0,
+				"race_native": 3.0,
+				"race_pacific": 4.0,
+				"race_unknown": 516.0,
+				"race_white": 572.0
+			},
+			"age_18-65": {
+				"race_asian": 16,
+				"race_black": 741,
+				"race_hispaniclatino": 60,
+				"race_native": 20,
+				"race_pacific": 6,
+				"race_unknown": 295,
+				"race_white": 4417
+			},
+			"age_5-17": {
+				"race_asian": 5.0,
+				"race_black": 273.0,
+				"race_hispaniclatino": 64.0,
+				"race_native": 10.0,
+				"race_pacific": 7.0,
+				"race_unknown": 1091.0,
+				"race_white": 1235.0
+			},
+			"age_66+": {
+				"race_asian": 4.0,
+				"race_black": 46.0,
+				"race_hispaniclatino": 6.0,
+				"race_native": 0.0,
+				"race_pacific": 0.0,
+				"race_unknown": 12.0,
+				"race_white": 569.0
+			}
+		},
+		"2020": {
+			"age_0-4": {
+				"race_asian": 5.0,
+				"race_black": 164.0,
+				"race_hispaniclatino": 27.0,
+				"race_native": 2.0,
+				"race_pacific": 4.0,
+				"race_unknown": 563.0,
+				"race_white": 591.0
+			},
+			"age_18-65": {
+				"race_asian": 17.0,
+				"race_black": 812.0,
+				"race_hispaniclatino": 97.0,
+				"race_native": 25.0,
+				"race_pacific": 10.0,
+				"race_unknown": 381.0,
+				"race_white": 5100.0
+			},
+			"age_5-17": {
+				"race_asian": 14.0,
+				"race_black": 295.0,
+				"race_hispaniclatino": 81.0,
+				"race_native": 9.0,
+				"race_pacific": 6.0,
+				"race_unknown": 1207.0,
+				"race_white": 1378.0
+			},
+			"age_66+": {
+				"race_asian": 5.0,
+				"race_black": 65.0,
+				"race_hispaniclatino": 7.0,
+				"race_native": 1.0,
+				"race_pacific": 0.0,
+				"race_unknown": 14.0,
+				"race_white": 643.0
+			}
+		}
+	},
+	"wic_participation_children_data": {
+		"hispanic_or_latino": 20,
+		"race_amer_indian_or_alaskan_native": 3,
+		"race_asian": 1,
+		"race_black": 97,
+		"race_multiracial": 51,
+		"race_native_hawaii_or_pacific_islander": 3,
+		"race_white": 322,
+		"total": 365
+	},
+	"wic_participation_infants_data": {
+		"hispanic_or_latino": 19,
+		"race_amer_indian_or_alaskan_native": 1,
+		"race_asian": 3,
+		"race_black": 54,
+		"race_multiracial": 38,
+		"race_native_hawaii_or_pacific_islander": 3,
+		"race_white": 216,
+		"total": 237
+	},
+	"wic_participation_total_data": {
+		"hispanic_or_latino": 44,
+		"race_amer_indian_or_alaskan_native": 4,
+		"race_asian": 6,
+		"race_black": 172,
+		"race_multiracial": 95,
+		"race_native_hawaii_or_pacific_islander": 8,
+		"race_white": 697,
+		"total": 780
+	},
+	"wic_participation_women_data": {
+		"hispanic_or_latino": 5,
+		"race_amer_indian_or_alaskan_native": 0,
+		"race_asian": 2,
+		"race_black": 21,
+		"race_multiracial": 6,
+		"race_native_hawaii_or_pacific_islander": 2,
+		"race_white": 159,
+		"total": 178
+	}
+}
+```
+
 ### metaData.json
 
 ### zipData.json
