@@ -246,6 +246,8 @@ data_metrics is an object with one dictionary "poverty" that maps the census var
 
 ### zipData.json
 
+zipData.json is similar to countyData.json, but zipData.json uses ZIP codes as the keys and the values only contain the "poverty_data" and "race_data" fields. This is because all the input data except for census data was only available per county.
+
 ### How to Update the Data in the Front End
 
 Take the outputted JSON files and update the versions in the [fetched_data folder](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui/tree/main/src/fetched_data) in the front end repository.
