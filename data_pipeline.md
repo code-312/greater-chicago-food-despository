@@ -216,6 +216,34 @@ The values in the dictionary follow this schema:
 
 ### metaData.json
 
+metaData.json is an object with two fields: "data_bins" and "data_metrics".
+
+#### data_bins
+
+data_bins has two fields "natural_breaks" and "quantiles" that describe how the divide the data into five bins using either [Jenks natural breaks](https://en.wikipedia.org/wiki/Jenks_natural_breaks_optimization) or [quantiles](https://en.wikipedia.org/wiki/Quantile).
+
+"natural_breaks" and "quantiles" follow the same schema as the data for a single county, but instead of a data point, they include a list of six values separating the bins for that specific data metric.
+
+The data for a group of five bins could look like this:
+
+```javascript
+[0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+```
+
+For that data, the bins would be:
+
+Bin Name | Range of Values
+-------------- | --------------
+Bin 1 | 0.0 - 0.2
+Bin 2 | 0.2 - 0.4
+Bin 3 | 0.4 - 0.6
+Bin 4 | 0.6 - 0.8
+Bin 5 | 0.8 - 1.0
+
+#### data_metrics
+
+data_metrics is an object with one dictionary "poverty" that maps the census variables used to internal names and another dictionary "race" that does the same for race census variables.
+
 ### zipData.json
 
 ### How to Update the Data in the Front End
