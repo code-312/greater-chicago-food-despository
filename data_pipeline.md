@@ -1,5 +1,7 @@
 # Data Pipeline
 
+Running src/main.py reads in data from the US census API and local files containing data about child nutrition programs, food insecurity, SNAP usage and WIC usage. The script outputs three JSON files that can be used with the [front end project](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui) and CSV files of the WIC data which was originally requested by the Greater Chicago Food Depository.
+
 ## Input
 
 ### Census Data
@@ -23,7 +25,7 @@ S1701_C01_001E | poverty_population_total
 S1701_C02_001E | poverty_population_poverty
 S1701_C02_002E | poverty_population_poverty_child
 
-### Child Nutrition Data
+### Child Nutrition Programs Data
 
 The project reads the number of breakfast, lunch, afterschool and Summer Food Service Program meals served from an Excel spreadsheet provided by the Greater Chicago Food Depository.
 
@@ -41,7 +43,7 @@ The project parses WIC usage data from a PDF supplied by the Greater Chicago Foo
 
 ## Output
 
-Running src/main.py outputs three JSON files that can be used with the [front end project](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui) and CSV files of the WIC data which was originally requested by the Greater Chicago Food Depository.
+The main output of the script is three JSON files: countyData.json, metaData.json and zipData.json.
 
 ### countyData.json
 
