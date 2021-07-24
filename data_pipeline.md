@@ -25,11 +25,15 @@ S1701_C02_002E | poverty_population_poverty_child
 
 ### Child Nutrition Data
 
-
+The project reads the number of breakfast, lunch, afterschool and Summer Food Service Program meals served from an Excel spreadsheet provided by the Greater Chicago Food Depository.
 
 ### Food Insecurity Data
 
+The project reads child and total food insecurity rates from 2018 as well as projected 2020 data from an Excel spreadsheet provided by the Greater Chicago Food Depository.
+
 ### SNAP Usage Data
+
+THe project reads SNAP usage data from Excel spreadsheets provided by the Greater Chicago Food Depository. There is one spreadsheet for 2019 and one for 2020. The data is broken down by age and race.
 
 ### WIC Usage Data
 
