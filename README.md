@@ -53,3 +53,7 @@ After code runs, you can view the data in a Jupyter notebook at `getting_started
 <h2>Running the Tests</h2>
 
 To run the tests, run `pytest` from the root directory. Also see the [GitHub Actions](.github/workflows/run_tests.yaml) for the full list of tests that run in continuous integration.
+
+<h2>Data Pipeline</h2>
+
+For documentation of the various input data and output data, see [data_pipeline.md](data_pipeline.md).
