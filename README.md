@@ -9,12 +9,8 @@ Data generation for an interactive map of data in Illinois. Running this project
 <h3>Prerequisites</h3>
 
 1. The latest version of [Python 3.9](https://www.python.org/downloads/release/python-396/)
-
 2. The latest version of [Git](https://git-scm.com/downloads)
-
-<h3>Obtaining a Census API Key</h3>
-
-1. Submit a request [here](https://api.census.gov/data/key_signup.html) and you'll receive an email with your key.
+3. A Census API Key, which can be obtained by filling out [this form](https://api.census.gov/data/key_signup.html)
 
 <h3>Running for the first time</h3>
 
@@ -68,4 +64,32 @@ After code runs, you can view the data in a Jupyter notebook at `getting_started
 
 <h2>Running the Tests</h2>
 
-To run the tests, run `pytest` from the root directory. Also see the [GitHub Actions](.github/workflows/run_tests.yaml) for the full list of tests that run in continuous integration.
+1. To run the unit tests, run `pytest` from the root directory. 
+2. Run `flake8` from the root directory to check that code style rules have been followed.
+3. Run `mypy src --ignore-missing-imports` and `mypy tests --ignore-missing-imports` from the root directory to check for type errors.
+4. Also see the [GitHub Actions](.github/workflows/run_tests.yaml) for the full list of tests that run in continuous integration.
+
+<h2>Commiting changes</h2>
+
+1. Create a new branch for your task:
+```
+git checkout -b branch-name
+```
+2. Make your local changes.
+3. Check for locally modified files:
+```
+git status
+```
+4. Stage the modified files for a commit:
+```
+git add .
+```
+5. Commit to your local repository:
+```
+git commit -m "Your message here"
+```
+6. Push your local changes to the remote repository:
+```
+git push --set-upstream origin branch-name
+```
+7. Open a pull request from the Github UI using your branch
