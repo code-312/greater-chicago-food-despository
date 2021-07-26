@@ -72,3 +72,7 @@ After code runs, you can view the data in a Jupyter notebook at `getting_started
 <h2>See Also</h2>
 
 [GitHub Guides](https://guides.github.com/) for tutorials on GitHub development and workflows
+
+<h2>Data Pipeline</h2>
+
+For documentation of the various input data and output data, see [data_pipeline.md](data_pipeline.md).
