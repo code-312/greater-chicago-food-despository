@@ -6,22 +6,34 @@ Data generation for an interactive map of data in Illinois. Running this project
 
 <h2>Getting Started</h2>
 
-1. Obtain a Census API key [here](https://api.census.gov/data/key_signup.html)
-2. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
-3. Open `.env` in a text editor and add this as the contents, replacing the second part with your personal Census API key:
+<h3>Prerequisites</h3>
+
+1. The latest version of [Python 3.9](https://www.python.org/downloads/release/python-396/)
+2. The latest version of [Git](https://git-scm.com/downloads)
+3. A Census API Key, which can be obtained by filling out [this form](https://api.census.gov/data/key_signup.html)
+
+<h3>Running for the first time</h3>
+
+1. Ensure Python and Git are installed.
+2. Create a local directory, and open a command prompt there.
+3. Clone the repository with Git:
+```
+git clone https://github.com/Code-For-Chicago/greater-chicago-food-despository.git . 
+```
+4. Create a file called `.env` in the root directory. This file is ignored via the .gitignore file to avoid committing secrets.
+5. Open `.env` in a text editor and add this as the contents, replacing the second part with your personal Census API key:
 ```
 CENSUS_KEY=REPLACE_ME_WITH_CENSUS_API_KEY
 ```
-4. Ensure Python is installed.
-5. Install required modules in requirements.txt
+6. Install required modules in requirements.txt
    - Mac/Linux: `pip3 install -r requirements.txt`
    - Windows: `pip install -r requirements.txt`
-6. Run start script to verify your setup is correct
+7. Run start script to verify your setup is correct
    - Mac/Linux: 
        - Make script executable `chmod 755 start.sh`
        - Run `start.sh` via terminal or double click
    - Windows: run `start.bat` via command line or double click
-7. If the tests do not pass, check your `.env` file and your installed python package versions
+8. If the tests do not pass, check your `.env` file and your installed python package versions
 
 <h2>Running the Project</h2>
 
@@ -52,7 +64,14 @@ After code runs, you can view the data in a Jupyter notebook at `getting_started
 
 <h2>Running the Tests</h2>
 
-To run the tests, run `pytest` from the root directory. Also see the [GitHub Actions](.github/workflows/run_tests.yaml) for the full list of tests that run in continuous integration.
+1. To run the unit tests, run `pytest` from the root directory. 
+2. Run `flake8` from the root directory to check that code style rules have been followed.
+3. Run `mypy src --ignore-missing-imports` and `mypy tests --ignore-missing-imports` from the root directory to check for type errors.
+4. Also see the [GitHub Actions](.github/workflows/run_tests.yaml) for the full list of tests that run in continuous integration.
+
+<h2>See Also</h2>
+
+[GitHub Guides](https://guides.github.com/) for tutorials on GitHub development and workflows
 
 <h2>Data Pipeline</h2>
 
