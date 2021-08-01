@@ -2,7 +2,7 @@
 
 <h1>Code for Chicago Mapping Project Backend</h1>
 
-Data generation for an interactive map of data in Illinois. Running this project outputs JSON files that can be used by [the frontend](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui).
+This project is a set of Python scripts that generate data for an interactive map of food insecurity, food assistance program participation and demographics in Illinois. Running this project outputs JSON files that can be used by [the frontend](https://github.com/Code-For-Chicago/greater-chicago-food-despository-ui).
 
 <h2>Getting Started</h2>
 
