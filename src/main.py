@@ -11,6 +11,7 @@ from src.snap import merge_snap_data  # noqa: E402
 from src.child_nutrition import merge_child_nutrition_data  # noqa: E402
 from src import data  # noqa: E402
 from src.insecurity import get_food_insecurity_data  # noqa: E402
+import src.zip_data  # noqa: E402
 
 
 def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
@@ -65,12 +66,16 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
         print("Reading Child Nutrition Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
     merged_data: data.Merged = data.merge(combined_data)
+    # Increase version number to publish updates to final_jsons.zip
+    merged_data.meta.version = '0.1.0'
     with open('final_jsons/countyData.json', "w") as f:
         f.write(data.to_json(merged_data.county_data))
     with open('final_jsons/metaData.json', "w") as f:
         f.write(data.to_json(merged_data.meta))
     with open('final_jsons/zipData.json', "w") as f:
         f.write(data.to_json(merged_data.zip_data))
+
+    src.zip_data.zip('final_jsons/final_jsons.zip')
 
     mph.record_current_memory_usage_if_enabled()
     mph.generate_report_if_enabled()
