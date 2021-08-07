@@ -43,7 +43,7 @@ The project parses WIC usage data from a PDF supplied by the Greater Chicago Foo
 
 ## Output
 
-The main output of the script is three JSON files: countyData.json, metaData.json and zipData.json.
+The main output of the script is three JSON files: countyData.json, metaData.json and zipData.json. When the version number in `src.main` is updated, these JSON files are compressed into a zip file.
 
 ### countyData.json
 

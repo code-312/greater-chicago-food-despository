@@ -66,6 +66,7 @@ def main(geo_ls=["zip", "county"], verbose: bool = False) -> None:
         print("Reading Child Nutrition Data took: {0:.2f} seconds".format(duration))  # noqa: E501
 
     merged_data: data.Merged = data.merge(combined_data)
+    # Increase version number to publish updates to final_jsons.zip
     merged_data.meta.version = '0.1.0'
     with open('final_jsons/countyData.json', "w") as f:
         f.write(data.to_json(merged_data.county_data))
